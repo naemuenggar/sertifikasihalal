@@ -5,7 +5,7 @@ import ScrollLink from "./ScrollLink";
 const faqs = [
   {
     q: "Berapa lama sertifikasi halal selesai?",
-    a: "Untuk UMKM rata-rata 14–45 hari sejak dokumen lengkap. Korporasi multi-produk bisa 2–4 bulan. Lama proses sangat bergantung kelengkapan bahan dan respons Anda; kami yang mendorong supaya tetap di estimasi.",
+    a: "Rata-Rata 30-45 Hari.",
   },
   {
     q: "Apakah Urushalal bagian dari MUI atau BPJPH?",
@@ -16,16 +16,12 @@ const faqs = [
     a: "Untuk paket Bisnis dan Enterprise, pendampingan revisi dan audit ulang sudah termasuk. Paket Pemula mencakup satu kali audit; bila perlu audit ulang dikenakan biaya operasional yang transparan.",
   },
   {
-    q: "Produk saya impor. Bisa dibantu sertifikasi seberang?",
-    a: "Bisa. Kami tangani skema sertifikasi halal seberang (produk luar negeri) termasuk verifikasi dokumen negara asal dan koordinasi dengan LPH yang ditunjuk.",
+    q: "Produk saya impor dan sudah bersertifikat halal luar negeri apakah bisa dibantu sertifikasi halal di indonesia?",
+    a: "Bisa, kami bantu untuk registrasi halal luar negeri ke dalam sertifikasi BPJPH Indonesia.",
   },
   {
     q: "Dokumen apa yang harus saya siapkan dari awal?",
     a: "Minimal: daftar produk, daftar bahan beserta supplier, flowchart proses produksi, dan dokumen legalitas usaha. Kami beri checklist lengkap setelah konsultasi awal supaya tidak ada yang tertinggal.",
-  },
-  {
-    q: "Sertifikat halal berlaku berapa lama?",
-    a: "Sertifikat halal berlaku 4 tahun. Sebelum jatuh tempo kami ingatkan dan bantu perpanjangan agar status halal produk Anda tidak putus di tengah jalan.",
   },
 ];
 

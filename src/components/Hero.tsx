@@ -9,10 +9,8 @@ export default function Hero() {
         <div>
           <div className="hero__meta">
             <span>
-              <span className="dot" /> Terdaftar resmi di BPJPH & LPH
+              <span className="dot" /> Sejak 2022 · Jakarta
             </span>
-            <span className="sep" />
-            <span>Sejak 2019 · Jakarta</span>
           </div>
 
           <h1 className="h-display hero__copy">
@@ -34,11 +32,11 @@ export default function Hero() {
 
         <aside className="hero__side">
           <div className="stat">
-            <span className="stat__num">1.200+</span>
+            <span className="stat__num">200+</span>
             <span className="stat__lbl">produk sudah kami sertifikasi halal</span>
           </div>
           <div className="stat">
-            <span className="stat__num">14 hari</span>
+            <span className="stat__num">30 hari</span>
             <span className="stat__lbl">rata-rata audit sampai terbit, untuk UMKM</span>
           </div>
           <div className="stat">

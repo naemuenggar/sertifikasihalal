@@ -9,6 +9,11 @@
     "preview": "vite preview",
     "lint": "tsc -b --noEmit"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
