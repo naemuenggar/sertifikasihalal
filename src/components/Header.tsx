@@ -46,6 +46,9 @@ export default function Header() {
         </nav>
 
         <div className="header-cta">
+          <button type="button" className="btn btn--ghost" onClick={() => go("kontak")}>
+            Masuk
+          </button>
           <button type="button" className="btn btn--solid" onClick={() => go("kontak")}>
             Konsultasi gratis
           </button>
