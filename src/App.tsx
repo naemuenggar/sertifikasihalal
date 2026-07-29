@@ -9,6 +9,7 @@ import FAQ from "./components/FAQ";
 import Footer from "./components/Footer";
 import HalalDeadlineModal from "./components/HalalDeadlineModal";
 import { WhatsApp } from "./components/icons";
+import { WA_LINK } from "./utils/contact";
 
 export default function App() {
   return (
@@ -27,7 +28,7 @@ export default function App() {
       <HalalDeadlineModal />
       <a
         className="wa-fab"
-        href="https://wa.me/6281234567890"
+        href={WA_LINK}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat WhatsApp"

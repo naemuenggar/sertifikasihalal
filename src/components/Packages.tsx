@@ -8,7 +8,7 @@ const packages = [
     unit: "/ lokasi · sekali bayar",
     feat: true,
     feats: [
-      "Konsultasi skema & pemetaan produk",
+      "Konsultasi gratis untuk skema & pemetaan produk",
       "Penyusunan dokumen Reg-01 sampai siap verifikasi",
       "Kaji bahan & supplier lengkap",
       "Flowchart produksi disusun",

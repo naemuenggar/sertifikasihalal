@@ -1,8 +1,8 @@
 const steps = [
   {
     no: "i",
-    title: "Daftar & Konsultasi",
-    desc: "Anda daftar, kami kirim kuesioner singkat. Sesi konsultasi 30 menit untuk menentukan skema: reguler atau self-declare.",
+    title: "Daftar & Konsultasi Gratis",
+    desc: "Anda daftar, kami kirim kuesioner singkat. Sesi konsultasi gratis 30 menit untuk menentukan skema: reguler atau self-declare.",
     dur: "Hari 1–3",
   },
   {

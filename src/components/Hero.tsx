@@ -19,7 +19,7 @@ export default function Hero() {
 
           <div className="hero__sub">
             <ScrollLink to="kontak" className="btn btn--solid">
-              Mulai konsultasi
+              Mulai konsultasi gratis
             </ScrollLink>
             <ScrollLink to="proses" className="btn btn--ghost">
               Lihat alurnya

@@ -21,7 +21,7 @@ const faqs = [
   },
   {
     q: "Dokumen apa yang harus saya siapkan dari awal?",
-    a: "Minimal: daftar produk, daftar bahan beserta supplier, flowchart proses produksi, dan dokumen legalitas usaha. Kami beri checklist lengkap setelah konsultasi awal supaya tidak ada yang tertinggal.",
+    a: "Minimal: daftar produk, daftar bahan beserta supplier, flowchart proses produksi, dan dokumen legalitas usaha. Kami beri checklist lengkap setelah konsultasi gratis supaya tidak ada yang tertinggal.",
   },
 ];
 

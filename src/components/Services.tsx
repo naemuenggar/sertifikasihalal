@@ -19,7 +19,7 @@ type Service = {
 const services: Service[] = [
   {
     icon: MessagesSquare,
-    title: "Konsultasi Awal",
+    title: "Konsultasi Awal Gratis",
     desc: "Kami petakan jenis produk, bahan, dan proses Anda untuk menentukan skema sertifikasi yang paling pas.",
     tag: "Fase persiapan",
   },
