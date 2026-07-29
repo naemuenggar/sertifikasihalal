@@ -1,4 +1,5 @@
-import ScrollLink from "./ScrollLink";
+import SpecularButton from "./SpecularButton/SpecularButton";
+import { WA_LINK } from "../utils/contact";
 
 const packages = [
   {
@@ -36,6 +37,8 @@ const packages = [
   },
 ];
 
+const openWa = () => window.open(WA_LINK, "_blank", "noopener,noreferrer");
+
 export default function Packages() {
   return (
     <section className="section" id="paket">
@@ -47,9 +50,6 @@ export default function Packages() {
               Harga jujur, tidak ada biaya yang ngumpet.
             </h2>
           </div>
-          <ScrollLink to="kontak" className="section__link">
-            Bandingkan detail
-          </ScrollLink>
         </div>
 
         <div className="pkg-grid">
@@ -67,12 +67,28 @@ export default function Packages() {
                   <li key={f}>{f}</li>
                 ))}
               </ul>
-              <ScrollLink
-                to="kontak"
-                className={`btn ${p.feat ? "btn--solid" : "btn--ghost"}`}
+
+              <SpecularButton
+                size="lg"
+                radius={12}
+                tint="#F2F2F2"
+                tintOpacity={1}
+                blur={0}
+                textColor="#1a1a1a"
+                lineColor="#00ffc3"
+                baseColor="#d4d4d4"
+                intensity={1}
+                shineSize={10}
+                shineFade={40}
+                thickness={1}
+                speed={1.05}
+                followMouse={true}
+                proximity={250}
+                autoAnimate
+                onClick={openWa}
               >
                 Pilih {p.name}
-              </ScrollLink>
+              </SpecularButton>
             </article>
           ))}
         </div>
