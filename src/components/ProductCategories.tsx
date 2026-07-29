@@ -7,7 +7,8 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import CarouselControls from "./CarouselControls";
+import { useCarousel } from "../hooks/useCarousel";
 
 type ProductCategory = {
   icon: LucideIcon;
@@ -49,69 +50,17 @@ const categories: ProductCategory[] = [
 ];
 
 export default function ProductCategories() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(false);
-
-  const updateNav = useCallback(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    setAtStart(el.scrollLeft <= 4);
-    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", updateNav, { passive: true });
-    window.addEventListener("resize", updateNav);
-    updateNav();
-    return () => {
-      el.removeEventListener("scroll", updateNav);
-      window.removeEventListener("resize", updateNav);
-    };
-  }, [updateNav]);
-
-  const slide = (dir: 1 | -1) => {
-    const el = trackRef.current;
-    if (!el) return;
-    if (dir === -1 && atStart) {
-      el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
-      return;
-    }
-    if (dir === 1 && atEnd) {
-      el.scrollTo({ left: 0, behavior: "smooth" });
-      return;
-    }
-    const card = el.querySelector<HTMLElement>(".product-category");
-    if (!card) return;
-    const gap = parseFloat(getComputedStyle(el).gap) || 16;
-    el.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: "smooth" });
-  };
+  const { trackRef, slide, progress, ratio } = useCarousel<HTMLDivElement>(".product-category");
 
   return (
     <section className="product-categories" id="produk">
       <div className="product-categories__inner">
-        <div className="product-categories__top">
-          <div className="product-categories__head">
-            <span className="eyebrow">Cakupan sertifikasi</span>
-            <h2 className="h-section">Produk yang Kami Sertifikasi</h2>
-            <p className="lead">
-              Sertifikasi Halal untuk berbagai kategori produk sesuai ketentuan BPJPH.
-            </p>
-          </div>
-          <div className="product-categories__nav">
-            <button type="button" onClick={() => slide(-1)} aria-label="Kategori sebelumnya">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button type="button" onClick={() => slide(1)} aria-label="Kategori berikutnya">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
+        <div className="product-categories__head">
+          <span className="eyebrow">Cakupan sertifikasi</span>
+          <h2 className="h-section">Produk yang Kami Sertifikasi</h2>
+          <p className="lead">
+            Sertifikasi Halal untuk berbagai kategori produk sesuai ketentuan BPJPH.
+          </p>
         </div>
 
         <div className="product-categories__grid" ref={trackRef}>
@@ -125,6 +74,15 @@ export default function ProductCategories() {
             </article>
           ))}
         </div>
+
+        <CarouselControls
+          progress={progress}
+          ratio={ratio}
+          onPrev={() => slide(-1)}
+          onNext={() => slide(1)}
+          prevLabel="Kategori sebelumnya"
+          nextLabel="Kategori berikutnya"
+        />
       </div>
     </section>
   );

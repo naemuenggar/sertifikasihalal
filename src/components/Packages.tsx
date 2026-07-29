@@ -2,30 +2,19 @@ import ScrollLink from "./ScrollLink";
 
 const packages = [
   {
-    lbl: "UMKM",
-    name: "Pemula",
-    price: "1,5jt",
-    unit: "/ produk · sekali bayar",
-    feat: false,
-    feats: [
-      "Konsultasi skema sertifikasi",
-      "Pendampingan dokumen Reg-01",
-      "1x audit lapangan didampingi",
-      "Tracking via dashboard",
-      "Garansi lolos verifikasi pertama",
-    ],
-  },
-  {
     lbl: "Paling dipilih",
     name: "Bisnis",
     price: "4,5jt",
     unit: "/ lokasi · sekali bayar",
     feat: true,
     feats: [
-      "Semua di paket Pemula",
+      "Konsultasi skema & pemetaan produk",
+      "Penyusunan dokumen Reg-01 sampai siap verifikasi",
       "Kaji bahan & supplier lengkap",
       "Flowchart produksi disusun",
-      "2x audit didampingi + revisi",
+      "2x audit lapangan didampingi + revisi",
+      "Tracking status via dashboard",
+      "Garansi lolos verifikasi pertama",
       "Pemeliharaan 1 tahun pasca-terbit",
       "Prioritas respons 1×24 jam",
     ],

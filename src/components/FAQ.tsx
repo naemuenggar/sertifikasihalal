@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus } from "./icons";
+import { Plus } from "lucide-react";
 import ScrollLink from "./ScrollLink";
 
 const faqs = [
@@ -13,7 +13,7 @@ const faqs = [
   },
   {
     q: "Kalau gagal audit, apakah ada biaya tambahan?",
-    a: "Untuk paket Bisnis dan Enterprise, pendampingan revisi dan audit ulang sudah termasuk. Paket Pemula mencakup satu kali audit; bila perlu audit ulang dikenakan biaya operasional yang transparan.",
+    a: "Tidak ada biaya tersembunyi. Pendampingan revisi dan audit ulang sudah termasuk di paket Bisnis maupun Enterprise, jadi Anda tidak perlu bayar lagi kalau audit pertama belum lolos.",
   },
   {
     q: "Produk saya impor dan sudah bersertifikat halal luar negeri apakah bisa dibantu sertifikasi halal di indonesia?",
@@ -59,7 +59,7 @@ export default function FAQ() {
                     onClick={() => setOpen(isOpen ? null : i)}
                   >
                     {f.q}
-                    <Plus className="faq-item__icon" />
+                    <Plus className="faq-item__icon" size={18} strokeWidth={1.8} />
                   </button>
                   <div className="faq-item__a">
                     <div>

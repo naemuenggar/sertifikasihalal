@@ -16,11 +16,11 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <Articles />
         <ProductCategories />
         <Services />
         <Process />
         <Packages />
-        <Articles />
         <FAQ />
       </main>
       <Footer />

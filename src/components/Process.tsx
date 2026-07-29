@@ -2,7 +2,7 @@ const steps = [
   {
     no: "i",
     title: "Daftar & Konsultasi",
-    desc: "Anda daftar, kami kuesioner singkat. Sesi konsultasi 30 menit untuk pilih skema: reguler, seberang, atau UMKM.",
+    desc: "Anda daftar, kami kirim kuesioner singkat. Sesi konsultasi 30 menit untuk menentukan skema: reguler atau self-declare.",
     dur: "Hari 1–3",
   },
   {
@@ -20,7 +20,7 @@ const steps = [
   {
     no: "iv",
     title: "Fatwa & Terbit",
-    desc: "Hasil audit masuk ke MUI untuk fatwa. Setetap, sertifikat halal terbit dan bisa diunduh di SiHALAL.",
+    desc: "Hasil audit masuk ke MUI untuk fatwa. Setelah itu sertifikat halal terbit dan bisa diunduh di SiHALAL.",
     dur: "Hari 19–45",
   },
 ];

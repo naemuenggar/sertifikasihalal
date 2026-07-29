@@ -2,10 +2,10 @@ import { useState } from "react";
 import { LogoMark } from "./icons";
 
 const navItems = [
+  { id: "artikel", label: "Artikel" },
   { id: "layanan", label: "Layanan" },
   { id: "proses", label: "Proses" },
   { id: "paket", label: "Paket" },
-  { id: "artikel", label: "Artikel" },
   { id: "faq", label: "FAQ" },
 ];
 

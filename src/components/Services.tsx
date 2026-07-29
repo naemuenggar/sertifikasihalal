@@ -1,33 +1,48 @@
-import { useRef, useState, useEffect, useCallback } from "react";
-import { IconConsult, IconDoc, IconAudit, IconCert, IconShield } from "./icons";
+import {
+  Award,
+  ClipboardCheck,
+  FileText,
+  MessagesSquare,
+  PackageSearch,
+  type LucideIcon,
+} from "lucide-react";
+import CarouselControls from "./CarouselControls";
+import { useCarousel } from "../hooks/useCarousel";
 
-const services = [
+type Service = {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  tag: string;
+};
+
+const services: Service[] = [
   {
-    icon: IconConsult,
+    icon: MessagesSquare,
     title: "Konsultasi Awal",
     desc: "Kami petakan jenis produk, bahan, dan proses Anda untuk menentukan skema sertifikasi yang paling pas.",
     tag: "Fase persiapan",
   },
   {
-    icon: IconDoc,
+    icon: FileText,
     title: "Penyusunan Dokumen",
     desc: "Formulir Pendaftaran Halal (Reg-01), daftar bahan, flowchart produksi—kami susun rapi sampai siap verifikasi.",
     tag: "BPJPH",
   },
   {
-    icon: IconAudit,
+    icon: ClipboardCheck,
     title: "Pendampingan Audit",
     desc: "Auditor LPH datang ke lokasi. Kami dampingi dari sisi teknis supaya audit jalan satu kali jalan.",
     tag: "Lapangan",
   },
   {
-    icon: IconCert,
+    icon: Award,
     title: "Penerbitan Sertifikat",
     desc: "Hasil audit kami pantau sampai Fatwa MUI keluar dan sertifikat halal resmi terbit di portal SiHALAL.",
     tag: "Penyelesaian",
   },
   {
-    icon: IconShield,
+    icon: PackageSearch,
     title: "Kaji Bahan & Supplier",
     desc: "Cek status halal setiap bahan dan supplier agar rantai pasok Anda terdokumentasi dan tidak bermasalah saat audit.",
     tag: "Due diligence",
@@ -35,48 +50,7 @@ const services = [
 ];
 
 export default function Services() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(false);
-
-  const updateNav = useCallback(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    setAtStart(el.scrollLeft <= 4);
-    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", updateNav, { passive: true });
-    window.addEventListener("resize", updateNav);
-    updateNav();
-    return () => {
-      el.removeEventListener("scroll", updateNav);
-      window.removeEventListener("resize", updateNav);
-    };
-  }, [updateNav]);
-
-  const slide = (dir: 1 | -1) => {
-    const el = trackRef.current;
-    if (!el) return;
-
-    if (dir === -1 && atStart) {
-      el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
-      return;
-    }
-
-    if (dir === 1 && atEnd) {
-      el.scrollTo({ left: 0, behavior: "smooth" });
-      return;
-    }
-
-    const card = el.querySelector<HTMLElement>(".svc-carousel__card");
-    if (!card) return;
-    const gap = parseFloat(getComputedStyle(el).gap) || 16;
-    el.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: "smooth" });
-  };
+  const { trackRef, slide, progress, ratio } = useCarousel<HTMLDivElement>(".svc-carousel__card");
 
   return (
     <section className="section" id="layanan">
@@ -88,43 +62,29 @@ export default function Services() {
               Dari niat sampai sertifikat terbit, satu pintu.
             </h2>
           </div>
-          <div className="svc-nav">
-            <button
-              type="button"
-              className="svc-nav__btn"
-              onClick={() => slide(-1)}
-              aria-label="Kartu sebelumnya"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="svc-nav__btn"
-              onClick={() => slide(1)}
-              aria-label="Kartu berikutnya"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
         </div>
 
         <div className="svc-carousel" ref={trackRef}>
-          {services.map((s) => {
-            const Icon = s.icon;
-            return (
-              <article className="svc svc-carousel__card" key={s.title}>
-                <Icon className="svc__icon" />
-                <h3>{s.title}</h3>
-                <p>{s.desc}</p>
-                <span className="svc__tag">{s.tag}</span>
-              </article>
-            );
-          })}
+          {services.map(({ icon: Icon, title, desc, tag }) => (
+            <article className="svc svc-carousel__card" key={title}>
+              <span className="svc__icon" aria-hidden="true">
+                <Icon size={24} strokeWidth={1.8} />
+              </span>
+              <h3>{title}</h3>
+              <p>{desc}</p>
+              <span className="svc__tag">{tag}</span>
+            </article>
+          ))}
         </div>
+
+        <CarouselControls
+          progress={progress}
+          ratio={ratio}
+          onPrev={() => slide(-1)}
+          onNext={() => slide(1)}
+          prevLabel="Kartu sebelumnya"
+          nextLabel="Kartu berikutnya"
+        />
       </div>
     </section>
   );
