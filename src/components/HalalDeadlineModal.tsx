@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { TriangleAlert, X } from "lucide-react";
+import WaLink from "./WaLink";
 
 const SESSION_KEY = "urushalal-deadline-modal-dismissed";
 
@@ -33,16 +34,6 @@ export default function HalalDeadlineModal() {
   const dismiss = () => {
     sessionStorage.setItem(SESSION_KEY, "true");
     setOpen(false);
-  };
-
-  const goToContact = () => {
-    dismiss();
-    window.setTimeout(() => {
-      document.getElementById("kontak")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 0);
   };
 
   if (!open) return null;
@@ -81,9 +72,9 @@ export default function HalalDeadlineModal() {
           dari larangan impor, penarikan produk dari pasar, hingga denda
           administratif.
         </p>
-        <button type="button" className="deadline-modal__cta" onClick={goToContact}>
+        <WaLink className="deadline-modal__cta" onClick={dismiss}>
           Konsultasi Gratis
-        </button>
+        </WaLink>
       </div>
     </div>
   );

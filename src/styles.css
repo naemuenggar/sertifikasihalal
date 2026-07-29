@@ -1309,6 +1309,9 @@ h3 {
   line-height: 1.65;
 }
 .deadline-modal__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 48px;
   margin-top: 1.6rem;

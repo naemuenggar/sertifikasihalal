@@ -1,4 +1,5 @@
 import ScrollLink from "./ScrollLink";
+import WaLink from "./WaLink";
 
 export default function Hero() {
   return (
@@ -18,9 +19,9 @@ export default function Hero() {
           </h1>
 
           <div className="hero__sub">
-            <ScrollLink to="kontak" className="btn btn--solid">
+            <WaLink className="btn btn--solid">
               Mulai konsultasi gratis
-            </ScrollLink>
+            </WaLink>
             <ScrollLink to="proses" className="btn btn--ghost">
               Lihat alurnya
             </ScrollLink>

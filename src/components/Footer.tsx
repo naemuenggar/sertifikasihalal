@@ -1,5 +1,6 @@
 import { LogoMark } from "./icons";
 import ScrollLink from "./ScrollLink";
+import WaLink from "./WaLink";
 import { WA_DISPLAY, WA_LINK } from "../utils/contact";
 
 export default function Footer() {
@@ -10,9 +11,9 @@ export default function Footer() {
           <h2>
             Saatnya produk Anda <em>resmi halal.</em>
           </h2>
-          <ScrollLink to="kontak" className="btn btn--solid">
+          <WaLink className="btn btn--solid">
             Mulai konsultasi gratis
-          </ScrollLink>
+          </WaLink>
         </div>
       </section>
 
@@ -32,7 +33,7 @@ export default function Footer() {
             <div>
               <h4>Layanan</h4>
               <ul>
-                <li><ScrollLink to="layanan">Konsultasi gratis</ScrollLink></li>
+                <li><WaLink>Konsultasi gratis</WaLink></li>
                 <li><ScrollLink to="layanan">Dokumen</ScrollLink></li>
                 <li><ScrollLink to="layanan">Audit</ScrollLink></li>
                 <li><ScrollLink to="layanan">Renewal</ScrollLink></li>

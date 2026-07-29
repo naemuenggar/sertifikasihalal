@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { LogoMark } from "./icons";
+import WaLink from "./WaLink";
 
 const navItems = [
   { id: "artikel", label: "Artikel" },
@@ -49,9 +50,9 @@ export default function Header() {
           <button type="button" className="btn btn--ghost" onClick={() => go("kontak")}>
             Masuk
           </button>
-          <button type="button" className="btn btn--solid" onClick={() => go("kontak")}>
+          <WaLink className="btn btn--solid" onClick={() => setOpen(false)}>
             Konsultasi gratis
-          </button>
+          </WaLink>
           <button
             className="menu-btn"
             aria-label={open ? "Tutup menu" : "Buka menu"}
@@ -84,9 +85,9 @@ export default function Header() {
             ))}
           </nav>
           <div className="mobile-menu__cta">
-            <button type="button" className="btn btn--solid" onClick={() => go("kontak")}>
+            <WaLink className="btn btn--solid" onClick={() => setOpen(false)}>
               Konsultasi gratis
-            </button>
+            </WaLink>
           </div>
         </div>
       </div>
