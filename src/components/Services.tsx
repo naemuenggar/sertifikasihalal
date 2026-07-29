@@ -6,7 +6,7 @@ import {
   PackageSearch,
   type LucideIcon,
 } from "lucide-react";
-import CarouselControls from "./CarouselControls";
+import Carousel from "./Carousel";
 import { useCarousel } from "../hooks/useCarousel";
 
 type Service = {
@@ -64,27 +64,27 @@ export default function Services() {
           </div>
         </div>
 
-        <div className="svc-carousel" ref={trackRef}>
-          {services.map(({ icon: Icon, title, desc, tag }) => (
-            <article className="svc svc-carousel__card" key={title}>
-              <span className="svc__icon" aria-hidden="true">
-                <Icon size={24} strokeWidth={1.8} />
-              </span>
-              <h3>{title}</h3>
-              <p>{desc}</p>
-              <span className="svc__tag">{tag}</span>
-            </article>
-          ))}
-        </div>
-
-        <CarouselControls
+        <Carousel
           progress={progress}
           ratio={ratio}
           onPrev={() => slide(-1)}
           onNext={() => slide(1)}
           prevLabel="Kartu sebelumnya"
           nextLabel="Kartu berikutnya"
-        />
+        >
+          <div className="svc-carousel" ref={trackRef}>
+            {services.map(({ icon: Icon, title, desc, tag }) => (
+              <article className="svc svc-carousel__card" key={title}>
+                <span className="svc__icon" aria-hidden="true">
+                  <Icon size={24} strokeWidth={1.8} />
+                </span>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+                <span className="svc__tag">{tag}</span>
+              </article>
+            ))}
+          </div>
+        </Carousel>
       </div>
     </section>
   );

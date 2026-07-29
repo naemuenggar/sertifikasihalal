@@ -7,7 +7,7 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
-import CarouselControls from "./CarouselControls";
+import Carousel from "./Carousel";
 import { useCarousel } from "../hooks/useCarousel";
 
 type ProductCategory = {
@@ -63,26 +63,26 @@ export default function ProductCategories() {
           </p>
         </div>
 
-        <div className="product-categories__grid" ref={trackRef}>
-          {categories.map(({ icon: Icon, title, description }) => (
-            <article className="product-category" key={title}>
-              <span className="product-category__icon" aria-hidden="true">
-                <Icon size={24} strokeWidth={1.8} />
-              </span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </article>
-          ))}
-        </div>
-
-        <CarouselControls
+        <Carousel
           progress={progress}
           ratio={ratio}
           onPrev={() => slide(-1)}
           onNext={() => slide(1)}
           prevLabel="Kategori sebelumnya"
           nextLabel="Kategori berikutnya"
-        />
+        >
+          <div className="product-categories__grid" ref={trackRef}>
+            {categories.map(({ icon: Icon, title, description }) => (
+              <article className="product-category" key={title}>
+                <span className="product-category__icon" aria-hidden="true">
+                  <Icon size={24} strokeWidth={1.8} />
+                </span>
+                <h3>{title}</h3>
+                <p>{description}</p>
+              </article>
+            ))}
+          </div>
+        </Carousel>
       </div>
     </section>
   );
