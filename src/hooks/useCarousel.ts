@@ -6,7 +6,7 @@ const EDGE = 4;
  * Track horizontal-scroll untuk carousel kartu.
  * `ratio` = porsi track yang sedang terlihat, dipakai untuk lebar thumb progress.
  */
-export function useCarousel<T extends HTMLElement>(cardSelector: string) {
+export function useCarousel<T extends HTMLElement>(cardSelector: string, refreshKey?: unknown) {
   const trackRef = useRef<T>(null);
   const [progress, setProgress] = useState(0);
   const [ratio, setRatio] = useState(1);
@@ -44,7 +44,7 @@ export function useCarousel<T extends HTMLElement>(cardSelector: string) {
       ro.disconnect();
       cancelAnimationFrame(raf);
     };
-  }, [update, cardSelector]);
+  }, [update, cardSelector, refreshKey]);
 
   const slide = useCallback(
     (dir: 1 | -1) => {

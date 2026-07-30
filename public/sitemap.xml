@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sitemap halaman publik Urushalal.
+     Catatan: halaman admin (/portal-admin, /admin/*) SENGAJA tidak dimasukkan
+     dan ditandai noindex,nofollow agar tidak diindeks mesin pencari. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/tentang-kami</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/layanan/sertifikasi-halal-reguler</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/layanan/registrasi-sertifikat-halal-luar-negeri</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/layanan/registrasi-makanan-minuman-bpom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/layanan/registrasi-kosmetik-bpom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/layanan/registrasi-suplemen-kesehatan-bpom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sertifikasihalal-chi.vercel.app/berita</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

@@ -22,7 +22,7 @@ export default function Hero() {
             <WaLink className="btn btn--solid">
               Mulai konsultasi gratis
             </WaLink>
-            <ScrollLink to="proses" className="btn btn--ghost">
+            <ScrollLink to="alur" className="btn btn--ghost">
               Lihat alurnya
             </ScrollLink>
           </div>
