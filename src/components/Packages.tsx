@@ -1,5 +1,4 @@
-import SpecularButton from "./SpecularButton/SpecularButton";
-import { WA_LINK } from "../utils/contact";
+import WaLink from "./WaLink";
 
 const packages = [
   {
@@ -37,8 +36,6 @@ const packages = [
   },
 ];
 
-const openWa = () => window.open(WA_LINK, "_blank", "noopener,noreferrer");
-
 export default function Packages() {
   return (
     <section className="section" id="paket">
@@ -68,27 +65,12 @@ export default function Packages() {
                 ))}
               </ul>
 
-              <SpecularButton
-                size="lg"
-                radius={12}
-                tint="#F2F2F2"
-                tintOpacity={1}
-                blur={0}
-                textColor="#1a1a1a"
-                lineColor="#00ffc3"
-                baseColor="#d4d4d4"
-                intensity={1}
-                shineSize={10}
-                shineFade={40}
-                thickness={1}
-                speed={1.05}
-                followMouse={true}
-                proximity={250}
-                autoAnimate
-                onClick={openWa}
+              <WaLink
+                className={`btn ${p.feat ? "btn--solid" : "btn--ghost"}`}
+                message={`Halo, saya tertarik dengan paket ${p.name}. Boleh minta penjelasannya?`}
               >
                 Pilih {p.name}
-              </SpecularButton>
+              </WaLink>
             </article>
           ))}
         </div>

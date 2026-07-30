@@ -3,6 +3,9 @@
   --ink-soft: #4a524d;
   --cream: #f3eddf;
   --paper: #faf6ec;
+  /* Permukaan kartu yang diangkat di atas --paper/--cream. Putih hangat, bukan
+     #fff murni, supaya tidak bentrok dengan palet cream di sekitarnya. */
+  --surface: #fffdf8;
   --forest: #0d3a2c;
   --moss: #2a6a4f;
   --gold: #c8a02a;
@@ -433,8 +436,10 @@ h3 {
   padding-block: var(--pad-y);
   border-bottom: 1px solid var(--line);
 }
+/* Section-nya sengaja lebih dalam dari kartunya. Waktu keduanya sama-sama
+   putih, kartu kehilangan bidangnya dan cuma tersisa garis border. */
 #paket {
-  background: #ffffff;
+  background: var(--cream);
 }
 .section__head {
   display: grid;
@@ -686,7 +691,7 @@ h3 {
 }
 /* ---------- Process ---------- */
 .alur {
-  background: #fff;
+  background: var(--surface);
   color: var(--ink);
 }
 .alur .eyebrow {
@@ -698,37 +703,90 @@ h3 {
 .alur .lead {
   color: var(--ink-soft);
 }
-.steps {
-  position: relative;
+/* Pemilih jalur. Alur sertifikasi sebenarnya bercabang — reguler pakai audit
+   lapangan, jalur MRA tidak. Dulu keduanya ditumpuk jadi satu paragraf dan
+   pembaca harus memilah sendiri; sekarang dia memilih dulu, baru baca. */
+.paths {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: clamp(1rem, 2.5vw, 2.25rem);
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.7rem, 1.5vw, 1rem);
+  max-width: 820px;
+  margin-bottom: clamp(1.8rem, 3.5vw, 2.6rem);
 }
-.steps::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  top: 24px;
-  left: 10%;
-  right: 10%;
-  height: 1px;
-  background: var(--line-strong);
-}
-.step {
-  position: relative;
-  z-index: 1;
+.paths__btn {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  gap: 0.35rem;
+  padding: clamp(0.9rem, 2vw, 1.15rem) clamp(1rem, 2vw, 1.3rem);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--paper);
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
-.step__no {
-  width: 48px;
-  height: 48px;
+.paths__btn:hover {
+  border-color: var(--moss);
+}
+.paths__btn:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+.paths__btn--on {
+  border-color: var(--moss);
+  background: color-mix(in srgb, var(--moss) 8%, var(--surface));
+  box-shadow: inset 0 0 0 1px var(--moss);
+}
+.paths__label {
+  font-weight: 600;
+  font-size: 0.98rem;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.paths__hint {
+  font-size: 0.83rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.flow__count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-bottom: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+
+/* Timeline vertikal. Teks dapat lebar baca penuh (dulu terjepit di kolom
+   203px / 13px / 11 baris), dan di mobile arahnya sudah natural. */
+.flow {
+  list-style: none;
+  max-width: 820px;
+}
+.flow__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding-bottom: clamp(1.7rem, 3vw, 2.4rem);
+}
+.flow__step:last-child {
+  padding-bottom: 0;
+}
+.flow__step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 46px;
+  bottom: 0;
+  width: 2px;
+  background: color-mix(in srgb, var(--moss) 22%, transparent);
+}
+.flow__marker {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--moss);
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--moss) 18%, #fff);
-  color: #fff;
+  color: var(--paper);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -736,20 +794,256 @@ h3 {
   font-weight: 700;
   line-height: 1;
 }
-.step h3 {
-  margin-top: 1.6rem;
+.flow__body h3 {
   font-family: var(--sans);
-  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  font-weight: 650;
+  line-height: 1.3;
+  padding-top: 0.6rem;
+}
+.flow__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+}
+.flow__actor,
+.flow__dur {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.3em 0.7em;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.flow__actor {
+  background: color-mix(in srgb, var(--moss) 13%, var(--surface));
+  color: var(--forest);
+}
+/* Tahap yang butuh kerja dari klien diberi warna berbeda supaya sekali lihat
+   ketahuan "bagian saya yang mana". */
+.flow__actor--you {
+  background: color-mix(in srgb, var(--terracotta) 13%, var(--surface));
+  color: #8f4327;
+}
+.flow__dur {
+  background: color-mix(in srgb, var(--ink) 7%, var(--surface));
+  color: var(--ink-soft);
+}
+.flow__body p {
+  margin-top: 0.7rem;
+  max-width: 60ch;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* ---------- Alur: ular (>= 900px) ---------- */
+/* Baris ganjil mengalir balik ke kiri, jadi jalurnya menyambung seperti ular.
+   Arah baca jadi bolak-balik — nomor besar di tiap node yang menjaga urutan
+   tetap terbaca. Garis penghubung sengaja hanya lewat di jalur kosong: yang
+   mendatar di ketinggian pusat marker, yang menurun di celah antar-baris. */
+.snake {
+  --snake-gap-x: clamp(1rem, 2vw, 1.6rem);
+  --snake-gap-y: clamp(2.4rem, 4vw, 3.2rem);
+  --snake-marker: 44px;
+  /* Jarak antar-node = dua langkah kolom, karena node hanya menempati kolom
+     berselang (1,3,5 lalu 4,2). Kolom kosong di antaranya yang bikin baris
+     bawah jatuh di sela baris atas. */
+  --snake-span: calc(200% + 2 * var(--snake-gap-x));
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: var(--snake-gap-x);
+  row-gap: var(--snake-gap-y);
+}
+.snake__cell {
+  position: relative;
+  animation: flow-in 0.4s ease-out both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+.snake__cell::before,
+.snake__cell::after {
+  content: "";
+  position: absolute;
+  background: color-mix(in srgb, var(--moss) 28%, transparent);
+  border-radius: 999px;
+}
+/* ::before hanya dipakai ruas mendatar milik siku */
+.snake__cell::before,
+.snake__cell[data-dir="none"]::after {
+  display: none;
+}
+.snake__cell[data-dir="right"]::after,
+.snake__cell[data-dir="left"]::after {
+  top: calc(var(--snake-marker) / 2 - 1px);
+  height: 2px;
+  /* -60px = radius marker (22) + jeda nafas (8) di kedua ujung */
+  width: calc(var(--snake-span) - 60px);
+}
+.snake__cell[data-dir="right"]::after {
+  left: calc(50% + 30px);
+}
+.snake__cell[data-dir="left"]::after {
+  right: calc(50% + 30px);
+}
+
+/* Perpindahan baris disiku, bukan diserongkan: garis serong memotong judul dan
+   badge node terakhir baris 1. Ruas menurun sengaja baru mulai di batas bawah
+   baris (top: 100%), jadi ia lewat celah antar-baris yang kosong. */
+.snake__cell[data-dir="elbow"]::after {
+  left: 50%;
+  transform: translateX(-1px);
+  /* +10px: node terakhir baris 1 biasanya sel tertinggi, jadi batas bawahnya
+     persis menempel di badge. Tanpa jeda ini garisnya terlihat menempel. */
+  top: calc(100% + 10px);
+  width: 2px;
+  height: calc(var(--snake-gap-y) + var(--snake-marker) / 2 - 10px);
+}
+.snake__cell[data-dir="elbow"]::before {
+  display: block;
+  /* sejajar pusat marker node tujuan di baris bawah */
+  top: calc(100% + var(--snake-gap-y) + var(--snake-marker) / 2 - 1px);
+  right: 50%;
+  height: 2px;
+  /* satu langkah kolom, dikurangi radius marker + jeda nafas di ujung kiri */
+  width: calc(100% + var(--snake-gap-x) - 30px);
+}
+
+.snake__node {
+  position: relative;
+  z-index: 1; /* marker menutupi ujung konektor, termasuk yang serong */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0;
+}
+.snake__node:focus-visible {
+  outline: none;
+}
+.snake__marker {
+  width: var(--snake-marker);
+  height: var(--snake-marker);
+  border-radius: 50%;
+  background: var(--moss);
+  color: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
   font-weight: 700;
+  line-height: 1;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+/* Penanda aktif sengaja cuma halo + naik sedikit. Cukup untuk menunjukkan node
+   mana yang sedang dibaca, tanpa menggeser tetangganya atau menutupi apa pun. */
+.snake__node--on .snake__marker,
+.snake__node:focus-visible .snake__marker {
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--moss) 20%, transparent);
+  transform: translateY(-2px);
+}
+.snake__title {
+  font-size: 0.95rem;
+  font-weight: 650;
   line-height: 1.3;
   color: var(--ink);
+  transition: color 0.18s ease;
 }
-.step p {
-  margin-top: 0.75rem;
-  max-width: 24ch;
+.snake__node--on .snake__title {
+  color: var(--forest);
+}
+.snake__node .flow__meta {
+  justify-content: center;
+  margin-top: 0;
+}
+
+/* Panel detail. Ruangnya dipesan di paragraf, bukan di panel: satuan baris
+   ikut menyesuaikan kalau font atau lebar berubah, sementara min-height piksel
+   akan meleset dan panelnya kembali melompat saat ganti node. */
+/* Ikut selebar ularnya supaya tepi kanannya tidak menggantung; keterbacaan
+   dijaga di paragrafnya (62ch), bukan dengan menyempitkan panelnya. */
+.detail {
+  margin-top: clamp(2.2rem, 4vw, 3rem);
+  padding: clamp(1.3rem, 2.5vw, 1.7rem) clamp(1.4rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--moss);
+  border-radius: 12px;
+  background: var(--paper);
+}
+.detail__step {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--moss);
+}
+.detail h3 {
+  margin-top: 0.5rem;
+  font-family: var(--sans);
+  font-size: 1.25rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.detail p {
+  margin-top: 0.7rem;
+  max-width: 62ch;
   color: var(--ink-soft);
-  font-size: 0.82rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  /* Deskripsi terpanjang memakan 4 baris; ruang segitu dipesan permanen supaya
+     tinggi panel tidak berubah waktu pindah node. */
+  min-height: calc(4 * 1.65em);
+}
+
+@media (max-width: 640px) {
+  .paths {
+    grid-template-columns: 1fr;
+  }
+  .flow__step {
+    grid-template-columns: 36px 1fr;
+    gap: 0.9rem;
+  }
+  .flow__step:not(:last-child)::before {
+    left: 17px;
+    top: 38px;
+  }
+  .flow__marker {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+  .flow__body h3 {
+    padding-top: 0.35rem;
+  }
+}
+
+/* Animasi masuk bertahap — menandai bahwa isinya berganti saat jalur ditukar,
+   sekaligus menuntun mata dari tahap 1 ke bawah. */
+.flow__step {
+  animation: flow-in 0.4s ease-out both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+.flow__step:nth-child(1) { --i: 0; }
+.flow__step:nth-child(2) { --i: 1; }
+.flow__step:nth-child(3) { --i: 2; }
+.flow__step:nth-child(4) { --i: 3; }
+.flow__step:nth-child(5) { --i: 4; }
+@keyframes flow-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow__step,
+  .snake__cell {
+    animation: none;
+  }
+  .snake__marker,
+  .snake__title {
+    transition: none;
+  }
 }
 
 /* ---------- Packages ---------- */
@@ -768,7 +1062,7 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 1.3rem;
-  background: #ffffff;
+  background: var(--surface);
   overflow: visible;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -777,16 +1071,35 @@ h3 {
   border-color: var(--ink);
   box-shadow: 0 8px 24px rgba(22, 26, 23, 0.1);
 }
+
+/* Kartu unggulan harus menang tanpa dibaca dulu: garis moss lebih tebal,
+   terangkat, dan labelnya jadi badge isi. Ring-nya pakai inset shadow, bukan
+   border-width 2px, supaya tinggi kartu tidak bergeser 1px dari tetangganya. */
 .pkg--feat {
   border-color: var(--moss);
+  box-shadow:
+    inset 0 0 0 1px var(--moss),
+    0 10px 30px rgba(13, 58, 44, 0.13);
 }
-/* .pkg--feat .pkg__lbl — inherits from .pkg__lbl (moss) */
+.pkg--feat:hover {
+  border-color: var(--moss);
+  box-shadow:
+    inset 0 0 0 1px var(--moss),
+    0 16px 38px rgba(13, 58, 44, 0.18);
+}
 .pkg__lbl {
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--moss);
+}
+.pkg--feat .pkg__lbl {
+  align-self: flex-start;
+  padding: 0.45em 0.95em;
+  border-radius: 999px;
+  background: var(--moss);
+  color: var(--paper);
 }
 .pkg h3 {
   font-size: 1.7rem;
@@ -805,7 +1118,6 @@ h3 {
   font-weight: 400;
   color: var(--ink-soft);
 }
-/* .pkg--feat .pkg__price small — inherits from .pkg__price small (ink-soft) */
 .pkg ul {
   list-style: none;
   display: flex;
@@ -819,27 +1131,15 @@ h3 {
   align-items: baseline;
   color: var(--ink-soft);
 }
-/* .pkg--feat li — inherits from .pkg li (ink-soft) */
 .pkg li::before {
   content: "—";
   color: var(--moss);
   flex-shrink: 0;
 }
-/* .pkg--feat li::before — inherits from .pkg li::before (moss) */
 .pkg .btn {
   margin-top: auto;
-}
-.pkg .specular-button {
-  margin-top: auto;
   width: 100%;
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.08),
-    0 4px 12px rgba(0, 0, 0, 0.06);
-}
-.pkg .specular-button:hover {
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.1),
-    0 8px 20px rgba(0, 0, 0, 0.08);
+  justify-content: center;
 }
 
 /* ---------- News carousel ---------- */
@@ -1289,40 +1589,6 @@ h3 {
   }
 }
 
-@media (max-width: 767px) {
-  .steps {
-    grid-template-columns: 1fr;
-    gap: 1.8rem;
-  }
-  .steps::before {
-    top: 24px;
-    bottom: 24px;
-    left: 24px;
-    right: auto;
-    width: 1px;
-    height: auto;
-  }
-  .step {
-    display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
-    column-gap: 1.25rem;
-    align-items: start;
-    text-align: left;
-  }
-  .step__no {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-  }
-  .step h3 {
-    grid-column: 2;
-    margin-top: 0.15rem;
-  }
-  .step p {
-    grid-column: 2;
-    max-width: 48ch;
-    margin-top: 0.45rem;
-  }
-}
 
 @media (max-width: 520px) {
   .foot-grid {
