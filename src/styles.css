@@ -1066,10 +1066,31 @@ h3 {
    Arah baca jadi bolak-balik — nomor besar di tiap node yang menjaga urutan
    tetap terbaca. Garis penghubung sengaja hanya lewat di jalur kosong: yang
    mendatar di ketinggian pusat marker, yang menurun di celah antar-baris. */
-.snake {
+/* Dinaikkan ke .alur, bukan .snake, supaya panel detail bisa ikut membaca —
+   takiknya perlu menghitung posisi kolom dengan grid yang sama. */
+.alur {
   --snake-gap-x: clamp(1rem, 2vw, 1.6rem);
-  --snake-gap-y: clamp(2.4rem, 4vw, 3.2rem);
   --snake-marker: 44px;
+  /* Padding atas kartu node. Konektor menempel di pusat marker, jadi setiap
+     offsetnya harus ikut menghitung nilai ini — kalau tidak, garisnya melayang
+     di atas kartu. */
+  --snake-pad-y: 1rem;
+}
+.snake__hint {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.6rem 0 clamp(1rem, 2vw, 1.4rem);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.snake__hint svg {
+  flex-shrink: 0;
+  color: var(--moss);
+}
+
+.snake {
+  --snake-gap-y: clamp(2.4rem, 4vw, 3.2rem);
   /* Jarak antar-node = dua langkah kolom, karena node hanya menempati kolom
      berselang (1,3,5 lalu 4,2). Kolom kosong di antaranya yang bikin baris
      bawah jatuh di sela baris atas. */
@@ -1077,6 +1098,10 @@ h3 {
   list-style: none;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  /* Kedua baris disamakan tingginya. Bukan cuma demi kartu yang rata: konektor
+     sekarang menempel di 50% tinggi sel, dan ruas siku harus menebak tinggi sel
+     di baris bawah dari sel di baris atas. Itu hanya sah kalau barisnya sama. */
+  grid-auto-rows: 1fr;
   column-gap: var(--snake-gap-x);
   row-gap: var(--snake-gap-y);
 }
@@ -1099,7 +1124,7 @@ h3 {
 }
 .snake__cell[data-dir="right"]::after,
 .snake__cell[data-dir="left"]::after {
-  top: calc(var(--snake-marker) / 2 - 1px);
+  top: calc(50% - 1px);
   height: 2px;
   /* -60px = radius marker (22) + jeda nafas (8) di kedua ujung */
   width: calc(var(--snake-span) - 60px);
@@ -1121,31 +1146,69 @@ h3 {
      persis menempel di badge. Tanpa jeda ini garisnya terlihat menempel. */
   top: calc(100% + 10px);
   width: 2px;
-  height: calc(var(--snake-gap-y) + var(--snake-marker) / 2 - 10px);
+  height: calc(var(--snake-gap-y) + 50% - 10px);
 }
 .snake__cell[data-dir="elbow"]::before {
   display: block;
-  /* sejajar pusat marker node tujuan di baris bawah */
-  top: calc(100% + var(--snake-gap-y) + var(--snake-marker) / 2 - 1px);
+  /* sejajar titik tengah kartu tujuan di baris bawah — sah karena kedua baris
+     dipaksa sama tinggi lewat grid-auto-rows: 1fr */
+  top: calc(100% + var(--snake-gap-y) + 50% - 1px);
   right: 50%;
   height: 2px;
   /* satu langkah kolom, dikurangi radius marker + jeda nafas di ujung kiri */
   width: calc(100% + var(--snake-gap-x) - 30px);
 }
 
+/* Node diberi bidang saat diam. Tanpa ini isinya cuma lingkaran angka + teks
+   di atas latar section — bahasa visual infografis, dan orang memperlakukan
+   infografis sebagai gambar diam. Begitu punya kartu, ia terbaca sebagai
+   kontrol dan hover jadi sesuatu yang orang coba sendiri.
+   Latarnya --paper di atas section --surface: satu tingkat lebih hangat, cukup
+   untuk membentuk bidang tanpa menambah garis. */
 .snake__node {
   position: relative;
-  z-index: 1; /* marker menutupi ujung konektor, termasuk yang serong */
+  z-index: 1; /* kartu menutupi ujung konektor, termasuk yang menyiku */
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0;
+  height: 100%; /* isi tinggi sel supaya kartu se-baris rata bawahnya */
+  padding: var(--snake-pad-y) clamp(0.6rem, 1.2vw, 1rem)
+    calc(var(--snake-pad-y) - 0.15rem);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 .snake__node:focus-visible {
   outline: none;
+  border-color: var(--moss);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--moss) 28%, transparent);
+}
+/* Hover dipisah dari --on. Sebelumnya keduanya menyatu karena hover memang yang
+   men-set node aktif, jadi tidak ada umpan balik yang murni "kamu menyentuh
+   ini" — yang terlihat cuma akibat seleksi, dan itu datang terlambat. */
+@media (hover: hover) and (pointer: fine) {
+  .snake__node:hover {
+    border-color: color-mix(in srgb, var(--moss) 50%, transparent);
+    box-shadow: 0 8px 20px -12px rgba(22, 26, 23, 0.4);
+    transform: translateY(-3px);
+  }
+  .snake__node:hover .snake__marker {
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+/* Kartunya ditekan balik sesaat. Umpan balik tekan inilah yang membedakan
+   "aku menyentuh" dari "aku mengklik" — tanpa itu klik terasa tidak diterima. */
+.snake__node:active {
+  transform: translateY(-1px) scale(0.985);
+  transition-duration: 0.06s;
 }
 .snake__marker {
   width: var(--snake-marker);
@@ -1160,6 +1223,13 @@ h3 {
   font-weight: 700;
   line-height: 1;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+/* Node yang sedang dibaca: kartunya justru dicerahkan ke --surface, kebalikan
+   dari tetangganya yang --paper. Terangkat, bukan sekadar diberi warna lain. */
+.snake__node--on {
+  border-color: var(--moss);
+  background: var(--surface);
+  box-shadow: 0 10px 24px -14px rgba(22, 26, 23, 0.45);
 }
 /* Penanda aktif sengaja cuma halo + naik sedikit. Cukup untuk menunjukkan node
    mana yang sedang dibaca, tanpa menggeser tetangganya atau menutupi apa pun. */
@@ -1189,36 +1259,117 @@ h3 {
 /* Ikut selebar ularnya supaya tepi kanannya tidak menggantung; keterbacaan
    dijaga di paragrafnya (62ch), bukan dengan menyempitkan panelnya. */
 .detail {
-  margin-top: clamp(2.2rem, 4vw, 3rem);
-  padding: clamp(1.3rem, 2.5vw, 1.7rem) clamp(1.4rem, 3vw, 2rem);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--moss);
-  border-radius: 12px;
-  background: var(--paper);
+  /* Lebar trek grid ular, dihitung ulang di sini supaya takiknya bisa mendarat
+     tepat di tengah kolom node yang sedang dibaca. Panel dan ular sama-sama
+     selebar .wrap, jadi persentasenya sebanding. */
+  --snake-track: calc((100% - 4 * var(--snake-gap-x)) / 5);
+  --notch-x: calc(
+    (var(--col, 1) - 1) * (var(--snake-track) + var(--snake-gap-x)) +
+      var(--snake-track) / 2
+  );
+  position: relative;
+  margin-top: clamp(2.4rem, 4.5vw, 3.4rem);
+  padding-top: clamp(1.4rem, 2.8vw, 2.1rem);
+}
+/* Rel indikator menggantikan panel berbingkai. Kotak dengan aksen di tepi kiri
+   adalah pola paling generik yang ada, dan di section yang sudah penuh kartu
+   node ia cuma menambah satu kotak lagi. Di sini strukturnya dibentuk oleh
+   ruang, satu garis rambut, dan kontras skala — bukan oleh border.
+   Ruas tebal yang meluncur juga lebih terbaca daripada takik diam: matanya
+   mengikuti gerakan turun dari node ke teksnya. */
+.detail__rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line);
+}
+/* `left` yang dianimasikan, bukan transform: --notch-x mengandung persentase,
+   dan di dalam transform persentase dihitung terhadap lebar elemen sendiri —
+   bukan terhadap panel. Elemennya absolut, jadi layout-nya tidak menyentuh
+   apa pun selain dirinya. */
+.detail__rail::after {
+  content: "";
+  position: absolute;
+  top: -1.5px;
+  left: var(--notch-x);
+  width: clamp(52px, 6.5vw, 84px);
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--moss), var(--gold));
+  transition: left 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.detail__body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(0.9rem, 2.6vw, 2.2rem);
+  align-items: start;
+  /* Diputar ulang tiap ganti tahap (lewat key di markup). Ini yang memberitahu
+     pembaca bahwa kliknya menghasilkan sesuatu di bawah sana. */
+  animation: detail-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+/* Angka besar memberi kontras skala tanpa menambah satu bidang pun. Fraunces,
+   font yang sama dengan judul hero — jadi terbaca sebagai keluarga, bukan
+   ornamen yang datang entah dari mana. */
+.detail__num {
+  font-family: var(--disp);
+  font-size: clamp(2.8rem, 5.5vw, 4.6rem);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+  color: color-mix(in srgb, var(--moss) 30%, transparent);
+  animation: detail-num-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .detail__step {
-  font-size: 0.72rem;
+  display: block;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--moss);
 }
 .detail h3 {
-  margin-top: 0.5rem;
-  font-family: var(--sans);
-  font-size: 1.25rem;
-  font-weight: 650;
-  line-height: 1.3;
+  margin-top: 0.4rem;
+  font-family: var(--disp);
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+  font-weight: 420;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+  color: var(--forest);
 }
 .detail p {
-  margin-top: 0.7rem;
+  margin-top: 0.6rem;
   max-width: 62ch;
   color: var(--ink-soft);
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-size: 0.97rem;
+  line-height: 1.7;
   /* Deskripsi terpanjang memakan 4 baris; ruang segitu dipesan permanen supaya
      tinggi panel tidak berubah waktu pindah node. */
-  min-height: calc(4 * 1.65em);
+  min-height: calc(4 * 1.7em);
+}
+@keyframes detail-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes detail-num-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1264,8 +1415,20 @@ h3 {
     animation: none;
   }
   .snake__marker,
-  .snake__title {
+  .snake__title,
+  .snake__node,
+  .detail__rail::after {
     transition: none;
+  }
+  .detail__body,
+  .detail__num {
+    animation: none;
+  }
+  .snake__node:hover {
+    transform: none;
+  }
+  .snake__node:hover .snake__marker {
+    transform: none;
   }
 }
 
