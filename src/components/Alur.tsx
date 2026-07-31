@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { MousePointerClick } from "lucide-react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+
+/** Jeda sebelum hover mengganti panel. Tanpa ini, kursor yang cuma melintas
+ *  menuju node lain ikut memicu panel dan isinya terbaca berkedip. */
+const HOVER_DELAY_MS = 120;
 
 type Stage = {
   title: string;
@@ -128,17 +133,60 @@ function Badges({ stage }: { stage: Stage }) {
 
 export default function Alur() {
   const [activeId, setActiveId] = useState(paths[0].id);
-  const [detailIdx, setDetailIdx] = useState(0);
+  // Dua state terpisah, bukan satu: klik mengunci tahap, hover cuma mengintip.
+  // Kalau digabung, panel ikut berpindah setiap kursor lewat dan pilihan yang
+  // sudah sengaja diklik ikut hilang.
+  const [pinnedIdx, setPinnedIdx] = useState(0);
+  const [previewIdx, setPreviewIdx] = useState<number | null>(null);
+  const hoverTimer = useRef<number | null>(null);
   // Ular butuh tiga kolom untuk terbaca; di bawah ini strukturnya memang beda,
   // bukan cuma gayanya — makanya pakai matchMedia, bukan media query CSS.
   const isWide = useMediaQuery("(min-width: 900px)");
 
+  useEffect(
+    () => () => {
+      if (hoverTimer.current !== null) window.clearTimeout(hoverTimer.current);
+    },
+    [],
+  );
+
   const active = paths.find((p) => p.id === activeId) ?? paths[0];
+  const detailIdx = previewIdx ?? pinnedIdx;
   const detail = active.stages[detailIdx] ?? active.stages[0];
+
+  const cancelPreview = () => {
+    if (hoverTimer.current !== null) {
+      window.clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  };
+
+  const previewStage = (i: number) => {
+    cancelPreview();
+    hoverTimer.current = window.setTimeout(
+      () => setPreviewIdx(i),
+      HOVER_DELAY_MS,
+    );
+  };
+
+  const endPreview = () => {
+    cancelPreview();
+    setPreviewIdx(null);
+  };
+
+  /** Klik dan keyboard mengunci langsung — tanpa jeda, dan tidak hilang waktu
+   *  kursor pergi. Keduanya aksi yang disengaja, beda dari sekadar melintas. */
+  const pinStage = (i: number) => {
+    cancelPreview();
+    setPreviewIdx(null);
+    setPinnedIdx(i);
+  };
 
   const selectPath = (id: string) => {
     setActiveId(id);
-    setDetailIdx(0);
+    cancelPreview();
+    setPreviewIdx(null);
+    setPinnedIdx(0);
   };
 
   return (
@@ -187,9 +235,17 @@ export default function Alur() {
 
           {isWide ? (
             <>
+              {/* Afordans hover tidak pernah cukup ditebak, jadi dinyatakan.
+                  Node-nya sendiri sudah berbentuk kartu, ini penegasnya. */}
+              <p className="snake__hint">
+                <MousePointerClick size={16} strokeWidth={1.8} aria-hidden />
+                Arahkan kursor ke tiap tahap untuk mengintip detailnya, klik
+                untuk menguncinya.
+              </p>
+
               {/* key memaksa remount saat jalur berganti supaya animasi masuknya
                   jalan lagi dan pembaca sadar isinya berubah. */}
-              <ol className="snake" key={active.id}>
+              <ol className="snake" key={active.id} onMouseLeave={endPreview}>
                 {active.stages.map((s, i) => {
                   const { row, col, dir } = snakeCell(i, active.stages.length);
                   return (
@@ -204,9 +260,9 @@ export default function Alur() {
                         className={`snake__node${i === detailIdx ? " snake__node--on" : ""}`}
                         aria-expanded={i === detailIdx}
                         aria-controls="flow-detail"
-                        onMouseEnter={() => setDetailIdx(i)}
-                        onFocus={() => setDetailIdx(i)}
-                        onClick={() => setDetailIdx(i)}
+                        onMouseEnter={() => previewStage(i)}
+                        onFocus={() => pinStage(i)}
+                        onClick={() => pinStage(i)}
                       >
                         <span className="snake__marker">{i + 1}</span>
                         <span className="snake__title">{s.title}</span>
@@ -218,11 +274,36 @@ export default function Alur() {
               </ol>
 
               {/* Panel tetap di bawah ular, bukan popover melayang: isinya
-                  berganti tanpa menggeser layout dan tanpa menutupi node lain. */}
-              <div className="detail" id="flow-detail" role="region" aria-label="Detail tahap">
-                <span className="detail__step">Tahap {detailIdx + 1}</span>
-                <h3>{detail.title}</h3>
-                <p>{detail.desc}</p>
+                  berganti tanpa menggeser layout dan tanpa menutupi node lain.
+                  --col dipakai takik di tepi atas panel untuk menunjuk balik ke
+                  node yang sedang dibaca — tanpa itu sebab dan akibatnya
+                  terpisah jauh dan orang tidak menghubungkan keduanya. */}
+              <div
+                className="detail"
+                id="flow-detail"
+                role="region"
+                aria-label="Detail tahap"
+                style={{
+                  ["--col" as string]: snakeCell(
+                    detailIdx,
+                    active.stages.length,
+                  ).col,
+                }}
+              >
+                <div className="detail__rail" aria-hidden />
+                {/* key memaksa remount tiap tahap berganti supaya animasi
+                    masuknya terputar ulang — itu yang memberitahu pembaca bahwa
+                    kliknya menghasilkan sesuatu, bukan sekadar menyorot node. */}
+                <div className="detail__body" key={`${active.id}-${detailIdx}`}>
+                  <span className="detail__num" aria-hidden>
+                    {String(detailIdx + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <span className="detail__step">Tahap {detailIdx + 1}</span>
+                    <h3>{detail.title}</h3>
+                    <p>{detail.desc}</p>
+                  </div>
+                </div>
               </div>
             </>
           ) : (
