@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Urushalal — pendamping resmi sertifikasi halal BPJPH untuk UMKM dan korporasi di Indonesia." />
+    <!-- Slide pertama hero = elemen LCP. Fotonya dipasang sebagai
+         background-image, jadi browser baru menemukannya setelah CSS diparsing —
+         preload ini yang menutup jeda itu. Slide kedua sengaja tidak di-preload:
+         baru terlihat 7 detik kemudian dan tidak boleh menyaingi LCP. -->
+    <link rel="preload" as="image" href="/hero-1.jpeg" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

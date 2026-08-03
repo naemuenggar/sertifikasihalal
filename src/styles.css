@@ -13,6 +13,19 @@
   --line: rgba(22, 26, 23, 0.14);
   --line-strong: rgba(22, 26, 23, 0.28);
 
+  /* Palet BPOM. Dipakai eksklusif oleh slide hero kedua — bukan warna sistem,
+     jadi jangan dipakai di section lain tanpa alasan. Diambil dari logo BPOM:
+     biru tua untuk judul, biru primer untuk aksi, biru muda untuk italic.
+     600 dan 400 sengaja sedikit lebih gelap dari biru mock: di atas panel
+     --azure-50 nilai mock-nya jatuh di 4,35 dan 2,50 — di bawah ambang WCAG AA
+     (4,5 teks biasa / 3,0 teks besar). Nilai di sini 4,80 dan 3,41. */
+  --azure-900: #10327c;
+  --azure-700: #1852c4;
+  --azure-600: #1668d6;
+  --azure-400: #3f82ec;
+  --azure-100: #dbeafd;
+  --azure-50: #eef5fe;
+
   --maxw: 1240px;
   --gut: clamp(1.25rem, 4vw, 3rem);
   --pad-y: clamp(5rem, 9vw, 8rem);
@@ -280,13 +293,13 @@ h3 {
   justify-content: center;
 }
 
-/* ---------- Hero ---------- */
-/* Panel hijaunya dibentuk di sini, bukan di file fotonya. Fotonya sengaja
-   digenerate netral/desaturated supaya warna akhir hero ditentukan oleh
-   overlay CSS di bawah — ganti foto tidak akan menggeser palet. */
+/* ---------- Hero (slider 2 slide) ---------- */
+/* Hero-nya carousel: `.hero` cuma cangkang + kontrol, tiap panel adalah
+   `.hero-slide` yang membawa paletnya sendiri lewat `data-theme`. Semua warna
+   panel dibaca dari custom property `--h-*` yang didefinisikan di blok tema di
+   bawah — jangan tulis warna literal di aturan layout, nanti slide kedua ikut
+   berubah. Fotonya dipasang lewat `--h-photo` dari data slide (HeroSlide.tsx). */
 .hero {
-  /* Satu-satunya baris yang perlu diganti kalau fotonya diperbarui. */
-  --hero-photo: url("/hero-consult.webp");
   /* Header-nya sticky dan ikut memakan ruang di atas hero, jadi tinggi yang
      benar-benar tersedia adalah viewport dikurangi tinggi header. */
   --hero-header-h: 4.8125rem;
@@ -297,35 +310,153 @@ h3 {
   --hero-gap-lg: clamp(0.8rem, 2vh + 0.3vw, 2rem);
   position: relative;
   overflow: hidden;
-  background: var(--forest);
   border-bottom: 1px solid var(--line);
   /* svh, bukan vh: di mobile vh memakai tinggi viewport terbesar sehingga hero
      tetap kepotong saat bar browser tampil. */
   min-height: calc(100svh - var(--hero-header-h));
   display: flex;
   flex-direction: column;
+  /* Warna dasar di balik slide — hanya terlihat sekejap sebelum foto termuat. */
+  transition: background 0.5s ease;
 }
+
+/* Slide ditumpuk di satu sel grid, bukan absolute: dengan begitu tinggi hero
+   tetap ditentukan slide yang paling tinggi, jadi tidak ada lompatan tinggi
+   waktu berganti panel. */
+.hero__slides {
+  position: relative;
+  flex: 1;
+  display: grid;
+}
+.hero-slide {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  /* visibility, bukan display: elemennya tetap mengukur grid, tapi hilang dari
+     urutan tab dan dari pembacaan screen reader. */
+  visibility: hidden;
+  transform: scale(1.02);
+  transition:
+    opacity 0.6s ease,
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0.6s;
+}
+.hero-slide[data-active="true"] {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.6s ease,
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s;
+}
+
+/* --- Tema slide 1: sertifikasi halal (forest + emas) --- */
+.hero-slide[data-theme="halal"] {
+  --h-panel: var(--forest);
+  --h-title: var(--paper);
+  --h-accent: var(--gold);
+  --h-accent-soft: var(--gold);
+  --h-body: color-mix(in srgb, var(--paper) 80%, transparent);
+  --h-badge: color-mix(in srgb, var(--paper) 88%, transparent);
+  --h-badge-bg: color-mix(in srgb, var(--gold) 22%, transparent);
+  --h-badge-border: color-mix(in srgb, var(--gold) 45%, transparent);
+  --h-icon-bg: color-mix(in srgb, var(--moss) 42%, transparent);
+  --h-icon-fg: var(--gold);
+  --h-icon-border: color-mix(in srgb, var(--gold) 28%, transparent);
+  --h-feature-desc: color-mix(in srgb, var(--paper) 72%, transparent);
+  --h-stats-bg: color-mix(in srgb, var(--forest) 58%, transparent);
+  --h-stats-border: color-mix(in srgb, var(--gold) 26%, transparent);
+  --h-stats-divider: color-mix(in srgb, var(--paper) 16%, transparent);
+  --h-stats-sheen: color-mix(in srgb, var(--gold) 10%, transparent);
+  --h-stat-num: var(--gold);
+  --h-stat-lbl: color-mix(in srgb, var(--paper) 78%, transparent);
+  --h-solid-fg: var(--forest);
+  --h-solid-hover-bg: color-mix(in srgb, var(--gold) 82%, var(--paper));
+  --h-solid-hover-fg: var(--ink);
+  --h-ghost-fg: var(--paper);
+  --h-ghost-border: color-mix(in srgb, var(--gold) 55%, transparent);
+  --h-ghost-hover-bg: color-mix(in srgb, var(--gold) 14%, transparent);
+  --h-glow-1: color-mix(in srgb, var(--gold) 20%, transparent);
+  --h-glow-2: color-mix(in srgb, var(--moss) 12%, transparent);
+  --h-vignette-top: 45%;
+  --h-vignette-bottom: 62%;
+  --h-photo-pos: 58% center;
+  --h-photo-filter: saturate(0.62) contrast(1.05);
+}
+
+/* --- Tema slide 2: izin BPOM (terang + biru) --- */
+.hero-slide[data-theme="bpom"] {
+  --h-panel: var(--azure-50);
+  --h-title: var(--azure-900);
+  --h-accent: var(--azure-600);
+  --h-accent-soft: var(--azure-400);
+  --h-body: var(--ink-soft);
+  --h-badge: var(--azure-700);
+  --h-badge-bg: var(--azure-100);
+  --h-badge-border: color-mix(in srgb, var(--azure-600) 35%, transparent);
+  /* Ikon fitur di mock BPOM adalah lingkaran biru pekat dengan glyph putih —
+     kebalikan dari slide halal yang glyph-nya berwarna di atas bidang tembus. */
+  --h-icon-bg: var(--azure-600);
+  --h-icon-fg: #fff;
+  --h-icon-border: transparent;
+  --h-feature-desc: var(--ink-soft);
+  --h-stats-bg: color-mix(in srgb, #fff 74%, transparent);
+  --h-stats-border: color-mix(in srgb, var(--azure-600) 20%, transparent);
+  --h-stats-divider: color-mix(in srgb, var(--azure-900) 14%, transparent);
+  --h-stats-sheen: color-mix(in srgb, var(--azure-600) 7%, transparent);
+  --h-stat-num: var(--azure-900);
+  --h-stat-lbl: var(--ink-soft);
+  --h-solid-fg: #fff;
+  --h-solid-hover-bg: var(--azure-700);
+  --h-solid-hover-fg: #fff;
+  --h-ghost-fg: var(--azure-900);
+  --h-ghost-border: color-mix(in srgb, var(--azure-600) 45%, transparent);
+  --h-ghost-hover-bg: color-mix(in srgb, var(--azure-600) 10%, transparent);
+  --h-glow-1: color-mix(in srgb, var(--azure-400) 26%, transparent);
+  --h-glow-2: color-mix(in srgb, var(--azure-600) 10%, transparent);
+  /* Fotonya sudah terang, jadi vignette-nya jauh lebih ringan — kalau disamakan
+     dengan slide halal, sudut atas/bawahnya jadi berkabut. */
+  --h-vignette-top: 30%;
+  --h-vignette-bottom: 46%;
+  --h-photo-pos: 62% center;
+  --h-photo-filter: saturate(0.95) contrast(1.02) brightness(1.02);
+}
+
+/* Warna dasar hero mengikuti slide yang sedang aktif. */
+.hero[data-theme="halal"] {
+  background: var(--forest);
+}
+.hero[data-theme="bpom"] {
+  background: var(--azure-50);
+}
+
 .hero__bg {
   position: absolute;
-  /* Fotonya potret (4:5). Kalau dibentang full-bleed, `cover` menskalakannya
-     mengikuti lebar hero — seluruh lebar foto tampil, tidak ada sisa horizontal,
-     dan `background-position` jadi tidak berefek. Akibatnya subjek di sisi kiri
-     frame terkubur di bagian scrim yang paling pekat. Jadi fotonya dikurung ke
-     kolom kanan saja, biar rasio panelnya mendekati rasio fotonya. */
+  /* Foto dikurung ke kolom kanan supaya rasio panelnya mendekati rasio foto.
+     Kalau dibentang full-bleed, `cover` menskalakannya mengikuti lebar hero —
+     seluruh lebar foto tampil, tidak ada sisa horizontal, dan
+     `background-position` jadi tidak berefek. Akibatnya subjek di sisi kiri
+     frame terkubur di bagian scrim yang paling pekat. */
   inset: 0 0 0 38%;
   z-index: 0;
-  background-image: var(--hero-photo);
+  background-image: var(--h-photo);
   background-size: cover;
-  background-position: center;
+  background-position: var(--h-photo-pos);
   background-repeat: no-repeat;
   /* Tepi kiri foto dilarutkan oleh mask-nya sendiri, bukan oleh scrim. Dengan
      begitu scrim bisa dibikin ringan di sisi kanan tanpa memunculkan garis
      sambung di batas panel. */
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 26%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 26%);
-  /* Sisa saturasi foto ditekan di sini supaya hijau overlay tidak beradu
-     dengan warna asli foto. */
-  filter: saturate(0.6) contrast(1.04);
+  /* Saturasi foto ditekan di sini supaya palet overlay tidak beradu dengan
+     warna asli foto. */
+  filter: var(--h-photo-filter);
 }
 .hero__overlay {
   position: absolute;
@@ -339,24 +470,24 @@ h3 {
       98deg,
       /* Kolom teks memanjang sampai ~52% lebar hero, jadi pita 34–58% sengaja
          ditahan tetap tebal demi keterbacaan, baru dijatuhkan setelahnya. */
-      var(--forest) 0%,
-      color-mix(in srgb, var(--forest) 92%, transparent) 34%,
-      color-mix(in srgb, var(--forest) 72%, transparent) 46%,
-      color-mix(in srgb, var(--forest) 32%, transparent) 58%,
-      color-mix(in srgb, var(--forest) 12%, transparent) 74%,
-      color-mix(in srgb, var(--forest) 4%, transparent) 100%
+      var(--h-panel) 0%,
+      color-mix(in srgb, var(--h-panel) 92%, transparent) 34%,
+      color-mix(in srgb, var(--h-panel) 72%, transparent) 46%,
+      color-mix(in srgb, var(--h-panel) 32%, transparent) 58%,
+      color-mix(in srgb, var(--h-panel) 12%, transparent) 74%,
+      color-mix(in srgb, var(--h-panel) 4%, transparent) 100%
     ),
     /* Vignette vertikal tipis: menahan sudut atas/bawah supaya badge dan
        bar statistik tetap punya kontras di atas bagian foto yang terang. */
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--forest) 45%, transparent) 0%,
+      color-mix(in srgb, var(--h-panel) var(--h-vignette-top), transparent) 0%,
       transparent 26%,
       transparent 58%,
-      color-mix(in srgb, var(--forest) 62%, transparent) 100%
+      color-mix(in srgb, var(--h-panel) var(--h-vignette-bottom), transparent) 100%
     );
 }
-/* Cahaya emas di belakang judul — murni CSS, bukan aset. */
+/* Cahaya di belakang judul — murni CSS, bukan aset. */
 .hero__glow {
   position: absolute;
   z-index: 2;
@@ -367,8 +498,8 @@ h3 {
   pointer-events: none;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--gold) 20%, transparent) 0%,
-    color-mix(in srgb, var(--moss) 12%, transparent) 42%,
+    var(--h-glow-1) 0%,
+    var(--h-glow-2) 42%,
     transparent 68%
   );
   filter: blur(40px);
@@ -382,7 +513,7 @@ h3 {
   /* Kolom kanan sengaja dibiarkan kosong: itu jendela fotonya. */
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   align-items: center;
-  color: var(--paper);
+  color: var(--h-title);
   flex: 1;
 }
 .hero__copy {
@@ -398,7 +529,7 @@ h3 {
   font-size: clamp(0.82rem, 1.1vw, 0.95rem);
   font-weight: 600;
   letter-spacing: 0.01em;
-  color: color-mix(in srgb, var(--paper) 88%, transparent);
+  color: var(--h-badge);
 }
 .hero__badge-mark {
   position: relative;
@@ -406,15 +537,15 @@ h3 {
   height: 30px;
   flex-shrink: 0;
   border-radius: 9px;
-  background: color-mix(in srgb, var(--gold) 22%, transparent);
-  border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
+  background: var(--h-badge-bg);
+  border: 1px solid var(--h-badge-border);
 }
 .hero__badge-mark::before,
 .hero__badge-mark::after {
   content: "";
   position: absolute;
   inset: 9px;
-  background: var(--gold);
+  background: var(--h-accent);
   border-radius: 2px;
 }
 .hero__badge-mark::after {
@@ -431,7 +562,7 @@ h3 {
   line-height: 1.04;
   letter-spacing: -0.025em;
   font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
-  color: var(--paper);
+  color: var(--h-title);
   /* Pemenggalan barisnya eksplisit di markup (mengikuti mock), jadi max-width
      di sini cuma pengaman supaya tidak melar di layar sangat lebar — bukan
      lagi alat pengatur wrap. Terlalu sempit justru memaksa baris ketiga
@@ -442,10 +573,10 @@ h3 {
   display: block;
   font-style: italic;
   font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
-  color: var(--gold);
+  color: var(--h-accent-soft);
 }
 
-/* Divider emas + belah ketupat kecil di ujung kiri */
+/* Divider beraksen + belah ketupat kecil di ujung kiri */
 .hero__rule {
   position: relative;
   margin-top: var(--hero-gap);
@@ -453,8 +584,8 @@ h3 {
   height: 1px;
   background: linear-gradient(
     90deg,
-    var(--gold) 0%,
-    color-mix(in srgb, var(--gold) 45%, transparent) 55%,
+    var(--h-accent) 0%,
+    color-mix(in srgb, var(--h-accent) 45%, transparent) 55%,
     transparent 100%
   );
 }
@@ -465,7 +596,7 @@ h3 {
   top: 50%;
   width: 6px;
   height: 6px;
-  background: var(--gold);
+  background: var(--h-accent);
   transform: translateY(-50%) rotate(45deg);
 }
 
@@ -473,7 +604,7 @@ h3 {
   margin-top: var(--hero-gap);
   font-size: clamp(1rem, 1.35vw, 1.15rem);
   line-height: 1.6;
-  color: color-mix(in srgb, var(--paper) 80%, transparent);
+  color: var(--h-body);
   /* Dua baris, seperti mock. 34ch bikin kalimatnya pecah jadi tiga. */
   max-width: 48ch;
 }
@@ -501,23 +632,23 @@ h3 {
   width: 62px;
   height: 62px;
   border-radius: 50%;
-  color: var(--gold);
-  background: color-mix(in srgb, var(--moss) 42%, transparent);
-  border: 1px solid color-mix(in srgb, var(--gold) 28%, transparent);
+  color: var(--h-icon-fg);
+  background: var(--h-icon-bg);
+  border: 1px solid var(--h-icon-border);
 }
 .hero-feature__title {
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.25;
-  color: var(--gold);
+  color: var(--h-accent);
 }
 .hero-feature__desc {
   font-size: 0.78rem;
   line-height: 1.4;
-  color: color-mix(in srgb, var(--paper) 72%, transparent);
+  color: var(--h-feature-desc);
 }
 
-/* Dua CTA: emas solid + outline */
+/* Dua CTA: aksen solid + outline */
 .hero__cta {
   margin-top: var(--hero-gap-lg);
   display: flex;
@@ -531,22 +662,22 @@ h3 {
   padding: 1em 1.7em;
 }
 .hero__cta .btn--solid {
-  background: var(--gold);
-  color: var(--forest);
-  box-shadow: 0 12px 30px -14px color-mix(in srgb, var(--gold) 70%, transparent);
+  background: var(--h-accent);
+  color: var(--h-solid-fg);
+  box-shadow: 0 12px 30px -14px color-mix(in srgb, var(--h-accent) 70%, transparent);
 }
 .hero__cta .btn--solid:hover {
-  background: color-mix(in srgb, var(--gold) 82%, var(--paper));
-  color: var(--ink);
+  background: var(--h-solid-hover-bg);
+  color: var(--h-solid-hover-fg);
 }
 .hero__cta .btn--ghost {
-  border-color: color-mix(in srgb, var(--gold) 55%, transparent);
-  color: var(--paper);
+  border-color: var(--h-ghost-border);
+  color: var(--h-ghost-fg);
 }
 .hero__cta .btn--ghost:hover {
-  border-color: var(--gold);
-  background: color-mix(in srgb, var(--gold) 14%, transparent);
-  color: var(--paper);
+  border-color: var(--h-accent);
+  background: var(--h-ghost-hover-bg);
+  color: var(--h-ghost-fg);
 }
 
 /* Bar statistik translucent */
@@ -561,9 +692,9 @@ h3 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   padding: clamp(0.75rem, 1.7vh + 0.4vw, 1.5rem) clamp(1.3rem, 3vw, 2.4rem);
-  background: color-mix(in srgb, var(--forest) 58%, transparent);
+  background: var(--h-stats-bg);
   backdrop-filter: blur(14px);
-  border: 1px solid color-mix(in srgb, var(--gold) 26%, transparent);
+  border: 1px solid var(--h-stats-border);
   /* Sudut kanan-bawah dibesarkan supaya bar-nya membaca sebagai satu panel
      yang "menutup" hero, bukan kotak generik. */
   border-radius: var(--r) var(--r) clamp(28px, 5vw, 56px) var(--r);
@@ -574,11 +705,7 @@ h3 {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(
-    100deg,
-    transparent 55%,
-    color-mix(in srgb, var(--gold) 10%, transparent) 100%
-  );
+  background: linear-gradient(100deg, transparent 55%, var(--h-stats-sheen) 100%);
 }
 .hero-stat {
   display: grid;
@@ -588,12 +715,12 @@ h3 {
   padding-inline: clamp(0.5rem, 2vw, 1.6rem);
 }
 .hero-stat + .hero-stat {
-  border-left: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
+  border-left: 1px solid var(--h-stats-divider);
 }
 .hero-stat__icon {
   grid-row: span 2;
   display: inline-flex;
-  color: var(--gold);
+  color: var(--h-accent);
 }
 .hero-stat__num {
   font-family: var(--disp);
@@ -601,12 +728,139 @@ h3 {
   font-weight: 480;
   line-height: 1.05;
   letter-spacing: -0.025em;
-  color: var(--gold);
+  color: var(--h-stat-num);
+  text-wrap: balance;
+}
+/* Angka slide BPOM berupa frasa ("4–5 Bulan", "Konsultasi Gratis"), bukan
+   bilangan pendek — pada ukuran slide halal frasanya pecah dua baris. */
+.hero-slide[data-theme="bpom"] .hero-stat__num {
+  font-size: clamp(1.1rem, 1.9vw, 1.6rem);
 }
 .hero-stat__lbl {
   font-size: clamp(0.72rem, 1vw, 0.86rem);
   line-height: 1.35;
-  color: color-mix(in srgb, var(--paper) 78%, transparent);
+  color: var(--h-stat-lbl);
+}
+
+/* ---------- Kontrol slider hero ---------- */
+/* Ditempel di pojok kanan atas: satu-satunya bidang yang kosong di kedua slide,
+   di semua breakpoint. Warnanya ikut slide aktif lewat `.hero[data-theme]` —
+   dan karena elemennya cuma satu, pergantian warnanya bisa ditransisikan
+   halus, tidak ikut memudar bersama panelnya. */
+.hero__controls {
+  position: absolute;
+  z-index: 4;
+  top: clamp(1rem, 2.6vh + 0.4vw, 3.5rem);
+  /* Sejajar dengan tepi kanan `.wrap`, bukan tepi layar. */
+  right: max(var(--gut), calc((100% - var(--maxw)) / 2 + var(--gut)));
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  background: var(--h-ctl-bg);
+  border: 1px solid var(--h-ctl-border);
+  backdrop-filter: blur(12px);
+  color: var(--h-ctl-fg);
+  transition: background 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+}
+.hero[data-theme="halal"] {
+  --h-ctl-bg: color-mix(in srgb, var(--forest) 55%, transparent);
+  --h-ctl-border: color-mix(in srgb, var(--gold) 32%, transparent);
+  --h-ctl-fg: var(--paper);
+  --h-ctl-accent: var(--gold);
+}
+.hero[data-theme="bpom"] {
+  --h-ctl-bg: color-mix(in srgb, #fff 66%, transparent);
+  --h-ctl-border: color-mix(in srgb, var(--azure-600) 26%, transparent);
+  --h-ctl-fg: var(--azure-900);
+  --h-ctl-accent: var(--azure-600);
+}
+
+.hero-ctl {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  transition: background 0.18s ease;
+}
+.hero-ctl:hover {
+  background: color-mix(in srgb, var(--h-ctl-accent) 24%, transparent);
+}
+
+.hero__dots {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding-inline: 0.3rem;
+}
+.hero-dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--h-ctl-fg) 30%, transparent);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+}
+.hero-dot:hover {
+  background: color-mix(in srgb, var(--h-ctl-fg) 55%, transparent);
+}
+.hero-dot[data-active="true"] {
+  width: 34px;
+  background: color-mix(in srgb, var(--h-ctl-accent) 25%, transparent);
+}
+/* Bar yang mengisi = sisa waktu sebelum auto-slide. scaleX, bukan width,
+   supaya animasinya jalan di compositor. Durasinya di-set inline dari
+   HERO_AUTOPLAY_MS — satu sumber dengan timer-nya. */
+.hero-dot__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--h-ctl-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.hero-dot[data-active="true"] .hero-dot__fill {
+  animation: hero-dot-fill linear forwards;
+}
+/* Auto-slide berhenti (kursor/fokus di dalam hero): barnya membeku di tempat,
+   bukan melompat — pengunjung lihat persis berapa sisa waktunya. */
+.hero__controls[data-autoplay="false"] .hero-dot__fill {
+  animation-play-state: paused;
+}
+@keyframes hero-dot-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero-ctl:focus-visible,
+.hero-dot:focus-visible {
+  outline: 2px solid var(--h-ctl-accent);
+  outline-offset: 2px;
+}
+
+/* Tanpa auto-slide barnya tidak akan pernah terisi, jadi dot aktifnya
+   dijadikan padat supaya tetap terbaca sebagai posisi sekarang. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide {
+    transition: opacity 0.2s linear, visibility 0s linear 0.2s;
+    transform: none;
+  }
+  .hero-slide[data-active="true"] {
+    transition: opacity 0.2s linear, visibility 0s;
+  }
+  .hero-dot[data-active="true"] .hero-dot__fill {
+    animation: none;
+    transform: scaleX(1);
+  }
 }
 
 /* Layar pendek — laptop 720p, atau jendela yang tidak dimaksimalkan. Ritme yang
@@ -622,6 +876,9 @@ h3 {
   .hero__inner {
     padding-top: clamp(0.7rem, 1.9vh, 1.7rem);
     padding-bottom: clamp(0.55rem, 1.4vh, 1.2rem);
+  }
+  .hero__controls {
+    top: clamp(0.7rem, 1.9vh, 1.7rem);
   }
   .hero__title {
     font-size: min(clamp(2.2rem, 4.4vw, 3.4rem), 7.4vh);
@@ -1862,18 +2119,24 @@ h3 {
   .hero__overlay {
     background: linear-gradient(
       180deg,
-      color-mix(in srgb, var(--forest) 52%, transparent) 0%,
-      color-mix(in srgb, var(--forest) 86%, transparent) 38%,
-      color-mix(in srgb, var(--forest) 96%, transparent) 100%
+      color-mix(in srgb, var(--h-panel) 52%, transparent) 0%,
+      color-mix(in srgb, var(--h-panel) 86%, transparent) 38%,
+      color-mix(in srgb, var(--h-panel) 96%, transparent) 100%
     );
   }
   .hero__bg {
-    /* Satu kolom: fotonya kembali full-bleed, dan rasio potretnya justru pas
-       dengan kontainer yang tinggi di sini. */
+    /* Satu kolom: fotonya kembali full-bleed dan kontainernya tinggi, jadi
+       subjeknya ditarik ke atas supaya tidak tertutup blok teks. */
     inset: 0;
-    background-position: center;
+    background-position: center 22%;
     -webkit-mask-image: none;
     mask-image: none;
+  }
+  /* Pill kontrol menempel di pojok kanan atas — badge-nya harus berhenti
+     sebelum sampai ke sana, kalau tidak teksnya menyelinap di bawah pill. */
+  .hero__badge {
+    max-width: 100%;
+    padding-right: 9rem;
   }
   /* Empat kolom jadi terlalu sempit untuk judul dua baris di sini. */
   .hero__features {
@@ -1955,6 +2218,12 @@ h3 {
   }
   .hero__badge {
     font-size: 0.8rem;
+    padding-right: 5rem;
+  }
+  /* Panah dilepas: di layar sentuh swipe dan dot sudah cukup, dan pill-nya
+     jadi cukup sempit supaya badge tetap punya ruang. */
+  .hero-ctl {
+    display: none;
   }
   .hero__features {
     margin-top: 1.6rem;
