@@ -1,118 +1,91 @@
-import {
-  ArrowRight,
-  Award,
-  CalendarCheck,
-  Globe,
-  MessageCircle,
-  ShieldCheck,
-  Timer,
-  TrendingUp,
-  Users,
-} from "lucide-react";
-import ScrollLink from "./ScrollLink";
-import WaLink from "./WaLink";
-
-/** Empat alasan utama, ditaruh di hero supaya keberatan pertama pengunjung
- *  ("aman nggak? lama nggak? diakui nggak?") sudah terjawab sebelum scroll. */
-const FEATURES = [
-  {
-    icon: ShieldCheck,
-    title: "Sesuai Syariat",
-    desc: "Dipandu auditor berkompeten & tersertifikasi",
-  },
-  {
-    icon: Timer,
-    title: "Proses Cepat & Transparan",
-    desc: "Alur jelas, biaya pasti, tanpa hidden cost",
-  },
-  {
-    icon: Globe,
-    title: "Diakui Nasional & Global",
-    desc: "Sertifikat halal diakui BPJPH & MUI",
-  },
-  {
-    icon: Users,
-    title: "Pendampingan Profesional",
-    desc: "Tim ahli siap mendampingi sampai sertifikat terbit",
-  },
-] as const;
-
-const STATS = [
-  { icon: Award, num: "200+", label: "Produk Tersertifikasi" },
-  { icon: CalendarCheck, num: "30 Hari", label: "Rata-rata Audit" },
-  { icon: TrendingUp, num: "98%", label: "Pengajuan Lolos Verifikasi Pertama" },
-] as const;
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { HERO_SLIDES } from "../data/heroSlides";
+import { HERO_AUTOPLAY_MS, useHeroSlider } from "../hooks/useHeroSlider";
+import HeroSlide from "./HeroSlide";
 
 export default function Hero() {
+  const total = HERO_SLIDES.length;
+  const { index, goTo, step, isAutoplaying, pause, resume, onTouchStart, onTouchEnd, onKeyDown } =
+    useHeroSlider(total);
+  const active = HERO_SLIDES[index];
+
   return (
-    <section className="hero" id="top">
-      <div className="hero__bg" aria-hidden />
-      <div className="hero__overlay" aria-hidden />
-      <div className="hero__glow" aria-hidden />
+    <section
+      className="hero"
+      id="top"
+      // data-theme di section hanya dipakai kontrol slider. Warna tiap panel
+      // datang dari data-theme milik slide-nya sendiri, supaya slide yang sedang
+      // memudar keluar tidak ikut berganti palet di tengah transisi.
+      data-theme={active.theme}
+      aria-roledescription="carousel"
+      aria-label="Layanan utama Urushalal"
+      onMouseEnter={pause}
+      onMouseLeave={resume}
+      onFocus={pause}
+      onBlur={resume}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onKeyDown={onKeyDown}
+    >
+      <div className="hero__slides">
+        {HERO_SLIDES.map((slide, i) => (
+          <HeroSlide
+            key={slide.id}
+            slide={slide}
+            isActive={i === index}
+            position={i + 1}
+            total={total}
+          />
+        ))}
+      </div>
 
-      <div className="wrap hero__inner">
-        <div className="hero__copy">
-          <p className="hero__badge">
-            <span className="hero__badge-mark" aria-hidden />
-            Sertifikasi Halal untuk Semua Jenis Usaha
-          </p>
+      {total > 1 && (
+        <div className="hero__controls" data-autoplay={isAutoplaying} role="group" aria-label="Navigasi slide">
+          <button
+            type="button"
+            className="hero-ctl"
+            onClick={() => step(-1)}
+            aria-label="Slide sebelumnya"
+          >
+            <ChevronLeft size={18} strokeWidth={2} aria-hidden />
+          </button>
 
-          <h1 className="hero__title">
-            {/* Spasi eksplisit: <em> di-block lewat CSS, jadi tidak terlihat —
-                tapi tanpa ini screen reader & snippet SEO membaca "Halal,Nilai". */}
-            Sertifikasi Halal,{" "}
-            <em>
-              Nilai Lebih
-              <br />
-              untuk Bisnis Anda
-            </em>
-          </h1>
-
-          <div className="hero__rule" aria-hidden />
-
-          <p className="hero__lead">
-            Kami membantu Anda mendapatkan sertifikasi halal secara cepat,
-            mudah, dan sesuai syariat.
-          </p>
-
-          <ul className="hero__features">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
-              <li className="hero-feature" key={title}>
-                <span className="hero-feature__icon" aria-hidden>
-                  <Icon size={28} strokeWidth={1.6} />
-                </span>
-                <span className="hero-feature__title">{title}</span>
-                <span className="hero-feature__desc">{desc}</span>
-              </li>
+          <div className="hero__dots">
+            {HERO_SLIDES.map((slide, i) => (
+              <button
+                type="button"
+                key={slide.id}
+                className="hero-dot"
+                data-active={i === index}
+                aria-label={`Tampilkan slide ${slide.name}`}
+                aria-current={i === index}
+                onClick={() => goTo(i)}
+              >
+                {/* Bar yang mengisi = sisa waktu sebelum auto-slide. Durasinya
+                    diambil dari sumber yang sama dengan timernya. */}
+                <span
+                  className="hero-dot__fill"
+                  style={{ animationDuration: `${HERO_AUTOPLAY_MS}ms` }}
+                  aria-hidden
+                />
+              </button>
             ))}
-          </ul>
-
-          <div className="hero__cta">
-            <WaLink className="btn btn--solid">
-              <MessageCircle size={18} strokeWidth={1.8} aria-hidden />
-              Mulai konsultasi gratis
-            </WaLink>
-            <ScrollLink to="alur" className="btn btn--ghost">
-              Lihat alurnya
-              <ArrowRight size={18} strokeWidth={1.8} aria-hidden />
-            </ScrollLink>
           </div>
-        </div>
-      </div>
 
-      <div className="wrap hero__stats-wrap">
-        <ul className="hero__stats">
-          {STATS.map(({ icon: Icon, num, label }) => (
-            <li className="hero-stat" key={num}>
-              <span className="hero-stat__icon" aria-hidden>
-                <Icon size={26} strokeWidth={1.5} />
-              </span>
-              <span className="hero-stat__num">{num}</span>
-              <span className="hero-stat__lbl">{label}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+          <button
+            type="button"
+            className="hero-ctl"
+            onClick={() => step(1)}
+            aria-label="Slide berikutnya"
+          >
+            <ChevronRight size={18} strokeWidth={2} aria-hidden />
+          </button>
+        </div>
+      )}
+
+      <p className="sr-only" aria-live="polite">
+        Slide {index + 1} dari {total}: {active.name}
+      </p>
     </section>
   );
 }
