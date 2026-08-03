@@ -1,17 +1,17 @@
 :root {
-  --ink: #161a17;
-  --ink-soft: #4a524d;
+  --ink: #111827;
+  --ink-soft: #4b5563;
   --cream: #f3eddf;
-  --paper: #faf6ec;
+  --paper: #FAFAF9;
   /* Permukaan kartu yang diangkat di atas --paper/--cream. Putih hangat, bukan
      #fff murni, supaya tidak bentrok dengan palet cream di sekitarnya. */
-  --surface: #fffdf8;
+  --surface: #FFFFFF;
   --forest: #0d3a2c;
   --moss: #2a6a4f;
   --gold: #c8a02a;
   --terracotta: #b65a35;
-  --line: rgba(22, 26, 23, 0.14);
-  --line-strong: rgba(22, 26, 23, 0.28);
+  --line: #E5E5E2;
+  --line-strong: #E5E5E2;
 
   /* Palet BPOM. Dipakai eksklusif oleh slide hero kedua — bukan warna sistem,
      jadi jangan dipakai di section lain tanpa alasan. Diambil dari logo BPOM:
@@ -916,10 +916,18 @@ h3 {
   padding-block: var(--pad-y);
   border-bottom: 1px solid var(--line);
 }
+.section:nth-of-type(odd),
+section:nth-of-type(odd) {
+  background: #FAFAF9;
+}
+.section:nth-of-type(even),
+section:nth-of-type(even) {
+  background: #F5F5F3;
+}
 /* Section-nya sengaja lebih dalam dari kartunya. Waktu keduanya sama-sama
    putih, kartu kehilangan bidangnya dan cuma tersisa garis border. */
 #paket {
-  background: var(--cream);
+  background: #FAFAF9;
 }
 .section__head {
   display: grid;
@@ -962,13 +970,18 @@ h3 {
 .product-categories {
   padding-block: var(--pad-y);
   border-bottom: 1px solid var(--line);
-  background: var(--paper);
+  background: #F5F5F3;
 }
 .product-categories__inner {
   width: 100%;
   max-width: var(--maxw);
   margin-inline: auto;
   padding-inline: var(--gut);
+}
+.product-categories__group + .product-categories__group {
+  margin-top: clamp(4.5rem, 8vw, 7rem);
+  padding-top: clamp(4rem, 7vw, 6rem);
+  border-top: 1px solid var(--line);
 }
 .product-categories__head {
   max-width: 52rem;
@@ -979,6 +992,9 @@ h3 {
 }
 .product-categories__head .lead {
   margin-top: 1rem;
+}
+.eyebrow--bpom {
+  color: #0C447C;
 }
 .product-categories__grid {
   --card-gap: clamp(1rem, 2vw, 1.5rem);
@@ -1002,7 +1018,7 @@ h3 {
   padding: clamp(1.5rem, 2.5vw, 2rem);
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--paper);
+  background: #FFFFFF;
   box-shadow: 0 3px 14px rgba(22, 26, 23, 0.05);
   display: flex;
   flex-direction: column;
@@ -1018,12 +1034,20 @@ h3 {
   flex-shrink: 0;
   align-self: flex-start;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--moss) 12%, var(--paper));
-  color: var(--forest);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: background 0.22s ease, color 0.22s ease;
+}
+.product-category__icon--halal,
+.svc__icon--halal {
+  background: #EAF3DE;
+  color: #27500A;
+}
+.product-category__icon--bpom,
+.svc__icon--bpom {
+  background: #E6F1FB;
+  color: #0C447C;
 }
 .product-category__icon {
   margin-bottom: 1.4rem;
@@ -1041,10 +1065,15 @@ h3 {
   max-width: 42ch;
 }
 @media (hover: hover) and (pointer: fine) {
-  .product-category:hover .product-category__icon,
-  .svc:hover .svc__icon {
-    background: var(--forest);
-    color: var(--paper);
+  .product-category:hover .product-category__icon--halal,
+  .svc:hover .svc__icon--halal {
+    background: #27500A;
+    color: #EAF3DE;
+  }
+  .product-category:hover .product-category__icon--bpom,
+  .svc:hover .svc__icon--bpom {
+    background: #0C447C;
+    color: #E6F1FB;
   }
   .product-category:hover {
     transform: translateY(-4px) scale(1.01);
@@ -1076,7 +1105,7 @@ h3 {
   padding: clamp(1.6rem, 3vw, 2.4rem);
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--paper);
+  background: #FFFFFF;
   box-shadow: 0 2px 8px rgba(22, 26, 23, 0.05);
   display: flex;
   flex-direction: column;
@@ -1122,9 +1151,9 @@ h3 {
   /* setengah tombol menggantung ke luar track, jadi titik pusatnya
      tepat di garis tepi track — persis seperti yang diminta klien */
   transform: translateY(-50%);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-radius: 50%;
-  background: var(--paper);
+  background: #FFFFFF;
   color: var(--ink);
   display: inline-flex;
   align-items: center;
@@ -1198,9 +1227,9 @@ h3 {
   flex-direction: column;
   gap: 0.35rem;
   padding: clamp(0.9rem, 2vw, 1.15rem) clamp(1rem, 2vw, 1.3rem);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--paper);
+  background: #FFFFFF;
   transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 .paths__btn:hover {
@@ -1212,7 +1241,7 @@ h3 {
 }
 .paths__btn--on {
   border-color: var(--moss);
-  background: color-mix(in srgb, var(--moss) 8%, var(--surface));
+  background: #FFFFFF;
   box-shadow: inset 0 0 0 1px var(--moss);
 }
 .paths__label {
@@ -1265,8 +1294,8 @@ h3 {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--moss);
-  color: var(--paper);
+  background: #EAF3DE;
+  color: #27500A;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1392,6 +1421,31 @@ h3 {
 .snake__cell[data-dir="left"]::after {
   right: calc(50% + 30px);
 }
+.snake__arrow {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--moss) 42%, transparent);
+}
+.snake__arrow svg {
+  display: block;
+  flex: 0 0 auto;
+}
+.snake__arrow--right,
+.snake__arrow--left {
+  top: calc(50% - 7px);
+  width: calc(var(--snake-span) - 60px);
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.snake__arrow--right {
+  left: calc(50% + 30px);
+}
+.snake__arrow--left {
+  right: calc(50% + 30px);
+}
 
 /* Perpindahan baris disiku, bukan diserongkan: garis serong memotong judul dan
    badge node terakhir baris 1. Ruas menurun sengaja baru mulai di batas bawah
@@ -1415,6 +1469,15 @@ h3 {
   /* satu langkah kolom, dikurangi radius marker + jeda nafas di ujung kiri */
   width: calc(100% + var(--snake-gap-x) - 30px);
 }
+.snake__arrow--elbow {
+  left: calc(50% - 7px);
+  top: calc(100% + 10px);
+  width: 14px;
+  height: calc(var(--snake-gap-y) + 50% - 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Node diberi bidang saat diam. Tanpa ini isinya cuma lingkaran angka + teks
    di atas latar section — bahasa visual infografis, dan orang memperlakukan
@@ -1435,8 +1498,8 @@ h3 {
   padding: var(--snake-pad-y) clamp(0.6rem, 1.2vw, 1rem)
     calc(var(--snake-pad-y) - 0.15rem);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--paper);
+  border-radius: 12px;
+  background: #FFFFFF;
   transition:
     border-color 0.18s ease,
     background-color 0.18s ease,
@@ -1471,8 +1534,8 @@ h3 {
   width: var(--snake-marker);
   height: var(--snake-marker);
   border-radius: 50%;
-  background: var(--moss);
-  color: var(--paper);
+  background: #EAF3DE;
+  color: #27500A;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1485,8 +1548,12 @@ h3 {
    dari tetangganya yang --paper. Terangkat, bukan sekadar diberi warna lain. */
 .snake__node--on {
   border-color: var(--moss);
-  background: var(--surface);
+  background: #FFFFFF;
   box-shadow: 0 10px 24px -14px rgba(22, 26, 23, 0.45);
+}
+.snake__node--on .snake__marker {
+  background: #27500A;
+  color: #EAF3DE;
 }
 /* Penanda aktif sengaja cuma halo + naik sedikit. Cukup untuk menunjukkan node
    mana yang sedang dibaca, tanpa menggeser tetangganya atau menutupi apa pun. */
@@ -1699,13 +1766,13 @@ h3 {
   margin-inline: auto;
 }
 .pkg {
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   padding: clamp(1.8rem, 3vw, 2.4rem);
   display: flex;
   flex-direction: column;
   gap: 1.3rem;
-  background: var(--surface);
+  background: #FFFFFF;
   overflow: visible;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1806,7 +1873,7 @@ h3 {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--paper);
+  background: #FFFFFF;
   box-shadow: 0 3px 14px rgba(22, 26, 23, 0.05);
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
@@ -1912,6 +1979,43 @@ h3 {
 .faq__intro p {
   color: var(--ink-soft);
   margin-top: 1rem;
+}
+.faq__content {
+  min-width: 0;
+}
+.faq__tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.faq__tabs::-webkit-scrollbar {
+  display: none;
+}
+.faq__tab {
+  flex: 0 0 auto;
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: transparent;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.faq__tab[data-category="halal"][aria-selected="true"] {
+  color: #27500A;
+  background: #EAF3DE;
+}
+.faq__tab[data-category="bpom"][aria-selected="true"] {
+  color: #0C447C;
+  background: #E6F1FB;
+}
+.faq__tab:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 .faq__list {
   border-top: 1px solid var(--line-strong);

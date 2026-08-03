@@ -47,8 +47,40 @@ const faqs = [
   },
 ];
 
+const bpomFaqs = [
+  {
+    q: "Apa itu BPOM?",
+    a: "BPOM adalah lembaga pemerintah yang mengawasi keamanan obat dan makanan yang beredar di Indonesia.",
+  },
+  {
+    q: "Kenapa produk saya butuh izin BPOM?",
+    a: "Produk seperti obat, suplemen, kosmetik, dan makanan olahan wajib punya izin edar sebelum dijual di Indonesia. Tanpa izin ini, produk bisa ditarik dari pasar dan dikenai sanksi, meski sudah berizin di negara asal.",
+  },
+  {
+    q: "Berapa lama prosesnya dan berapa lama masa berlakunya?",
+    a: "Prosesnya melalui pengajuan, audit, penilaian, evaluasi, hingga pengesahan secara online; durasinya tergantung jenis dan tingkat risiko produk. Izin berlaku 5 tahun dan dapat diperpanjang mulai 6 bulan sebelum masa berlaku habis.",
+  },
+  {
+    q: "Dokumen apa saja yang dibutuhkan?",
+    a: "Dokumen umumnya meliputi identitas direktur dan penanggung jawab, legalitas perusahaan, data pabrik dan bahan baku, detail produk, hasil uji lab, serta sertifikat GMP/HACCP/ISO. Persyaratan dapat berbeda untuk produk lokal dan impor.",
+  },
+  {
+    q: "Kenapa pakai jasa pengurusan BPOM?",
+    a: "Agar semua persyaratan terpenuhi sejak awal, proses lebih cepat, dan risiko penolakan lebih kecil. Tim kami mendampingi proses sampai izin terbit.",
+  },
+];
+
+type FaqCategory = "halal" | "bpom";
+
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
+  const [category, setCategory] = useState<FaqCategory>("halal");
+  const activeFaqs = category === "halal" ? faqs : bpomFaqs;
+
+  const selectCategory = (nextCategory: FaqCategory) => {
+    setCategory(nextCategory);
+    setOpen(0);
+  };
 
   return (
     <section className="section" id="faq">
@@ -70,27 +102,52 @@ export default function FAQ() {
             </ScrollLink>
           </div>
 
-          <div className="faq__list">
-            {faqs.map((f, i) => {
-              const isOpen = open === i;
-              return (
-                <div className="faq-item" key={f.q} data-open={isOpen}>
-                  <button
-                    className="faq-item__q"
-                    aria-expanded={isOpen}
-                    onClick={() => setOpen(isOpen ? null : i)}
-                  >
-                    {f.q}
-                    <Plus className="faq-item__icon" size={18} strokeWidth={1.8} />
-                  </button>
-                  <div className="faq-item__a">
-                    <div className="prose prose--inline">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{f.a}</ReactMarkdown>
+          <div className="faq__content">
+            <div className="faq__tabs" role="tablist" aria-label="Kategori FAQ">
+              <button
+                type="button"
+                className="faq__tab"
+                role="tab"
+                data-category="halal"
+                aria-selected={category === "halal"}
+                onClick={() => selectCategory("halal")}
+              >
+                Sertifikasi Halal
+              </button>
+              <button
+                type="button"
+                className="faq__tab"
+                role="tab"
+                data-category="bpom"
+                aria-selected={category === "bpom"}
+                onClick={() => selectCategory("bpom")}
+              >
+                Izin BPOM
+              </button>
+            </div>
+
+            <div className="faq__list">
+              {activeFaqs.map((f, i) => {
+                const isOpen = open === i;
+                return (
+                  <div className="faq-item" key={f.q} data-open={isOpen}>
+                    <button
+                      className="faq-item__q"
+                      aria-expanded={isOpen}
+                      onClick={() => setOpen(isOpen ? null : i)}
+                    >
+                      {f.q}
+                      <Plus className="faq-item__icon" size={18} strokeWidth={1.8} />
+                    </button>
+                    <div className="faq-item__a">
+                      <div className="prose prose--inline">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{f.a}</ReactMarkdown>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

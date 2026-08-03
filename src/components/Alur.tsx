@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MousePointerClick } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, MousePointerClick } from "lucide-react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
 /** Jeda sebelum hover mengganti panel. Tanpa ini, kursor yang cuma melintas
@@ -248,6 +248,8 @@ export default function Alur() {
               <ol className="snake" key={active.id} onMouseLeave={endPreview}>
                 {active.stages.map((s, i) => {
                   const { row, col, dir } = snakeCell(i, active.stages.length);
+                  const DirectionIcon =
+                    dir === "left" ? ChevronLeft : dir === "elbow" ? ChevronDown : ChevronRight;
                   return (
                     <li
                       className="snake__cell"
@@ -255,6 +257,11 @@ export default function Alur() {
                       data-dir={dir}
                       style={{ gridRow: row, gridColumn: col, ["--i" as string]: i }}
                     >
+                      {dir !== "none" && (
+                        <span className={`snake__arrow snake__arrow--${dir}`} aria-hidden="true">
+                          <DirectionIcon size={14} strokeWidth={2.2} />
+                        </span>
+                      )}
                       <button
                         type="button"
                         className={`snake__node${i === detailIdx ? " snake__node--on" : ""}`}

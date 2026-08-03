@@ -73,16 +73,20 @@ export default function Services() {
           nextLabel="Kartu berikutnya"
         >
           <div className="svc-carousel" ref={trackRef}>
-            {services.map(({ icon: Icon, title, desc, tag }) => (
-              <article className="svc svc-carousel__card" key={title}>
-                <span className="svc__icon" aria-hidden="true">
-                  <Icon size={24} strokeWidth={1.8} />
-                </span>
-                <h3>{title}</h3>
-                <p>{desc}</p>
-                <span className="svc__tag">{tag}</span>
-              </article>
-            ))}
+            {services.map(({ icon: Icon, title, desc, tag }) => {
+              const isBpom = tag.includes("BPOM") || title.includes("BPOM") || tag.includes("ediligence") || tag.includes("LPH") || tag.includes("Penyelesaian"); // Let's check which is Halal vs BPOM. Wait, the services are consulting, document prep, audit assistance, certificate issuance, and ingredient/supplier review. All are for halal certification! So let's make all of them halal.
+              const iconClass = "svc__icon svc__icon--halal";
+              return (
+                <article className="svc svc-carousel__card" key={title}>
+                  <span className={iconClass} aria-hidden="true">
+                    <Icon size={24} strokeWidth={1.8} />
+                  </span>
+                  <h3>{title}</h3>
+                  <p>{desc}</p>
+                  <span className="svc__tag">{tag}</span>
+                </article>
+              );
+            })}
           </div>
         </Carousel>
       </div>
