@@ -4,6 +4,7 @@ import {
   Pill,
   Sparkles,
   SprayCan,
+  Truck,
   UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
@@ -37,10 +38,16 @@ const halalCategories: ProductCategory[] = [
     image: "halal-kosmetik.jpg",
   },
   {
+    icon: Truck,
+    title: "Jasa Distribusi & Penyimpanan",
+    description: "Pendampingan sertifikasi halal untuk rantai distribusi dan penyimpanan produk, memastikan proses logistik tetap terjaga kehalalannya.",
+    image: "halal-logistik.jpg",
+  },
+  {
     icon: HeartPulse,
-    title: "Alat Kesehatan",
-    description: "Perangkat medis yang bersentuhan langsung maupun tidak langsung dengan tubuh.",
-    image: "halal-alat_kesehatan.jpg",
+    title: "Barang Gunaan",
+    description: "Produk kebutuhan sehari-hari yang telah tersertifikasi halal, mulai dari plastic wrap, tisu, sabun, hingga perlengkapan rumah tangga lainnya.",
+    image: "halal-barang_gunaan.jpg",
   },
   {
     icon: SprayCan,
@@ -102,10 +109,10 @@ function ProductCarousel({ categories, theme }: ProductCarouselProps) {
 
           const style = isPhotoCard
             ? {
-                backgroundImage: `${overlay}, url('/images/card/${image}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }
+              backgroundImage: `${overlay}, url('/images/card/${image}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
             : undefined;
 
           return (
