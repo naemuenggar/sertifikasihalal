@@ -83,7 +83,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className="section" id="faq">
+    <section className="section" id="faq" data-service="neutral">
       <div className="wrap">
         <div className="faq">
           <div className="faq__intro">

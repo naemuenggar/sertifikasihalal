@@ -49,7 +49,7 @@ export default function BeritaSection() {
   if (!loading && items.length === 0) return null;
 
   return (
-    <section className="section" id="berita">
+    <section className="section" id="berita" data-service="neutral">
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">

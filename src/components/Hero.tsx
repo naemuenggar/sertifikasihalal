@@ -13,6 +13,7 @@ export default function Hero() {
     <section
       className="hero"
       id="top"
+      data-service="neutral"
       // data-theme di section hanya dipakai kontrol slider. Warna tiap panel
       // datang dari data-theme milik slide-nya sendiri, supaya slide yang sedang
       // memudar keluar tidak ikut berganti palet di tengah transisi.

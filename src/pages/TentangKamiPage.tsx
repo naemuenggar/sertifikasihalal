@@ -31,7 +31,7 @@ export default function TentangKamiPage() {
         }
       />
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section" style={{ paddingTop: 0 }} data-service="neutral">
         <div className="wrap">
           <div className="about-grid">
             <div className="prose about-main">

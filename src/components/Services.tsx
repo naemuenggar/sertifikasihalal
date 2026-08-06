@@ -53,7 +53,7 @@ export default function Services() {
   const { trackRef, slide, progress, ratio } = useCarousel<HTMLDivElement>(".svc-carousel__card");
 
   return (
-    <section className="section" id="layanan">
+    <section className="section" id="layanan" data-service="halal">
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">

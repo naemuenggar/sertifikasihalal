@@ -16,7 +16,7 @@ const halalServices = services.filter((s) => !bpomServiceSlugs.includes(s.slug))
 export default function Footer() {
   return (
     <>
-      <section className="cta-band" id="kontak">
+      <section className="cta-band" id="kontak" data-service="neutral">
         <div className="wrap cta-band__inner">
           <h2>
             Saatnya produk Anda <em>resmi halal.</em>
@@ -25,7 +25,7 @@ export default function Footer() {
         </div>
       </section>
 
-      <footer className="site-footer">
+      <footer className="site-footer" data-service="neutral">
         <div className="wrap">
           <div className="foot-grid">
             <div>

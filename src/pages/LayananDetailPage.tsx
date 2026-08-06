@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { getService, services } from "../data/services";
+import { getService, services, bpomServiceSlugs } from "../data/services";
 import PageHero from "../components/PageHero";
 import WaLink from "../components/WaLink";
 import NotFoundPage from "./NotFoundPage";
@@ -14,12 +14,13 @@ export default function LayananDetailPage() {
   if (!service) return <NotFoundPage />;
 
   const others = services.filter((s) => s.slug !== service.slug);
+  const serviceType = bpomServiceSlugs.includes(service.slug) ? "bpom" : "halal";
 
   return (
     <>
       <PageHero eyebrow="Layanan" title={service.name} />
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section" style={{ paddingTop: 0 }} data-service={serviceType}>
         <div className="wrap">
           <div className="detail-layout">
             <article className="prose detail-article">

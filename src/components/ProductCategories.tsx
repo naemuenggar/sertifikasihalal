@@ -101,9 +101,9 @@ function ProductCarousel({ categories, theme }: ProductCarouselProps) {
 
 export default function ProductCategories() {
   return (
-    <section className="product-categories" id="produk">
-      <div className="product-categories__inner">
-        <div className="product-categories__group">
+    <div className="product-categories-wrap">
+      <section className="section product-categories__group" id="produk" data-service="halal">
+        <div className="wrap">
           <div className="product-categories__head">
             <span className="eyebrow">Cakupan sertifikasi</span>
             <h2 className="h-section">Produk Halal yang Kami Sertifikasi</h2>
@@ -113,8 +113,10 @@ export default function ProductCategories() {
           </div>
           <ProductCarousel categories={halalCategories} theme="halal" />
         </div>
+      </section>
 
-        <div className="product-categories__group">
+      <section className="section product-categories__group" id="produk-bpom" data-service="bpom">
+        <div className="wrap">
           <div className="product-categories__head">
             <span className="eyebrow eyebrow--bpom">Cakupan izin edar</span>
             <h2 className="h-section">Produk BPOM yang Kami Sertifikasi</h2>
@@ -124,7 +126,7 @@ export default function ProductCategories() {
           </div>
           <ProductCarousel categories={bpomCategories} theme="bpom" />
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

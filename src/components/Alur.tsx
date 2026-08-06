@@ -190,7 +190,7 @@ export default function Alur() {
   };
 
   return (
-    <section className="section alur" id="alur">
+    <section className="section alur" id="alur" data-service="halal">
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">

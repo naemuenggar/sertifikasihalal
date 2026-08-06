@@ -38,7 +38,7 @@ const packages = [
 
 export default function Packages() {
   return (
-    <section className="section" id="paket">
+    <section className="section" id="paket" data-service="neutral">
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">
