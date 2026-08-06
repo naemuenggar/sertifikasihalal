@@ -36,35 +36,44 @@
   --r: 4px;
 }
 
-/* ─── System Background Gradient per Section ─── */
-[data-service="halal"] {
-  background: linear-gradient(180deg, #eef4e6 0%, #d3e4c4 100%);
-}
-[data-service="neutral"] {
-  background: #eeece3;
-}
-[data-service="bpom"] {
-  background: linear-gradient(180deg, #e8f1fa 0%, #c5dcef 100%);
-}
-
-/* Transisi antar section yang beda data-service */
+/* ─── Uniform Section Background (#faf9f6) & Card Gradient System ─── */
 section[data-service],
-footer[data-service] {
-  border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+.section,
+.cta-band {
+  background: #faf9f6;
+  border-top: 0.5px solid #e3e3e0;
 }
 
-/* Kartu putih (cards) di dalam section tetap solid #ffffff agar kontras dan menonjol */
-[data-service] .svc,
-[data-service] .pkg,
-[data-service] .product-category,
-[data-service] .faq-item,
-[data-service] .snake__node,
-[data-service] .detail,
-[data-service] .news-carousel__card,
-[data-service] .about-main,
-[data-service] .detail-cta,
-[data-service] .detail-article {
+/* Kartu di section Halal (data-service="halal") -> Gradient Hijau */
+[data-service="halal"] .svc,
+[data-service="halal"] .product-category,
+[data-service="halal"] .snake__node,
+[data-service="halal"] .detail,
+[data-service="halal"] .detail-article {
+  background: linear-gradient(180deg, #eef4e6 0%, #d3e4c4 100%);
+  border: 0.5px solid #e3e3e0;
+}
+
+/* Kartu di section BPOM (data-service="bpom") -> Gradient Biru */
+[data-service="bpom"] .product-category,
+[data-service="bpom"] .detail,
+[data-service="bpom"] .detail-article {
+  background: linear-gradient(180deg, #e8f1fa 0%, #c5dcef 100%);
+  border: 0.5px solid #e3e3e0;
+}
+
+/* Kartu di section Netral (data-service="neutral") -> Putih Solid (#ffffff) */
+[data-service="neutral"] .svc,
+[data-service="neutral"] .pkg,
+[data-service="neutral"] .product-category,
+[data-service="neutral"] .faq-item,
+[data-service="neutral"] .snake__node,
+[data-service="neutral"] .detail,
+[data-service="neutral"] .news-carousel__card,
+[data-service="neutral"] .about-main,
+[data-service="neutral"] .detail-cta {
   background: #ffffff;
+  border: 0.5px solid #e3e3e0;
 }
 
 * {
@@ -1070,19 +1079,6 @@ h3 {
   padding-block: var(--pad-y);
   border-bottom: 1px solid var(--line);
 }
-.section:nth-of-type(odd),
-section:nth-of-type(odd) {
-  background: #FAFAF9;
-}
-.section:nth-of-type(even),
-section:nth-of-type(even) {
-  background: #F5F5F3;
-}
-/* Section-nya sengaja lebih dalam dari kartunya. Waktu keduanya sama-sama
-   putih, kartu kehilangan bidangnya dan cuma tersisa garis border. */
-#paket {
-  background: #FAFAF9;
-}
 .section__head {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1124,7 +1120,6 @@ section:nth-of-type(even) {
 .product-categories {
   padding-block: var(--pad-y);
   border-bottom: 1px solid var(--line);
-  background: #F5F5F3;
 }
 .product-categories__inner {
   width: 100%;
@@ -1178,6 +1173,24 @@ section:nth-of-type(even) {
   flex-direction: column;
   align-items: flex-start;
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+/* Cards Halal & BPOM dengan photo background */
+.product-category--photo,
+[data-service="halal"] .product-category--photo,
+[data-service="bpom"] .product-category--photo {
+  background-size: cover;
+  background-position: center;
+  border: none !important;
+}
+.product-category--photo h3,
+.product-category--photo p {
+  color: #ffffff !important;
+}
+.product-category--photo .product-category__icon {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(4px);
 }
 /* Badge ikon — satu definisi untuk semua kartu bericon.
    Jangan bikin varian baru: ikon wajib dari lucide, 24px, stroke 1.8. */
@@ -4120,9 +4133,6 @@ textarea.field {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-  width: 100%;
 }
 .mobile-accordion__panel {
   display: flex;
