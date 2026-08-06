@@ -53,15 +53,43 @@ const linksAfter = [
   { to: "/berita", label: "Berita" },
 ];
 
+/** Delay sebelum dropdown menutup saat mouse leave, supaya tidak langsung
+ *  hilang kalau kursor sekilas keluar area saat pindah ke submenu. */
+const DROP_CLOSE_DELAY_MS = 150;
+
 export default function Header() {
   const [open, setOpen] = useState(false); // menu hamburger
   const [dropOpen, setDropOpen] = useState(false); // dropdown Layanan (desktop)
   const [mobLayananOpen, setMobLayananOpen] = useState(false); // accordion Layanan (mobile)
   const dropRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<number | null>(null);
 
   const close = () => setOpen(false);
 
-  // Dropdown desktop: tutup saat klik di luar atau tekan Escape.
+  /** Buka dropdown segera dan batalkan timer tutup yang sedang jalan. */
+  const openDrop = () => {
+    if (closeTimer.current !== null) {
+      window.clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+    setDropOpen(true);
+  };
+
+  /** Tutup dropdown setelah delay — kalau mouse masuk lagi sebelum
+   *  timer habis, timer dibatalkan oleh openDrop(). */
+  const closeDrop = () => {
+    closeTimer.current = window.setTimeout(() => {
+      setDropOpen(false);
+      closeTimer.current = null;
+    }, DROP_CLOSE_DELAY_MS);
+  };
+
+  // Bersihkan timer saat unmount.
+  useEffect(() => () => {
+    if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
+  }, []);
+
+  // Tutup dropdown saat klik di luar atau tekan Escape.
   useEffect(() => {
     if (!dropOpen) return;
     const onDown = (e: MouseEvent) => {
@@ -94,8 +122,19 @@ export default function Header() {
             </Link>
           ))}
 
-          {/* "Layanan" bukan link, melainkan pemicu dropdown pemilih layanan. */}
-          <div className="nav-layanan" ref={dropRef}>
+          {/* "Layanan" — hover buka dropdown (desktop), klik sebagai fallback (touch).
+              onFocus/onBlur agar keyboard Tab juga bisa membuka. */}
+          <div
+            className="nav-layanan"
+            ref={dropRef}
+            onMouseEnter={openDrop}
+            onMouseLeave={closeDrop}
+            onFocus={openDrop}
+            onBlur={(e) => {
+              // Tutup hanya kalau fokus pindah ke luar wrapper.
+              if (!dropRef.current?.contains(e.relatedTarget as Node)) closeDrop();
+            }}
+          >
             <button
               type="button"
               className="nav-layanan__btn"
@@ -111,27 +150,30 @@ export default function Header() {
               />
             </button>
 
-            {dropOpen && (
-              <div className="nav-dropdown" role="menu" aria-label="Pilih layanan">
-                {layananItems.map(({ slug, name, icon: Icon, tagline }) => (
-                  <Link
-                    key={slug}
-                    to={`/layanan/${slug}`}
-                    className="nav-dropdown__item"
-                    role="menuitem"
-                    onClick={() => setDropOpen(false)}
-                  >
-                    <span className="nav-dropdown__icon" aria-hidden="true">
-                      <Icon size={20} strokeWidth={1.8} />
-                    </span>
-                    <span className="nav-dropdown__text">
-                      <span className="nav-dropdown__title">{name}</span>
-                      <span className="nav-dropdown__desc">{tagline}</span>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
+            <div
+              className="nav-dropdown"
+              role="menu"
+              aria-label="Pilih layanan"
+              data-open={dropOpen}
+            >
+              {layananItems.map(({ slug, name, icon: Icon, tagline }) => (
+                <Link
+                  key={slug}
+                  to={`/layanan/${slug}`}
+                  className="nav-dropdown__item"
+                  role="menuitem"
+                  onClick={() => setDropOpen(false)}
+                >
+                  <span className="nav-dropdown__icon" aria-hidden="true">
+                    <Icon size={20} strokeWidth={1.8} />
+                  </span>
+                  <span className="nav-dropdown__text">
+                    <span className="nav-dropdown__title">{name}</span>
+                    <span className="nav-dropdown__desc">{tagline}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
 
           {linksAfter.map((n) => (

@@ -3325,6 +3325,115 @@ textarea.field {
   border-top: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
   padding-top: 1rem;
 }
+.nav-layanan__btn {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  padding: 0.6em 1em;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.nav-layanan__btn:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.nav-layanan__chev {
+  transition: transform 0.2s ease;
+}
+.nav-layanan__chev.is-open {
+  transform: rotate(180deg);
+}
+
+/* ---------- Popup dropdown (desktop) ---------- */
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(620px, calc(100vw - 2rem));
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 20px 52px rgba(22, 26, 23, 0.18);
+  padding: 0.7rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+  z-index: 70;
+
+  /* Tersembunyi secara default — muncul saat data-open="true". */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
+}
+.nav-dropdown[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s;
+}
+.nav-dropdown__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0.8rem;
+  border-radius: 12px;
+  transition: background 0.15s ease;
+}
+.nav-dropdown__item:hover {
+  background: color-mix(in srgb, var(--cream) 70%, #fff);
+}
+.nav-dropdown__icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--forest);
+  background: color-mix(in srgb, var(--moss) 13%, var(--paper));
+}
+.nav-dropdown__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.nav-dropdown__title {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.nav-dropdown__desc {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-dropdown,
+  .nav-dropdown[data-open="true"] {
+    transition: none;
+  }
+}
 .admin__foot-link {
   font-size: 0.85rem;
   color: color-mix(in srgb, var(--paper) 68%, transparent);
@@ -3859,100 +3968,6 @@ textarea.field {
   gap: 0.4em;
   transition: color 0.15s ease, background 0.15s ease;
 }
-.nav-layanan__btn:hover {
-  color: var(--ink);
-  background: color-mix(in srgb, var(--ink) 6%, transparent);
-}
-.nav-layanan__chev {
-  transition: transform 0.2s ease;
-}
-.nav-layanan__chev.is-open {
-  transform: rotate(180deg);
-}
-
-/* ---------- Popup dropdown (desktop) ---------- */
-.nav-dropdown {
-  position: absolute;
-  top: calc(100% + 12px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(620px, calc(100vw - 2rem));
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 0 20px 52px rgba(22, 26, 23, 0.18);
-  padding: 0.7rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.35rem;
-  z-index: 70;
-  animation: nav-dropdown-in 0.18s ease;
-}
-@keyframes nav-dropdown-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-.nav-dropdown__item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 0.8rem;
-  border-radius: 12px;
-  transition: background 0.15s ease;
-}
-.nav-dropdown__item:hover {
-  background: color-mix(in srgb, var(--cream) 70%, #fff);
-}
-.nav-dropdown__icon {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--forest);
-  background: color-mix(in srgb, var(--moss) 13%, var(--paper));
-}
-.nav-dropdown__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
-}
-.nav-dropdown__title {
-  font-family: var(--sans);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.25;
-}
-.nav-dropdown__desc {
-  font-size: 0.78rem;
-  color: var(--ink-soft);
-  line-height: 1.35;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-@media (prefers-reduced-motion: reduce) {
-  .nav-dropdown {
-    animation: none;
-  }
-}
-
-/* ---------- Accordion "Layanan" (mobile) ---------- */
-.mobile-accordion__btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   width: 100%;
 }
 .mobile-accordion__panel {
