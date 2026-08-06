@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Admin routes — jangan diindex
+Disallow: /portal-admin
+Disallow: /admin/
+
+Sitemap: https://sertifikasihalal-chi.vercel.app/sitemap.xml

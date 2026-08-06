@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <path
+    d="M16 2.5c3.4 3.2 6.8 4.6 10.5 4.6.3 4.4-.5 9.2-2.8 13-2 3.3-4.8 5.6-7.7 7-2.9-1.4-5.7-3.7-7.7-7C5.6 16.3 4.8 11.5 5.1 7.1 8.8 7.1 12.2 5.7 15.6 2.5z"
+    fill="#6c5ce7"
+    opacity="0.25"
+  />
+  <path
+    d="M16 2.5c3.4 3.2 6.8 4.6 10.5 4.6.3 4.4-.5 9.2-2.8 13-2 3.3-4.8 5.6-7.7 7-2.9-1.4-5.7-3.7-7.7-7C5.6 16.3 4.8 11.5 5.1 7.1 8.8 7.1 12.2 5.7 15.6 2.5"
+    stroke="#6c5ce7"
+    stroke-width="1.6"
+    fill="none"
+  />
+  <path
+    d="M11 14.5l3.2 3.2L21 11"
+    stroke="#6c5ce7"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+</svg>

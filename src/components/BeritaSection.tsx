@@ -45,6 +45,9 @@ export default function BeritaSection() {
     };
   }, []);
 
+  // Jangan tampilkan section sama sekali kalau belum ada berita.
+  if (!loading && items.length === 0) return null;
+
   return (
     <section className="section" id="berita">
       <div className="wrap">
@@ -61,15 +64,18 @@ export default function BeritaSection() {
         </div>
 
         {loading ? (
-          <p className="lead">Memuat berita…</p>
-        ) : items.length === 0 ? (
-          <p className="lead">
-            Belum ada berita terbaru. Silakan cek kembali nanti, atau{" "}
-            <Link to="/berita" style={{ textDecoration: "underline" }}>
-              lihat semua berita
-            </Link>
-            .
-          </p>
+          <div className="news-skeleton">
+            {[1, 2, 3].map((i) => (
+              <div className="news-skeleton__card" key={i}>
+                <div className="news-skeleton__media shimmer" />
+                <div className="news-skeleton__body">
+                  <div className="news-skeleton__line shimmer" style={{ width: "70%" }} />
+                  <div className="news-skeleton__line shimmer" style={{ width: "90%" }} />
+                  <div className="news-skeleton__line shimmer" style={{ width: "40%" }} />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="news-carousel">
             <Carousel

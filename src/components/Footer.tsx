@@ -86,7 +86,9 @@ export default function Footer() {
           </div>
           <div className="foot-bottom">
             <span>© 2026 Urushalal. Bekerja sesuai regulasi BPJPH & MUI.</span>
-            <span>Kebijakan privasi · Syarat layanan</span>
+            <span>
+              <a href="/kebijakan-privasi">Kebijakan privasi</a> · <a href="/syarat-layanan">Syarat layanan</a>
+            </span>
           </div>
         </div>
       </footer>

@@ -71,13 +71,7 @@ export default function TentangKamiPage() {
                 ))}
               </ul>
 
-              <div className="about-note">
-                <p>
-                  <strong>Catatan:</strong> bagian ini dapat dilengkapi dengan
-                  legalitas perusahaan, tahun berdiri, jumlah klien/produk yang
-                  sudah ditangani, foto tim, dan info kontak lengkap.
-                </p>
-              </div>
+            
             </div>
 
             <aside className="detail-side">

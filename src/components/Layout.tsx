@@ -9,8 +9,11 @@ import HalalDeadlineModal from "./HalalDeadlineModal";
 export default function Layout() {
   return (
     <>
+      <a href="#main" className="sr-only" style={{ position: "fixed", top: 0, left: 0, zIndex: 9999 }}>
+        Langsung ke konten utama
+      </a>
       <Header />
-      <main>
+      <main id="main">
         <Outlet />
       </main>
       <Footer />
