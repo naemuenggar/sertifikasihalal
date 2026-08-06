@@ -1,5 +1,4 @@
 import PageHero from "../components/PageHero";
-import WaLink from "../components/WaLink";
 import { usePageTitle } from "../hooks/usePageMeta";
 
 const misi = [
@@ -31,57 +30,57 @@ export default function TentangKamiPage() {
         }
       />
 
-      <section className="section" style={{ paddingTop: 0 }} data-service="neutral">
-        <div className="wrap">
-          <div className="about-grid">
-            <div className="prose about-main">
-              <h2>Profil Singkat</h2>
-              <p>
-                Urushalal hadir untuk membantu pelaku usaha — dari UMKM hingga
-                korporasi, lokal maupun perusahaan luar negeri — mengurus
-                sertifikasi halal BPJPH dan izin edar BPOM dengan proses yang
-                cepat, transparan, dan sesuai regulasi terbaru. Kami memahami
-                bahwa proses perizinan bisa terasa rumit, karena itu kami hadir
-                sebagai partner yang mendampingi setiap tahapan, dari konsultasi
-                awal hingga sertifikat/izin edar terbit di tangan Anda.
-              </p>
+      <section className="section" data-service="neutral">
+        <div className="wrap about-stack">
 
-              <div className="about-vm">
-                <div>
-                  <h3>Visi</h3>
-                  <p>
-                    Menjadi mitra terpercaya nomor satu bagi pelaku usaha dalam
-                    memenuhi standar kehalalan dan keamanan produk di Indonesia.
-                  </p>
-                </div>
-                <div>
-                  <h3>Misi</h3>
-                  <ul>
-                    {misi.map((m) => (
-                      <li key={m}>{m}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <h2>Kenapa Memilih Kami</h2>
-              <ul className="about-list">
-                {keunggulan.map((k) => (
-                  <li key={k}>{k}</li>
-                ))}
-              </ul>
-
-            
-            </div>
-
-            <aside className="detail-side">
-              <div className="detail-cta">
-                <h3>Ada yang ingin ditanyakan?</h3>
-                <p>Tim kami siap membantu memetakan kebutuhan produk Anda.</p>
-                <WaLink className="btn btn--solid">Konsultasi gratis</WaLink>
-              </div>
-            </aside>
+          {/* Card 1 — Profil Singkat */}
+          <div className="about-card prose">
+            <h2>Profil Singkat</h2>
+            <p>
+              Urushalal hadir untuk membantu pelaku usaha — dari UMKM hingga
+              korporasi, lokal maupun perusahaan luar negeri — mengurus
+              sertifikasi halal BPJPH dan izin edar BPOM dengan proses yang
+              cepat, transparan, dan sesuai regulasi terbaru. Kami memahami
+              bahwa proses perizinan bisa terasa rumit, karena itu kami hadir
+              sebagai partner yang mendampingi setiap tahapan, dari konsultasi
+              awal hingga sertifikat/izin edar terbit di tangan Anda.
+            </p>
           </div>
+
+          {/* Card 2 — Visi & Misi */}
+          <div className="about-card about-card--vm">
+            <div className="about-vm-inner">
+              <div>
+                <h3 className="about-card-heading">Visi</h3>
+                <p className="about-card-text">
+                  Menjadi mitra terpercaya nomor satu bagi pelaku usaha dalam
+                  memenuhi standar kehalalan dan keamanan produk di Indonesia.
+                </p>
+              </div>
+              <div>
+                <h3 className="about-card-heading">Misi</h3>
+                <ul className="about-card-list">
+                  {misi.map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3 — Kenapa Memilih Kami */}
+          <div className="about-card">
+            <h2>Kenapa Memilih Kami</h2>
+            <ul className="about-list-grid">
+              {keunggulan.map((k) => (
+                <li key={k}>
+                  <span className="about-list-check">✓</span>
+                  {k}
+                </li>
+              ))}
+            </ul>
+          </div>
+
         </div>
       </section>
     </>

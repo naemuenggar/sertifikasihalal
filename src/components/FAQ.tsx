@@ -136,8 +136,10 @@ export default function FAQ() {
                       aria-expanded={isOpen}
                       onClick={() => setOpen(isOpen ? null : i)}
                     >
-                      {f.q}
-                      <Plus className="faq-item__icon" size={18} strokeWidth={1.8} />
+                      <span>{f.q}</span>
+                      <span className="faq-item__icon-wrap" aria-hidden="true">
+                        <Plus className="faq-item__icon" size={18} strokeWidth={2} />
+                      </span>
                     </button>
                     <div className="faq-item__a">
                       <div className="prose prose--inline">
