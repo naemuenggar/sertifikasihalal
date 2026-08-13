@@ -11,9 +11,10 @@ import type { News, NewsInput } from "./types";
 export async function fetchPublishedNews(opts: { limit?: number; offset?: number } = {}): Promise<{
   items: News[];
   count: number;
+  error?: string;
 }> {
   const sb = getSupabase();
-  if (!sb) return { items: [], count: 0 };
+  if (!sb) return { items: [], count: 0, error: "Supabase belum dikonfigurasi." };
   const { limit = 50, offset = 0 } = opts;
   try {
     const { data, error, count } = await sb
@@ -23,10 +24,14 @@ export async function fetchPublishedNews(opts: { limit?: number; offset?: number
       .order("published_at", { ascending: false })
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
-    if (error) return { items: [], count: 0 };
+    if (error) return { items: [], count: 0, error: error.message };
     return { items: (data ?? []) as News[], count: count ?? data?.length ?? 0 };
-  } catch {
-    return { items: [], count: 0 };
+  } catch (error) {
+    return {
+      items: [],
+      count: 0,
+      error: error instanceof Error ? error.message : "Berita gagal dimuat.",
+    };
   }
 }
 

@@ -28,6 +28,7 @@ function readingTime(content: string | null): number {
 export default function BeritaSection() {
   const [items, setItems] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { trackRef, slide, progress, ratio } = useCarousel<HTMLDivElement>(
     ".news-carousel__card",
     items.length
@@ -35,9 +36,10 @@ export default function BeritaSection() {
 
   useEffect(() => {
     let active = true;
-    fetchPublishedNews({ limit: 8 }).then(({ items }) => {
+    fetchPublishedNews({ limit: 8 }).then(({ items, error }) => {
       if (!active) return;
       setItems(items);
+      setError(error ?? null);
       setLoading(false);
     });
     return () => {
@@ -45,8 +47,8 @@ export default function BeritaSection() {
     };
   }, []);
 
-  // Jangan tampilkan section sama sekali kalau belum ada berita.
-  if (!loading && items.length === 0) return null;
+  // Sembunyikan hanya jika query berhasil dan memang belum ada berita.
+  if (!loading && !error && items.length === 0) return null;
 
   return (
     <section className="section" id="berita" data-service="neutral">
@@ -75,6 +77,17 @@ export default function BeritaSection() {
                 </div>
               </div>
             ))}
+          </div>
+        ) : error ? (
+          <div className="news-load-error">
+            <p>Berita sedang tidak dapat dimuat.</p>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => window.location.reload()}
+            >
+              Coba lagi
+            </button>
           </div>
         ) : (
           <div className="news-carousel">

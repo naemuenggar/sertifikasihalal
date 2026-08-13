@@ -2050,6 +2050,17 @@ h3 {
 .news-carousel__track::-webkit-scrollbar {
   display: none;
 }
+.news-load-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--ink-soft);
+}
 .news-carousel__card {
   flex: 0 0 calc((100% - var(--card-gap)) / 2.12);
   scroll-snap-align: start;
