@@ -1926,11 +1926,27 @@ h3 {
 /* ---------- Packages ---------- */
 .pkg-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(1rem, 2vw, 1.5rem);
   align-items: stretch;
-  max-width: 860px;
+  max-width: 1120px;
   margin-inline: auto;
+}
+.pkg-category + .pkg-category {
+  margin-top: clamp(3.5rem, 7vw, 6rem);
+}
+.pkg-category__head {
+  max-width: 760px;
+  margin: 0 auto 1.8rem;
+  text-align: center;
+}
+.pkg-category__head h3 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: var(--forest);
+}
+.pkg-category__head p {
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
 }
 .pkg {
   border: 1px solid var(--line);
