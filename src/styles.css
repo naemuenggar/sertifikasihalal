@@ -1932,6 +1932,54 @@ h3 {
   max-width: 1120px;
   margin-inline: auto;
 }
+
+/* ---------- Client carousel ---------- */
+.clients-carousel {
+  --card-gap: clamp(1rem, 2vw, 1.5rem);
+  --client-track-width: 100%;
+  --client-card-width: calc((var(--client-track-width) - 3 * var(--card-gap)) / 4);
+  width: 100%;
+  padding: 0.25rem 0.1rem 0.75rem;
+  display: flex;
+  gap: var(--card-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.clients-carousel-shell {
+  --clients-edge-gap: 18px;
+  /* Give this carousel its own wide viewport, independent of other grids. */
+  width: calc(100vw - 2 * var(--clients-edge-gap));
+  margin-left: calc(
+    var(--clients-edge-gap) - max(
+      var(--gut),
+      calc((100vw - min(var(--maxw), 100vw)) / 2 + var(--gut))
+    )
+  );
+}
+.clients-carousel::-webkit-scrollbar { display: none; }
+.clients-carousel__card { flex: 0 0 var(--client-card-width); scroll-snap-align: start; }
+.client-card { min-height: 390px; padding: 1.25rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: flex; flex-direction: column; gap: .8rem; box-shadow: 0 2px 8px rgba(22,26,23,.05); }
+.client-card__logo { height: 100px; display: grid; place-items: center; padding: .5rem; border-radius: 8px; background: #faf9f6; }
+.client-card__logo img { max-width: 100%; max-height: 84px; object-fit: contain; }
+.client-card__logo span { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: var(--forest); color: #fff; font-weight: 700; letter-spacing: .08em; }
+.client-card__country { display: flex; align-items: center; min-height: 32px; }
+.client-card__country img { width: 48px; height: 32px; object-fit: cover; border-radius: 3px; box-shadow: 0 1px 4px rgba(22, 26, 23, .16); }
+.client-card h3 { font-size: 1.12rem; line-height: 1.25; }
+.client-card p { color: var(--ink-soft); font-size: .88rem; line-height: 1.55; }
+.client-card__service { margin-top: auto; color: var(--moss); font-size: .72rem; font-weight: 600; line-height: 1.35; }
+.clients-section .carousel-arrow {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.clients-section .carousel-arrow--prev {
+  left: 0;
+}
+.clients-section .carousel-arrow--next {
+  right: 0;
+}
 .pkg-category + .pkg-category {
   margin-top: clamp(3.5rem, 7vw, 6rem);
 }
@@ -2370,6 +2418,7 @@ h3 {
 
 /* Tablet: ~1,7 kartu (kartu kedua terpotong) */
 @media (max-width: 1023px) {
+  .clients-carousel { --client-card-width: calc((var(--client-track-width) - var(--card-gap)) / 2); }
   .product-category,
   .svc-carousel__card {
     flex-basis: calc((100% - var(--card-gap)) / 1.7);
@@ -2477,6 +2526,7 @@ h3 {
 
 /* Mobile: 1 kartu + sedikit intipan kartu berikutnya */
 @media (max-width: 767px) {
+  .clients-carousel { --client-card-width: var(--client-track-width); }
   .product-category,
   .svc-carousel__card {
     flex-basis: calc((100% - var(--card-gap)) / 1.15);

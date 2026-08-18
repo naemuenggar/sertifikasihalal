@@ -5,6 +5,7 @@ import Services from "../components/Services";
 import Alur from "../components/Alur";
 import Packages from "../components/Packages";
 import FAQ from "../components/FAQ";
+import Clients from "../components/Clients";
 import { usePageTitle } from "../hooks/usePageMeta";
 
 export default function HomePage() {
@@ -16,8 +17,9 @@ export default function HomePage() {
       <ProductCategories />
       <Services />
       <Alur />
-      <Packages />
-      <FAQ />
+       <Packages />
+       <Clients />
+       <FAQ />
     </>
   );
 }
