@@ -3162,50 +3162,92 @@ textarea.field {
   text-decoration: underline;
 }
 
-/* ---------- Prose (konten Markdown) ---------- */
+/* ---------- Prose (konten Markdown) ----------
+   Ini badan artikel yang dibaca orang menit demi menit, bukan teks pendukung.
+   Tiga hal yang membuatnya terbaca tegas, dan ketiganya sengaja:
+   1. Warnanya --ink, bukan --ink-soft. Abu-abu muda enak untuk keterangan
+      satu-dua baris, tapi di paragraf sepanjang artikel hasilnya terlihat
+      pudar — kontrasnya turun justru di tempat yang paling butuh kontras.
+   2. Ukurannya di atas 16px. Ukuran badan situs dipakai untuk antarmuka;
+      teks bacaan panjang butuh sedikit lebih besar supaya mata tidak
+      menegang.
+   3. Jarak antar-paragraf lebih besar dari jarak antar-baris. Kalau
+      keduanya mirip, paragraf berhenti terbaca sebagai blok terpisah dan
+      halaman berubah jadi satu dinding teks. */
 .prose {
   max-width: 70ch;
   color: var(--ink);
+  font-size: clamp(1.0625rem, 1.02rem + 0.18vw, 1.15rem);
+  line-height: 1.75;
 }
 .prose > * + * {
-  margin-top: 1em;
+  margin-top: 1.35em;
 }
 .prose h1,
 .prose h2,
 .prose h3 {
-  margin-top: 1.6em;
+  margin-top: 2.2em;
+  /* Fraunces di badan artikel dipakai pada ukuran optik yang lain daripada
+     judul halaman: "opsz" 144 dirancang untuk teks raksasa dan jadi tipis
+     saat dikecilkan. Beratnya juga dinaikkan — subjudul harus terbaca
+     sebagai penanda babak baru, bukan sebagai kalimat yang kebetulan besar. */
+  font-weight: 560;
+  font-variation-settings: "opsz" 24, "SOFT" 20, "WONK" 0;
+  line-height: 1.2;
+  color: var(--forest);
 }
 .prose h2 {
-  font-size: 1.6rem;
+  font-size: 1.55em;
 }
 .prose h3 {
-  font-size: 1.25rem;
+  font-size: 1.22em;
+}
+/* Paragraf pertama setelah subjudul menempel lebih rapat: jaraknya milik
+   subjudulnya, bukan pemisah antar-paragraf. */
+.prose h1 + *,
+.prose h2 + *,
+.prose h3 + * {
+  margin-top: 0.65em;
 }
 .prose p {
-  line-height: 1.75;
-  color: var(--ink-soft);
+  color: var(--ink);
+  /* Menyeimbangkan sisa baris terakhir supaya paragraf tidak berakhir dengan
+     satu kata yatim menggantung sendirian. */
+  text-wrap: pretty;
 }
 .prose strong {
   color: var(--ink);
+  font-weight: 650;
 }
 .prose ul,
 .prose ol {
   padding-left: 1.4em;
-  color: var(--ink-soft);
-  line-height: 1.75;
+  color: var(--ink);
   display: flex;
   flex-direction: column;
-  gap: 0.4em;
+  gap: 0.5em;
+}
+.prose li::marker {
+  color: var(--moss);
 }
 .prose a {
-  color: var(--forest);
+  color: var(--moss);
+  font-weight: 550;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+.prose a:hover {
+  color: var(--forest);
 }
 .prose blockquote {
   border-left: 3px solid var(--gold);
-  padding-left: 1em;
-  color: var(--ink-soft);
+  padding-left: 1.1em;
+  color: var(--ink);
   font-style: italic;
+}
+.prose blockquote p {
+  color: inherit;
 }
 .prose code {
   background: var(--cream);
@@ -3452,8 +3494,17 @@ textarea.field {
 }
 
 /* ---------- Detail artikel berita ---------- */
+/* 820px pada ukuran badan artikel yang baru menghasilkan baris sepanjang ~90
+   karakter — mata kehilangan awal baris berikutnya saat kembali dari ujung
+   kanan. 760px mendekati 75 karakter, batas atas yang masih nyaman dibaca. */
 .article-wrap {
-  max-width: 820px;
+  max-width: 760px;
+}
+/* Di dalam artikel, kolom teksnya sudah dibatasi .article-wrap. Batas 70ch
+   milik .prose dipakai untuk konteks lain (pratinjau admin, jawaban FAQ) yang
+   pembungkusnya jauh lebih lebar. */
+.article-wrap .prose {
+  max-width: none;
 }
 .article-back {
   font-size: 0.88rem;
