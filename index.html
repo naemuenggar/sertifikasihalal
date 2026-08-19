@@ -27,8 +27,25 @@
     <!-- Slide pertama hero = elemen LCP. Fotonya dipasang sebagai
          background-image, jadi browser baru menemukannya setelah CSS diparsing —
          preload ini yang menutup jeda itu. Slide kedua sengaja tidak di-preload:
-         baru terlihat 7 detik kemudian dan tidak boleh menyaingi LCP. -->
-    <link rel="preload" as="image" href="/hero-1.jpeg" fetchpriority="high" />
+         baru terlihat 7 detik kemudian dan tidak boleh menyaingi LCP.
+         `media` wajib ada di kedua baris: di bawah 640px yang dipakai crop
+         potretnya (lihat .hero__bg di styles.css), jadi tanpa pembatas ini
+         ponsel ikut mengunduh foto lanskap yang tidak pernah ditampilkan.
+         Ambang di sini harus ikut kalau ambang di CSS digeser. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/hero-1.jpeg"
+      media="(min-width: 641px)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/hero-1-portrait.jpeg"
+      media="(max-width: 640px)"
+      fetchpriority="high"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

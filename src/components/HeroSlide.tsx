@@ -25,7 +25,12 @@ export default function HeroSlide({ slide, isActive, position, total }: Props) {
       aria-roledescription="slide"
       aria-label={`${position} dari ${total} — ${slide.name}`}
       aria-hidden={!isActive}
-      style={{ "--h-photo": `url("${slide.photo}")` } as CSSProperties}
+      style={
+        {
+          "--h-photo": `url("${slide.photo}")`,
+          "--h-photo-portrait": `url("${slide.photoPortrait}")`,
+        } as CSSProperties
+      }
     >
       <div className="hero__bg" aria-hidden />
       <div className="hero__overlay" aria-hidden />

@@ -36,6 +36,10 @@ export interface HeroSlideData {
   theme: HeroTheme;
   /** Path di /public. Dipasang lewat custom property, bukan <img>. */
   photo: string;
+  /** Crop potret 4:5 dari foto yang sama, dipakai di bawah 860px. Bukan sekadar
+   *  versi kecil: framing-nya beda, dipangkas ke dua subjeknya supaya wajah
+   *  tetap terbaca di lebar ponsel. Lihat `.hero__bg` di styles.css. */
+  photoPortrait: string;
   /** Label slide untuk pembaca layar dan dot indicator. */
   name: string;
   badge: string;
@@ -56,6 +60,7 @@ export const HERO_SLIDES: readonly HeroSlideData[] = [
     id: "halal",
     theme: "halal",
     photo: "/hero-1.jpeg",
+    photoPortrait: "/hero-1-portrait.jpeg",
     name: "Sertifikasi Halal",
     badge: "Sertifikasi Halal untuk Semua Jenis Usaha",
     titleHead: "Sertifikasi Halal,",
@@ -97,6 +102,7 @@ export const HERO_SLIDES: readonly HeroSlideData[] = [
     id: "bpom",
     theme: "bpom",
     photo: "/hero-2.jpeg",
+    photoPortrait: "/hero-2-portrait.jpeg",
     name: "Izin BPOM",
     badge: "Izin BPOM, Legalitas Terjamin",
     titleHead: "Urus Izin BPOM,",

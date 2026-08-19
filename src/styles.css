@@ -2604,7 +2604,8 @@ h3 {
      menyelamatkan itu; yang harus diubah rasio kotaknya.
      Tingginya diikat ke rasio foto (÷1.5) supaya frame-nya tampil utuh tanpa
      terpotong sama sekali, dengan langit-langit 38svh untuk layar lebar-pendek
-     — di sana ÷1.5 akan menghasilkan pita yang memakan hampir seluruh layar. */
+     — di sana ÷1.5 akan menghasilkan pita yang memakan hampir seluruh layar.
+     Di lebar ponsel fotonya diganti crop potret, lihat blok ≤640px. */
   .hero-slide {
     --hero-photo-h: min(calc(100vw / 1.5), 38svh);
   }
@@ -2718,6 +2719,26 @@ h3 {
   /* Hero: satu titik fokus. Judul harus jelas lebih besar dari angka statistik. */
   .hero {
     min-height: 100svh;
+  }
+  /* Art direction: di lebar ponsel fotonya diganti crop potret 4:5 dari frame
+     yang sama — dipangkas ke dua subjeknya, jadi wajah mereka terbaca di layar
+     selebar ini. Bukan sekadar versi kecil; framing-nya memang beda.
+     Batasnya 640px, bukan 860px: di lebar tablet pita fotonya melebar sampai
+     rasio ~1.8 dan crop potret di kotak selebar itu justru terpangkas habis
+     atas-bawah — di sana frame lanskapnya yang lebih pas.
+     `--h-photo` dipasang inline dari React sehingga tidak bisa ditimpa dari
+     sini; yang ditimpa `background-image`-nya, membaca variabel yang berbeda.
+     Efek sampingnya menguntungkan: browser hanya mengunduh aset yang menang di
+     cascade, jadi ponsel tidak lagi menarik foto lanskap 1536px.
+     Tinggi pita ikut rasio crop-nya (÷0.8) dengan langit-langit 52svh supaya
+     judul tetap terlihat tanpa scroll. Saat langit-langit itu aktif, yang
+     terpangkas bagian bawah (meja dan properti) — itu guna titik fokus 32%. */
+  .hero-slide {
+    --hero-photo-h: min(calc(100vw / 0.8), 52svh);
+  }
+  .hero__bg {
+    background-image: var(--h-photo-portrait);
+    background-position: center 32%;
   }
   .hero__inner {
     padding-top: 2.25rem;
