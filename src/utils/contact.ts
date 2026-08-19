@@ -8,3 +8,9 @@ export const WA_LINK = `https://wa.me/${WA_NUMBER}`;
  *  konteks — misal paket mana yang diklik — supaya chat tidak mulai kosong. */
 export const waLinkWith = (message: string) =>
   `${WA_LINK}?text=${encodeURIComponent(message)}`;
+
+/** Label tombol WhatsApp di akhir artikel berita. Sengaja tidak ikut disimpan
+ *  per berita: kolom `news.cta_text` diisi kalimat ajakannya, dan tombolnya
+ *  cukup satu kalimat aksi yang sama di semua artikel. Admin jadi hanya
+ *  menulis satu hal, dan tombolnya tidak bisa berubah jadi satu paragraf. */
+export const WA_CTA_LABEL = "Konsultasi gratis via WhatsApp";

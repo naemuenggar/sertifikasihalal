@@ -3484,12 +3484,47 @@ textarea.field {
   margin-bottom: 2rem;
   border: 1px solid var(--line);
 }
+/* Ajakan penutup artikel. Panel, bukan tombol raksasa: kalimat ajakannya bisa
+   sepanjang satu paragraf, jadi yang jadi tombol hanya baris aksinya. */
 .article-cta {
-  margin-top: 2.5rem;
-  padding-top: 1.8rem;
-  border-top: 1px solid var(--line);
+  margin-top: 3rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  border-radius: 12px;
+  background: var(--forest);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.4rem;
+}
+.article-cta__text {
+  margin: 0;
+  color: var(--cream);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  /* Admin boleh menulis lebih dari satu paragraf; tanpa ini semua barisnya
+     menempel jadi satu blok. */
+  white-space: pre-line;
+}
+.article-cta__btn {
+  flex-shrink: 0;
+  background: var(--paper);
+  color: var(--forest);
+  font-weight: 600;
+}
+.article-cta__btn:hover {
+  background: var(--gold);
+  color: var(--forest);
+}
+/* Di layar sempit label tombolnya pasti pecah jadi dua baris — tidak ada
+   ukuran huruf wajar yang muat satu baris di dalam panel selebar itu. Jadi
+   dibuat selebar panel dan terpusat, supaya pecahnya terbaca disengaja. */
+@media (max-width: 640px) {
+  .article-cta__btn {
+    align-self: stretch;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.35;
+  }
 }
 
 /* ---------- 404 ---------- */
@@ -4053,6 +4088,26 @@ textarea.field {
   font-size: 0.76rem;
   color: var(--ink-soft);
 }
+.admin-field__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.admin-field__foot small:last-child {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.admin-field__foot .is-warn {
+  color: var(--terracotta);
+  font-weight: 600;
+}
+/* Pratinjau CTA memakai komponen halaman publik apa adanya, jadi yang perlu
+   diatur di sini cuma jaraknya — bukan tampilan panelnya. */
+.admin-field .article-cta {
+  margin-top: 0;
+}
 .admin-form__tabs {
   display: flex;
   gap: 0.4rem;
@@ -4080,6 +4135,85 @@ textarea.field {
 .admin-form__content {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.88rem;
+}
+
+/* ---- Editor isi berita (toolbar Markdown) --------------------------------
+   Toolbar dan textarea sengaja dijadikan satu kotak: batas atas textarea-nya
+   dilepas supaya keduanya terbaca sebagai satu bidang tulis, bukan dua kontrol
+   yang kebetulan bertumpuk. */
+.md-editor {
+  display: grid;
+  gap: 0.55rem;
+}
+.md-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border: 1px solid var(--line-strong);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--cream);
+}
+.md-editor .admin-form__content {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: -0.55rem; /* menutup gap grid antara toolbar dan textarea */
+}
+.md-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.md-toolbar__btn:hover:not(:disabled),
+.md-toolbar__btn:focus-visible {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--forest);
+}
+.md-toolbar__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.md-toolbar__sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 0 0.3rem;
+  background: var(--line-strong);
+}
+.md-toolbar__text {
+  font-weight: 600;
+}
+.md-editor__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+}
+.md-editor__foot .is-warn {
+  color: var(--terracotta);
+  font-weight: 600;
+}
+
+/* Stabilo dan garis bawah dari toolbar. Tanpa aturan ini <mark> memakai kuning
+   bawaan browser yang bentrok dengan palet halaman. */
+.prose mark {
+  background: color-mix(in srgb, var(--gold) 35%, transparent);
+  padding: 0 0.15em;
+  border-radius: 2px;
+}
+.prose u {
+  text-underline-offset: 0.18em;
 }
 .admin-form__thumb {
   width: 100%;

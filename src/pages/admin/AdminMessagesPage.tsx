@@ -7,6 +7,7 @@ import {
 } from "../../lib/contact";
 import type { ContactMessage, ContactMessageStatus } from "../../lib/types";
 import { formatDateTime } from "../../utils/date";
+import { LIMITS } from "../../lib/limits";
 
 type Filter = "semua" | ContactMessageStatus;
 
@@ -184,6 +185,7 @@ export default function AdminMessagesPage() {
                 rows={4}
                 value={catatan}
                 onChange={(event) => setCatatan(event.target.value)}
+                maxLength={LIMITS.contactNote}
                 placeholder="Contoh: sudah dihubungi via WA, minat sertifikasi kosmetik"
               />
             </label>

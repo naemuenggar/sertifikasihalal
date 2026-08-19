@@ -4,9 +4,16 @@
  * Semua fungsi aman terhadap Supabase yang belum dikonfigurasi / error jaringan.
  */
 import { getSupabase } from "./supabase";
+import { LIMITS, cleanText, isOverLimit } from "./limits";
 import type { ContactMessage, ContactMessageStatus } from "./types";
 
-/** Kirim pesan dari form publik. Mengembalikan ok:true jika tersimpan. */
+/**
+ * Kirim pesan dari form publik. Mengembalikan ok:true jika tersimpan.
+ *
+ * Isinya dirapikan dan diperiksa panjangnya di sini, bukan hanya di komponen
+ * form — endpoint ini terbuka untuk anonim, jadi setiap pemanggil harus
+ * dianggap bisa saja bukan form kita.
+ */
 export async function submitContact(input: {
   name: string;
   contact: string;
@@ -14,8 +21,26 @@ export async function submitContact(input: {
 }): Promise<{ ok: boolean; error?: string }> {
   const sb = getSupabase();
   if (!sb) return { ok: false, error: "Database belum dikonfigurasi." };
+
+  const payload = {
+    name: cleanText(input.name),
+    contact: cleanText(input.contact),
+    message: cleanText(input.message),
+  };
+
+  if (!payload.name || !payload.contact || !payload.message) {
+    return { ok: false, error: "Nama, kontak, dan pesan wajib diisi." };
+  }
+  if (
+    isOverLimit(payload.name, LIMITS.contactName) ||
+    isOverLimit(payload.contact, LIMITS.contactContact) ||
+    isOverLimit(payload.message, LIMITS.contactMessage)
+  ) {
+    return { ok: false, error: "Isian terlalu panjang. Persingkat pesan Anda." };
+  }
+
   try {
-    const { error } = await sb.from("contact_messages").insert(input);
+    const { error } = await sb.from("contact_messages").insert(payload);
     return error ? { ok: false, error: error.message } : { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Terjadi kesalahan." };
@@ -46,9 +71,13 @@ export async function updateContactMessageAdmin(
   const sb = getSupabase();
   if (!sb) return { error: "Database belum dikonfigurasi." };
   try {
+    const note = input.catatan ? cleanText(input.catatan) : null;
+    if (note && isOverLimit(note, LIMITS.contactNote)) {
+      return { error: "Catatan terlalu panjang." };
+    }
     const { data, error } = await sb
       .from("contact_messages")
-      .update(input)
+      .update({ status: input.status, catatan: note || null })
       .eq("id", id)
       .select("*")
       .single();

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { MessageCircleQuestion, Send, X } from "lucide-react";
+import { LIMITS } from "../lib/limits";
 import { WhatsApp } from "./icons";
 import { WA_NUMBER } from "../utils/contact";
 import { submitContact } from "../lib/contact";
@@ -121,6 +122,8 @@ export default function MoreInfoFab() {
                 placeholder="Nama"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                maxLength={LIMITS.contactName}
+                autoComplete="name"
                 required
               />
               <input
@@ -128,6 +131,7 @@ export default function MoreInfoFab() {
                 placeholder="No. HP / Email"
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
+                maxLength={LIMITS.contactContact}
                 required
               />
               <textarea
@@ -136,6 +140,7 @@ export default function MoreInfoFab() {
                 rows={3}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+                maxLength={LIMITS.contactMessage}
                 required
               />
               {status === "error" && <p className="moreinfo__err">{errMsg}</p>}

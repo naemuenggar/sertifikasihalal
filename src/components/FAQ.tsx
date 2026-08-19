@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Markdown from "./Markdown";
 import ScrollLink from "./ScrollLink";
 
 const faqs = [
@@ -143,7 +142,7 @@ export default function FAQ() {
                     </button>
                     <div className="faq-item__a">
                       <div className="prose prose--inline">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{f.a}</ReactMarkdown>
+                        <Markdown>{f.a}</Markdown>
                       </div>
                     </div>
                   </div>

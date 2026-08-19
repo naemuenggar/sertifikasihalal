@@ -11,6 +11,7 @@ export type News = {
   summary: string | null;
   content: string | null;
   cta_text: string | null;
+  cta_button: string | null;
   status: NewsStatus;
   published_at: string | null;
   created_at: string;
@@ -26,6 +27,7 @@ export type NewsInput = {
   summary: string | null;
   content: string | null;
   cta_text: string | null;
+  cta_button: string | null;
   status: NewsStatus;
   published_at: string | null;
 };

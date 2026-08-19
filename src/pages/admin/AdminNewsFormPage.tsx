@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type ChangeEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { createNews, updateNews, fetchNewsByIdAdmin, uploadThumbnail } from "../../lib/news";
+import MarkdownEditor from "../../components/MarkdownEditor";
+import { createNews, updateNews, fetchNewsByIdAdmin, uploadNewsImage } from "../../lib/news";
+import { LIMITS } from "../../lib/limits";
+import ArticleCta from "../../components/ArticleCta";
+import { WA_CTA_LABEL } from "../../utils/contact";
 import type { NewsInput, NewsStatus } from "../../lib/types";
 import { slugify } from "../../utils/slug";
 
@@ -26,7 +28,7 @@ export default function AdminNewsFormPage() {
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [ctaText, setCtaText] = useState("");
-  const [preview, setPreview] = useState(false);
+  const [ctaButton, setCtaButton] = useState("");
   const [status, setStatus] = useState<NewsStatus>("draft");
   const [publishedDate, setPublishedDate] = useState("");
   const [saving, setSaving] = useState(false);
@@ -50,6 +52,7 @@ export default function AdminNewsFormPage() {
       setSummary(n.summary ?? "");
       setContent(n.content ?? "");
       setCtaText(n.cta_text ?? "");
+      setCtaButton(n.cta_button ?? "");
       setStatus(n.status);
       setPublishedDate(n.published_at ? n.published_at.slice(0, 10) : "");
       setLoading(false);
@@ -64,13 +67,14 @@ export default function AdminNewsFormPage() {
 
   const handleFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
     setUploading(true);
     setError("");
-    const url = await uploadThumbnail(file);
+    const { url, error: uploadError } = await uploadNewsImage(file);
     setUploading(false);
     if (url) setThumbnailUrl(url);
-    else setError("Gagal mengunggah gambar. Coba lagi.");
+    else setError(uploadError ?? "Gagal mengunggah gambar. Coba lagi.");
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -92,6 +96,7 @@ export default function AdminNewsFormPage() {
       summary: summary.trim() || null,
       content: content || null,
       cta_text: ctaText.trim() || null,
+      cta_button: ctaButton.trim() || null,
       status,
       published_at: publishedDate
         ? new Date(`${publishedDate}T09:00:00`).toISOString()
@@ -152,6 +157,7 @@ export default function AdminNewsFormPage() {
                 value={title}
                 onChange={(e) => handleTitle(e.target.value)}
                 placeholder="Judul berita"
+                maxLength={LIMITS.newsTitle}
                 required
               />
             </label>
@@ -166,6 +172,7 @@ export default function AdminNewsFormPage() {
                   setSlug(e.target.value);
                 }}
                 placeholder="otomatis-dari-judul"
+                maxLength={LIMITS.newsSlug}
               />
               <small>Otomatis dari judul, bisa diubah manual.</small>
             </label>
@@ -178,43 +185,67 @@ export default function AdminNewsFormPage() {
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder="Ditampilkan di kartu preview…"
+                maxLength={LIMITS.newsSummary}
               />
             </label>
 
             <div className="admin-field">
-              <span>Isi berita (Markdown)</span>
-              <div className="admin-form__tabs">
-                <button
-                  type="button"
-                  className={!preview ? "is-active" : ""}
-                  onClick={() => setPreview(false)}
-                >
-                  Tulis
-                </button>
-                <button
-                  type="button"
-                  className={preview ? "is-active" : ""}
-                  onClick={() => setPreview(true)}
-                >
-                  Preview
-                </button>
-              </div>
-              {preview ? (
-                <div className="prose admin-form__preview">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {content || "*Belum ada isi.*"}
-                  </ReactMarkdown>
-                </div>
-              ) : (
-                <textarea
-                  className="field admin-form__content"
-                  rows={12}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Tulis isi berita di sini…"
-                />
-              )}
+              <span>Isi berita</span>
+              <MarkdownEditor
+                value={content}
+                onChange={setContent}
+                onUploadImage={uploadNewsImage}
+                maxLength={LIMITS.newsContent}
+              />
             </div>
+
+            <div className="admin-field">
+              <span>Ajakan penutup artikel</span>
+              <textarea
+                className="field"
+                rows={4}
+                value={ctaText}
+                onChange={(e) => setCtaText(e.target.value)}
+                placeholder="mis. Butuh pendampingan sertifikasi halal? Konsultasikan produk dan kebutuhan bisnis Anda bersama tim kami."
+                maxLength={LIMITS.newsCta}
+              />
+              <div className="admin-field__foot">
+                <small>
+                  Satu sampai tiga kalimat ajakan. Tombol WhatsApp muncul otomatis di bawahnya —
+                  labelnya diatur di kolom berikutnya. Kosongkan jika berita ini tidak perlu ajakan.
+                </small>
+                <small className={ctaText.length > LIMITS.newsCta * 0.9 ? "is-warn" : ""}>
+                  {ctaText.length}/{LIMITS.newsCta}
+                </small>
+              </div>
+            </div>
+
+            <label className="admin-field">
+              <span>Teks tombol (opsional)</span>
+              <input
+                className="field"
+                value={ctaButton}
+                onChange={(e) => setCtaButton(e.target.value)}
+                placeholder={WA_CTA_LABEL}
+                maxLength={LIMITS.newsCtaButton}
+              />
+              <div className="admin-field__foot">
+                <small>
+                  Kosongkan saja untuk memakai “{WA_CTA_LABEL}”. Isi hanya kalau berita ini butuh
+                  ajakan yang lain — dua sampai lima kata, diawali kata kerja.
+                </small>
+                <small className={ctaButton.length > LIMITS.newsCtaButton * 0.9 ? "is-warn" : ""}>
+                  {ctaButton.length}/{LIMITS.newsCtaButton}
+                </small>
+              </div>
+            </label>
+
+            {ctaText.trim() && (
+              <div className="admin-field">
+                <span>Pratinjau ajakan</span>
+                <ArticleCta text={ctaText} buttonLabel={ctaButton} />
+              </div>
+            )}
           </div>
 
           {/* Kolom pengaturan terbit */}
@@ -230,23 +261,18 @@ export default function AdminNewsFormPage() {
               </select>
             </label>
 
-            <label className="admin-field">
-              <span>CTA (teks tombol)</span>
-              <input
-                className="field"
-                value={ctaText}
-                onChange={(e) => setCtaText(e.target.value)}
-                placeholder="mis. Konsultasi Gratis Sekarang"
-              />
-              <small>Ketik manual. Tombol WhatsApp ini tampil di akhir artikel. Kosongkan jika tidak perlu.</small>
-            </label>
-
             <div className="admin-field">
               <span>Gambar thumbnail</span>
               {thumbnailUrl && (
                 <img className="admin-form__thumb" src={thumbnailUrl} alt="Pratinjau thumbnail" />
               )}
-              <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} hidden />
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/avif"
+                onChange={handleFile}
+                hidden
+              />
               <div className="admin-form__thumb-actions">
                 <button
                   type="button"

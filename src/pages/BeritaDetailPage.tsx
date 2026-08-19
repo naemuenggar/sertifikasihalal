@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Markdown from "../components/Markdown";
 import { fetchNewsBySlug } from "../lib/news";
 import type { News } from "../lib/types";
-import WaLink from "../components/WaLink";
+import ArticleCta from "../components/ArticleCta";
 import { formatDate } from "../utils/date";
 import NotFoundPage from "./NotFoundPage";
 import { usePageTitle } from "../hooks/usePageMeta";
@@ -64,19 +63,14 @@ export default function BeritaDetailPage() {
         )}
 
         <div className="prose">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{news.content ?? ""}</ReactMarkdown>
+          <Markdown>{news.content ?? ""}</Markdown>
         </div>
 
-        {news.cta_text && (
-          <div className="article-cta">
-            <WaLink
-              className="btn btn--solid"
-              message={`Halo, saya membaca artikel "${news.title}" dan ingin konsultasi.`}
-            >
-              {news.cta_text}
-            </WaLink>
-          </div>
-        )}
+        <ArticleCta
+          text={news.cta_text}
+          buttonLabel={news.cta_button}
+          articleTitle={news.title}
+        />
       </div>
     </article>
   );
