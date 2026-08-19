@@ -22,12 +22,17 @@ create table if not exists public.news (
   thumbnail_url text,
   summary       text,
   content       text,                 -- isi berita (Markdown)
+  cta_text      text,                 -- teks tombol CTA WhatsApp di akhir artikel
   status        text not null default 'draft'
                 check (status in ('draft', 'published')),
   published_at  timestamptz,
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );
+
+-- Aman saat schema dijalankan ke project yang tabelnya sudah ada.
+alter table public.news
+  add column if not exists cta_text text;
 
 create index if not exists news_status_published_at_idx
   on public.news (status, published_at desc);

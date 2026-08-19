@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { fetchNewsBySlug } from "../lib/news";
 import type { News } from "../lib/types";
+import WaLink from "../components/WaLink";
 import { formatDate } from "../utils/date";
 import NotFoundPage from "./NotFoundPage";
 import { usePageTitle } from "../hooks/usePageMeta";
@@ -65,6 +66,17 @@ export default function BeritaDetailPage() {
         <div className="prose">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{news.content ?? ""}</ReactMarkdown>
         </div>
+
+        {news.cta_text && (
+          <div className="article-cta">
+            <WaLink
+              className="btn btn--solid"
+              message={`Halo, saya membaca artikel "${news.title}" dan ingin konsultasi.`}
+            >
+              {news.cta_text}
+            </WaLink>
+          </div>
+        )}
       </div>
     </article>
   );

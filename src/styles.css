@@ -3324,6 +3324,13 @@ textarea.field {
   margin-bottom: 2rem;
   border: 1px solid var(--line);
 }
+.article-cta {
+  margin-top: 2.5rem;
+  padding-top: 1.8rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+}
 
 /* ---------- 404 ---------- */
 .notfound {

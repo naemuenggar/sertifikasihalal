@@ -6,7 +6,7 @@ import { createNews, updateNews, fetchNewsByIdAdmin, uploadThumbnail } from "../
 import type { NewsInput, NewsStatus } from "../../lib/types";
 import { slugify } from "../../utils/slug";
 
-const CATEGORIES = ["Regulasi", "Kosmetik", "Pasar", "Tips & Panduan"];
+const CATEGORIES = ["Halal", "BPOM", "Regulasi", "Informasi", "Tips & Panduan"];
 
 /** Form Tambah (/admin/berita/new) & Edit (/admin/berita/:id/edit) berita. */
 export default function AdminNewsFormPage() {
@@ -25,6 +25,7 @@ export default function AdminNewsFormPage() {
   const [uploading, setUploading] = useState(false);
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
+  const [ctaText, setCtaText] = useState("");
   const [preview, setPreview] = useState(false);
   const [status, setStatus] = useState<NewsStatus>("draft");
   const [publishedDate, setPublishedDate] = useState("");
@@ -48,6 +49,7 @@ export default function AdminNewsFormPage() {
       setThumbnailUrl(n.thumbnail_url ?? "");
       setSummary(n.summary ?? "");
       setContent(n.content ?? "");
+      setCtaText(n.cta_text ?? "");
       setStatus(n.status);
       setPublishedDate(n.published_at ? n.published_at.slice(0, 10) : "");
       setLoading(false);
@@ -89,6 +91,7 @@ export default function AdminNewsFormPage() {
       thumbnail_url: thumbnailUrl || null,
       summary: summary.trim() || null,
       content: content || null,
+      cta_text: ctaText.trim() || null,
       status,
       published_at: publishedDate
         ? new Date(`${publishedDate}T09:00:00`).toISOString()
@@ -225,6 +228,17 @@ export default function AdminNewsFormPage() {
                   </option>
                 ))}
               </select>
+            </label>
+
+            <label className="admin-field">
+              <span>CTA (teks tombol)</span>
+              <input
+                className="field"
+                value={ctaText}
+                onChange={(e) => setCtaText(e.target.value)}
+                placeholder="mis. Konsultasi Gratis Sekarang"
+              />
+              <small>Ketik manual. Tombol WhatsApp ini tampil di akhir artikel. Kosongkan jika tidak perlu.</small>
             </label>
 
             <div className="admin-field">
