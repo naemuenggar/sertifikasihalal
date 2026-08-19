@@ -2596,23 +2596,51 @@ h3 {
     width: fit-content;
     margin-top: 0.5rem;
   }
-  /* Layout jadi 1 kolom, jadi scrim-nya harus vertikal juga. Gradien 98deg
-     dirancang untuk teks-kiri/foto-kanan dan bikin foto berat sebelah di sini. */
-  .hero__overlay {
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--h-panel) 52%, transparent) 0%,
-      color-mix(in srgb, var(--h-panel) 86%, transparent) 38%,
-      color-mix(in srgb, var(--h-panel) 96%, transparent) 100%
-    );
+  /* Foto berhenti jadi latar penuh dan turun jadi pita di atas.
+     Alasannya rasio, bukan selera: fotonya 3:2, sementara kotak hero di ponsel
+     sekitar 0.37 (375x1026). Dengan `cover`, foto diskalakan mengikuti tinggi
+     kotak sampai lebarnya ~1539px — hanya 24% lebar frame yang muat, sisanya
+     terbuang ke samping. Tidak ada nilai background-position yang bisa
+     menyelamatkan itu; yang harus diubah rasio kotaknya.
+     Tingginya diikat ke rasio foto (÷1.5) supaya frame-nya tampil utuh tanpa
+     terpotong sama sekali, dengan langit-langit 38svh untuk layar lebar-pendek
+     — di sana ÷1.5 akan menghasilkan pita yang memakan hampir seluruh layar. */
+  .hero-slide {
+    --hero-photo-h: min(calc(100vw / 1.5), 38svh);
   }
   .hero__bg {
-    /* Satu kolom: fotonya kembali full-bleed dan kontainernya tinggi, jadi
-       subjeknya ditarik ke atas supaya tidak tertutup blok teks. */
-    inset: 0;
-    background-position: center 22%;
+    inset: 0 0 auto 0;
+    height: var(--hero-photo-h);
+    background-position: center center;
     -webkit-mask-image: none;
     mask-image: none;
+  }
+  /* Scrim ikut mengecil ke pita yang sama. Bagian bawahnya ditutup penuh
+     --h-panel — warna yang sama dengan latar hero — jadi pita fotonya larut ke
+     bawah tanpa garis sambung, bukan berhenti dengan tepi keras. */
+  .hero__overlay {
+    inset: 0 0 auto 0;
+    height: var(--hero-photo-h);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--h-panel) 30%, transparent) 0%,
+      color-mix(in srgb, var(--h-panel) 8%, transparent) 30%,
+      color-mix(in srgb, var(--h-panel) 34%, transparent) 68%,
+      color-mix(in srgb, var(--h-panel) 88%, transparent) 90%,
+      var(--h-panel) 100%
+    );
+  }
+  /* Isinya digeser ke bawah pita lewat margin, bukan padding: tiap breakpoint
+     sudah punya padding-top-nya sendiri, dan menumpuk keduanya di properti yang
+     sama akan bikin salah satunya diam-diam hilang. */
+  .hero__inner {
+    margin-top: var(--hero-photo-h);
+  }
+  /* Cahaya dekoratif ini dirancang duduk di belakang judul di kolom kiri. Di
+     sini judulnya sudah turun ke bawah pita, jadi glow-nya cuma mengabuti
+     foto. */
+  .hero__glow {
+    display: none;
   }
   /* Pill kontrol menempel di pojok kanan atas — badge-nya harus berhenti
      sebelum sampai ke sana, kalau tidak teksnya menyelinap di bawah pill. */
