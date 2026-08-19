@@ -45,10 +45,12 @@ section[data-service],
 }
 
 /* Kartu di section Halal (data-service="halal") -> Gradient Hijau */
+/* .snake__node tidak ikut di sini. Lima kartu tahap yang semuanya hijau membuat
+   hijau tidak menandakan apa pun — dan justru menenggelamkan penanda tahap yang
+   sedang dibaca, satu-satunya hal di jalur ini yang perlu menonjol. Di section
+   ini hijau tinggal dipegang lingkaran ikonnya; latar kartunya netral. */
 [data-service="halal"] .svc,
 [data-service="halal"] .product-category,
-[data-service="halal"] .snake__node,
-[data-service="halal"] .detail,
 [data-service="halal"] .detail-article {
   background: linear-gradient(180deg, #eef4e6 0%, #d3e4c4 100%);
   border: 0.5px solid #e3e3e0;
@@ -56,7 +58,6 @@ section[data-service],
 
 /* Kartu di section BPOM (data-service="bpom") -> Gradient Biru */
 [data-service="bpom"] .product-category,
-[data-service="bpom"] .detail,
 [data-service="bpom"] .detail-article {
   background: linear-gradient(180deg, #e8f1fa 0%, #c5dcef 100%);
   border: 0.5px solid #e3e3e0;
@@ -67,8 +68,6 @@ section[data-service],
 [data-service="neutral"] .pkg,
 [data-service="neutral"] .product-category,
 [data-service="neutral"] .faq-item,
-[data-service="neutral"] .snake__node,
-[data-service="neutral"] .detail,
 [data-service="neutral"] .news-carousel__card,
 [data-service="neutral"] .about-main,
 [data-service="neutral"] .detail-cta {
@@ -1396,20 +1395,64 @@ h3 {
   padding: clamp(0.9rem, 2vw, 1.15rem) clamp(1rem, 2vw, 1.3rem);
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #FFFFFF;
-  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7F6F1 100%);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.paths__btn:hover {
-  border-color: var(--moss);
+/* Tombolnya harus terasa bisa ditekan sebelum ditekan. Naik sedikit + bayangan
+   yang melebar ke bawah membaca sebagai "benda ini terangkat dari halaman",
+   dan itu yang bikin orang mencoba menekannya. */
+@media (hover: hover) and (pointer: fine) {
+  .paths__btn:hover {
+    border-color: var(--moss);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -14px rgba(22, 26, 23, 0.55);
+  }
+}
+/* Turun melewati posisi diamnya, bukan cuma kembali ke nol — jarak tekannya
+   jadi terasa. Transisinya dipotong pendek supaya reaksinya datang bersamaan
+   dengan jarinya, bukan menyusul. */
+.paths__btn:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: inset 0 2px 6px -3px rgba(22, 26, 23, 0.4);
+  transition-duration: 0.06s;
 }
 .paths__btn:focus-visible {
   outline: 2px solid var(--moss);
   outline-offset: 2px;
 }
+/* Yang terpilih berhenti terangkat: cincin ganda di dalam tepi membacanya
+   sebagai tombol yang tertekan dan tetap di bawah — bukan sekadar tombol lain
+   yang kebetulan diberi border. Latarnya rata putih, tanpa gradasi, jadi
+   bedanya dari tetangganya datang dari cincin dan sikap, bukan dari warna. */
 .paths__btn--on {
   border-color: var(--moss);
   background: #FFFFFF;
   box-shadow: inset 0 0 0 1px var(--moss);
+  animation: paths-press 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  /* Yang sudah aktif tidak ikut terangkat waktu disentuh — kalau ikut, kesan
+     "sudah tertekan" hilang dan hover terasa membatalkan pilihan. */
+  .paths__btn--on:hover {
+    transform: none;
+    box-shadow: inset 0 0 0 1px var(--moss);
+  }
+}
+/* Pantulan sekali waktu pilihan berpindah. Animasi mulai sendiri begitu kelas
+   --on dipasang, jadi tidak perlu state tambahan di React hanya untuk ini. */
+@keyframes paths-press {
+  0% {
+    transform: scale(0.97);
+  }
+  60% {
+    transform: scale(1.012);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .paths__label {
   font-weight: 600;
@@ -1441,7 +1484,7 @@ h3 {
 .flow__step {
   position: relative;
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 48px 1fr;
   gap: clamp(1rem, 2vw, 1.5rem);
   padding-bottom: clamp(1.7rem, 3vw, 2.4rem);
 }
@@ -1451,24 +1494,28 @@ h3 {
 .flow__step:not(:last-child)::before {
   content: "";
   position: absolute;
-  left: 21px;
-  top: 46px;
+  left: 23px;
+  top: 50px;
   bottom: 0;
   width: 2px;
   background: color-mix(in srgb, var(--moss) 22%, transparent);
 }
 .flow__marker {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #EAF3DE;
   color: #27500A;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  font-weight: 700;
   line-height: 1;
+  flex-shrink: 0;
+  /* Sama seperti .snake__marker di tampilan lebar — ikonnya yang berbobot,
+     supaya bahasa visualnya tidak berganti waktu layar mengecil. */
+  background: linear-gradient(180deg, #F1F8E5 0%, #D9EAC3 100%);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--moss) 9%, transparent),
+    0 5px 12px -5px rgba(22, 26, 23, 0.4);
 }
 .flow__body h3 {
   font-family: var(--sans);
@@ -1523,7 +1570,10 @@ h3 {
    takiknya perlu menghitung posisi kolom dengan grid yang sama. */
 .alur {
   --snake-gap-x: clamp(1rem, 2vw, 1.6rem);
-  --snake-marker: 44px;
+  /* Naik dari 44px waktu isinya berganti dari angka ke ikon: glif angka terbaca
+     penuh di lingkaran kecil, ikon garis butuh ruang lebih supaya detailnya
+     tidak saling menempel. */
+  --snake-marker: 54px;
   /* Padding atas kartu node. Konektor menempel di pusat marker, jadi setiap
      offsetnya harus ikut menghitung nilai ini — kalau tidak, garisnya melayang
      di atas kartu. */
@@ -1666,7 +1716,9 @@ h3 {
     calc(var(--snake-pad-y) - 0.15rem);
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #FFFFFF;
+  /* Gradasi netral yang nyaris tak terbaca sebagai warna — cukup untuk memberi
+     kartu arah cahaya dari atas, tidak cukup untuk bersaing dengan kartu aktif. */
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7F6F1 100%);
   transition:
     border-color 0.18s ease,
     background-color 0.18s ease,
@@ -1684,11 +1736,14 @@ h3 {
 @media (hover: hover) and (pointer: fine) {
   .snake__node:hover {
     border-color: color-mix(in srgb, var(--moss) 50%, transparent);
-    box-shadow: 0 8px 20px -12px rgba(22, 26, 23, 0.4);
     transform: translateY(-3px);
   }
+  /* Bayangannya hidup di lingkaran, bukan di kartunya: saat hover ia melebar
+     dan turun sedikit, jadi angkanya yang terbaca terangkat — bukan sekadar
+     kotak yang bergeser. */
   .snake__node:hover .snake__marker {
     transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 18px -8px rgba(22, 26, 23, 0.45);
   }
 }
 /* Kartunya ditekan balik sesaat. Umpan balik tekan inilah yang membedakan
@@ -1701,32 +1756,54 @@ h3 {
   width: var(--snake-marker);
   height: var(--snake-marker);
   border-radius: 50%;
-  background: #EAF3DE;
+  /* Gradien lembut + cincin tipis, bukan bidang datar. Inilah yang membuat
+     lingkarannya terbaca sebagai keping yang berdiri di atas kartu — bentuk
+     yang dipakai contoh roadmap yang jadi acuan. */
+  background: linear-gradient(180deg, #F1F8E5 0%, #D9EAC3 100%);
   color: #27500A;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  font-weight: 700;
   line-height: 1;
+  /* Bayangan melekat pada bentuk bulatnya, bukan pada kartu persegi di
+     belakangnya. Lingkaran berikon inilah penanda tahap — yang punya bobot
+     harus dia, sementara kartunya tetap rata sebagai bidang penampung. */
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--moss) 9%, transparent),
+    0 5px 12px -5px rgba(22, 26, 23, 0.4);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+/* Ikon ikut ukuran lingkarannya, jadi cukup satu variabel --snake-marker untuk
+   menyetel keduanya dan tidak ada angka px kedua yang bisa ketinggalan waktu
+   ukurannya diubah. Ini juga menimpa atribut width/height bawaan lucide. */
+.snake__marker svg,
+.flow__marker svg {
+  width: 46%;
+  height: 46%;
 }
 /* Node yang sedang dibaca: kartunya justru dicerahkan ke --surface, kebalikan
    dari tetangganya yang --paper. Terangkat, bukan sekadar diberi warna lain. */
+/* Kartu aktif dibedakan dengan dicerahkan, bukan diwarnai: putih rata di antara
+   tetangga yang meluruh ke #F7F6F1. Bersama garis tepi moss dan lingkaran ikon
+   yang menghitam, itu sudah cukup menandai mana yang sedang dibuka — latar
+   berwarna cuma akan menambah satu bidang hijau lagi ke section ini. */
 .snake__node--on {
   border-color: var(--moss);
   background: #FFFFFF;
-  box-shadow: 0 10px 24px -14px rgba(22, 26, 23, 0.45);
 }
 .snake__node--on .snake__marker {
-  background: #27500A;
+  background: linear-gradient(180deg, #35660F 0%, #24490A 100%);
   color: #EAF3DE;
 }
-/* Penanda aktif sengaja cuma halo + naik sedikit. Cukup untuk menunjukkan node
-   mana yang sedang dibaca, tanpa menggeser tetangganya atau menutupi apa pun. */
+/* Penanda aktif: halo + bayangan jatuh + naik sedikit. Cukup untuk menunjukkan
+   node mana yang sedang dibaca, tanpa menggeser tetangganya atau menutupi apa
+   pun. Halo ditulis lebih dulu supaya cincinnya menempel di tepi lingkaran dan
+   bayangannya jatuh di belakang keduanya. */
 .snake__node--on .snake__marker,
 .snake__node:focus-visible .snake__marker {
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--moss) 20%, transparent);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--moss) 20%, transparent),
+    0 12px 20px -8px rgba(22, 26, 23, 0.5);
   transform: translateY(-2px);
 }
 .snake__title {
@@ -1761,6 +1838,19 @@ h3 {
   position: relative;
   margin-top: clamp(2.4rem, 4.5vw, 3.4rem);
   padding-top: clamp(1.4rem, 2.8vw, 2.1rem);
+  padding-bottom: clamp(1.4rem, 2.6vw, 2rem);
+  /* Wash, bukan bidang. Gradien radial dari tepi atas-tengah memudar habis
+     sebelum mencapai sisi mana pun, jadi ruangnya terisi tanpa tepi yang bisa
+     dibaca sebagai kotak kedua di bawah deretan kartu — itu sebabnya .detail
+     tetap tidak ikut daftar kartu bergradien di atas berkas ini. Titik pusatnya
+     di 50% mengikuti isi panel yang sekarang rata tengah.
+     Warnanya --cream, bukan hijau: yang dibutuhkan di sini cuma bidangnya tidak
+     terasa kosong, dan itu tidak perlu warna merek untuk dicapai. */
+  background: radial-gradient(
+    118% 88% at 50% 0%,
+    color-mix(in srgb, var(--cream) 72%, transparent) 0%,
+    transparent 64%
+  );
 }
 /* Rel indikator menggantikan panel berbingkai. Kotak dengan aksen di tepi kiri
    adalah pola paling generik yang ada, dan di section yang sudah penuh kartu
@@ -1792,14 +1882,19 @@ h3 {
   background: linear-gradient(90deg, var(--moss), var(--gold));
   transition: left 0.34s cubic-bezier(0.16, 1, 0.3, 1);
 }
+/* Satu kolom terpusat, bukan angka-di-kiri/teks-di-kanan. Panel ini duduk di
+   bawah ular yang node aktifnya bisa ada di kolom mana saja; sumbu tengah
+   memberi teksnya satu titik jangkar tetap, jadi matanya tidak perlu mencari
+   ulang tiap kali tahap berganti. */
 .detail__body {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(0.9rem, 2.6vw, 2.2rem);
-  align-items: start;
-  /* Diputar ulang tiap ganti tahap (lewat key di markup). Ini yang memberitahu
-     pembaca bahwa kliknya menghasilkan sesuatu di bawah sana. */
-  animation: detail-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 1.4vw, 0.9rem);
+  text-align: center;
+}
+.detail__text {
+  width: 100%;
 }
 /* Angka besar memberi kontras skala tanpa menambah satu bidang pun. Fraunces,
    font yang sama dengan judul hero — jadi terbaca sebagai keluarga, bukan
@@ -1812,7 +1907,12 @@ h3 {
   letter-spacing: -0.045em;
   font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
   color: color-mix(in srgb, var(--moss) 30%, transparent);
-  animation: detail-num-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Isi panel turun berurutan dari atas ke bawah — angka dulu, lalu label,
+     judul, paragraf. Diputar ulang tiap tahap berganti (lewat key di markup),
+     termasuk saat hover berpindah node. Geraknya sengaja panjang dan pelan:
+     yang dituntun di sini bukan perhatian yang harus dikejutkan, tapi urutan
+     baca dari nomor tahap turun ke penjelasannya. */
+  animation: detail-drop 0.62s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .detail__step {
   display: block;
@@ -1821,6 +1921,7 @@ h3 {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--moss);
+  animation: detail-drop 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.09s both;
 }
 .detail h3 {
   margin-top: 0.4rem;
@@ -1831,31 +1932,28 @@ h3 {
   letter-spacing: -0.015em;
   font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
   color: var(--forest);
+  animation: detail-drop 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
 }
 .detail p {
   margin-top: 0.6rem;
   max-width: 62ch;
+  /* Panjang barisnya tetap dibatasi demi keterbacaan, tapi bloknya sendiri
+     ikut duduk di sumbu tengah panel. */
+  margin-inline: auto;
   color: var(--ink-soft);
   font-size: 0.97rem;
   line-height: 1.7;
+  animation: detail-drop 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.27s both;
   /* Deskripsi terpanjang memakan 4 baris; ruang segitu dipesan permanen supaya
      tinggi panel tidak berubah waktu pindah node. */
   min-height: calc(4 * 1.7em);
 }
-@keyframes detail-in {
+/* Turun, bukan naik. Panelnya ada di bawah ular dan dibaca dari nomor tahap ke
+   bawah — arah geraknya mengikuti arah baca itu, bukan melawannya. */
+@keyframes detail-drop {
   from {
     opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes detail-num-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(-16px);
   }
   to {
     opacity: 1;
@@ -1868,17 +1966,16 @@ h3 {
     grid-template-columns: 1fr;
   }
   .flow__step {
-    grid-template-columns: 36px 1fr;
+    grid-template-columns: 40px 1fr;
     gap: 0.9rem;
   }
   .flow__step:not(:last-child)::before {
-    left: 17px;
-    top: 38px;
+    left: 19px;
+    top: 42px;
   }
   .flow__marker {
-    width: 36px;
-    height: 36px;
-    font-size: 0.9rem;
+    width: 40px;
+    height: 40px;
   }
   .flow__body h3 {
     padding-top: 0.35rem;
@@ -1911,8 +2008,10 @@ h3 {
   .detail__rail::after {
     transition: none;
   }
-  .detail__body,
-  .detail__num {
+  .detail__num,
+  .detail__step,
+  .detail h3,
+  .detail p {
     animation: none;
   }
   .snake__node:hover {
@@ -1920,6 +2019,18 @@ h3 {
   }
   .snake__node:hover .snake__marker {
     transform: none;
+  }
+  /* Umpan balik tekan tetap ada, tapi lewat warna dan bayangan saja — geraknya
+     yang dilepas, bukan tombolnya yang jadi mati rasa. */
+  .paths__btn {
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .paths__btn:hover,
+  .paths__btn:active {
+    transform: none;
+  }
+  .paths__btn--on {
+    animation: none;
   }
 }
 

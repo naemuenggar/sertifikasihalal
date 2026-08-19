@@ -1,5 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, MousePointerClick } from "lucide-react";
+import {
+  BadgeCheck,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  FileCheck,
+  FileStack,
+  Globe,
+  Landmark,
+  MessagesSquare,
+  MousePointerClick,
+  ScrollText,
+  SearchCheck,
+  type LucideIcon,
+} from "lucide-react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
 /** Jeda sebelum hover mengganti panel. Tanpa ini, kursor yang cuma melintas
@@ -8,6 +22,10 @@ const HOVER_DELAY_MS = 120;
 
 type Stage = {
   title: string;
+  /** Ikon penanda tahap. Dipilih dari isi tahapnya — bukan hiasan, jadi jangan
+   *  diganti ke ikon yang cuma "kelihatan bagus" tapi tidak menggambarkan apa
+   *  yang terjadi di tahap itu. */
+  icon: LucideIcon;
   /** Siapa yang mengerjakan tahap ini. Pertanyaan pertama calon klien. */
   actor: string;
   /** Tandai kalau tahap ini butuh kerja dari pihak klien, bukan cuma kami. */
@@ -34,28 +52,33 @@ const paths: Path[] = [
     stages: [
       {
         title: "Konsultasi Gratis",
+        icon: MessagesSquare,
         actor: "Urushalal",
         duration: "Maks. 24 jam",
         desc: "Kami tinjau produk dan negara asal produksi Anda, lalu konfirmasikan jalur sertifikasi yang paling tepat berikut perkiraan waktu dan estimasi biayanya.",
       },
       {
         title: "Penyiapan Dokumentasi",
+        icon: FileStack,
         actor: "Anda + Urushalal",
         needsYou: true,
         desc: "Sertifikat GMP, deklarasi bahan baku, desain kemasan, dan dokumen pendukung lainnya kami siapkan bersama Anda sampai lengkap.",
       },
       {
         title: "Pendaftaran SIHALAL & Audit",
+        icon: SearchCheck,
         actor: "LPH",
         desc: "Permohonan diajukan lewat sistem SIHALAL milik BPJPH. Auditor dari Lembaga Pemeriksa Halal terakreditasi memeriksa langsung ke fasilitas produksi Anda.",
       },
       {
         title: "Fatwa MUI",
+        icon: ScrollText,
         actor: "MUI",
         desc: "Hasil audit ditinjau Komisi Fatwa Majelis Ulama Indonesia. Fatwa halal ini syarat keagamaan yang diwajibkan undang-undang.",
       },
       {
         title: "Penerbitan Sertifikat",
+        icon: BadgeCheck,
         actor: "BPJPH",
         duration: "Berlaku permanen",
         desc: "BPJPH menerbitkan Sertifikat Halal Indonesia resmi. Kepatuhan tetap dievaluasi berkala setiap 4 tahun — kami bantu pantau dan urus pembaruannya.",
@@ -69,18 +92,21 @@ const paths: Path[] = [
     stages: [
       {
         title: "Konsultasi & Cek Kelayakan MRA",
+        icon: Globe,
         actor: "Urushalal",
         duration: "Maks. 24 jam",
         desc: "Kami verifikasi apakah lembaga penerbit sertifikat Anda punya perjanjian saling pengakuan (MRA) dengan BPJPH.",
       },
       {
         title: "Penyiapan Berkas Sertifikat",
+        icon: FileCheck,
         actor: "Anda + Urushalal",
         needsYou: true,
         desc: "Sertifikat halal yang sudah Anda miliki beserta dokumen pendukungnya kami rapikan sesuai ketentuan BPJPH. Syaratnya, sertifikat terbit dari lembaga di negara tempat produk diproduksi.",
       },
       {
         title: "Registrasi ke BPJPH",
+        icon: Landmark,
         actor: "BPJPH",
         desc: "Sertifikat didaftarkan ke sistem BPJPH untuk mendapat pengakuan resmi di Indonesia. Tanpa audit ulang ke fasilitas produksi, jadi jauh lebih cepat dan hemat biaya.",
       },
@@ -250,6 +276,7 @@ export default function Alur() {
                   const { row, col, dir } = snakeCell(i, active.stages.length);
                   const DirectionIcon =
                     dir === "left" ? ChevronLeft : dir === "elbow" ? ChevronDown : ChevronRight;
+                  const StageIcon = s.icon;
                   return (
                     <li
                       className="snake__cell"
@@ -271,7 +298,13 @@ export default function Alur() {
                         onFocus={() => pinStage(i)}
                         onClick={() => pinStage(i)}
                       >
-                        <span className="snake__marker">{i + 1}</span>
+                        <span className="snake__marker" aria-hidden="true">
+                          <StageIcon strokeWidth={1.7} />
+                        </span>
+                        {/* Nomornya hilang dari layar begitu diganti ikon —
+                            dikembalikan ke pembaca layar supaya urutan tahapnya
+                            tetap terdengar, bukan cuma terlihat. */}
+                        <span className="sr-only">Tahap {i + 1}:</span>
                         <span className="snake__title">{s.title}</span>
                         <Badges stage={s} />
                       </button>
@@ -305,7 +338,7 @@ export default function Alur() {
                   <span className="detail__num" aria-hidden>
                     {String(detailIdx + 1).padStart(2, "0")}
                   </span>
-                  <div>
+                  <div className="detail__text">
                     <span className="detail__step">Tahap {detailIdx + 1}</span>
                     <h3>{detail.title}</h3>
                     <p>{detail.desc}</p>
@@ -315,18 +348,24 @@ export default function Alur() {
             </>
           ) : (
             <ol className="flow" key={active.id}>
-              {active.stages.map((s, i) => (
-                <li className="flow__step" key={s.title}>
-                  <span className="flow__marker" aria-hidden="true">
-                    {i + 1}
-                  </span>
-                  <div className="flow__body">
-                    <h3>{s.title}</h3>
-                    <Badges stage={s} />
-                    <p>{s.desc}</p>
-                  </div>
-                </li>
-              ))}
+              {active.stages.map((s, i) => {
+                const StageIcon = s.icon;
+                return (
+                  <li className="flow__step" key={s.title}>
+                    <span className="flow__marker" aria-hidden="true">
+                      <StageIcon strokeWidth={1.7} />
+                    </span>
+                    <div className="flow__body">
+                      <h3>
+                        <span className="sr-only">Tahap {i + 1}: </span>
+                        {s.title}
+                      </h3>
+                      <Badges stage={s} />
+                      <p>{s.desc}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ol>
           )}
         </div>
