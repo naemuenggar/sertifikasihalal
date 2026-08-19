@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 
@@ -39,7 +40,13 @@ type Props = {
 export default function Markdown({ children, className }: Props) {
   const body = (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
+      // remark-breaks: satu Enter jadi baris baru sungguhan. Markdown aslinya
+      // memperlakukan satu Enter sebagai spasi — warisan kebiasaan menulis
+      // teks yang dibungkus manual di lebar 80 kolom, dan sama sekali bukan
+      // yang diharapkan orang yang menulis berita di kolom isi. Dua Enter
+      // tetap membuat paragraf baru (dengan jarak antar-paragraf), satu Enter
+      // sekarang membuat baris baru yang rapat.
+      remarkPlugins={[remarkGfm, remarkBreaks]}
       rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
       components={{
         // Link ke luar dibuka di tab baru. `rel` wajib ikut: tanpa noopener,
