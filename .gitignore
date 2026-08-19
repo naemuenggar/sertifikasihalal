@@ -6,3 +6,6 @@ dist
 .DS_Store
 
 .vercel
+
+# Konfigurasi Claude Code — berisi settings.local.json yang khusus mesin ini
+.claude/
