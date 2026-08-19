@@ -4243,6 +4243,38 @@ textarea.field {
 .md-toolbar__text {
   font-weight: 600;
 }
+/* Pemberitahuan sesudah "Rapikan paragraf". Aksinya mengubah seluruh naskah
+   sekaligus, jadi jalan mundurnya harus terlihat di tempat kejadian — bukan
+   disembunyikan di balik Ctrl+Z yang memang sudah putus di textarea ini. */
+.md-editor__notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+.md-editor__undo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--forest);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.md-editor__undo:hover {
+  border-color: var(--forest);
+}
 .md-editor__foot {
   display: flex;
   flex-wrap: wrap;

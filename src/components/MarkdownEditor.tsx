@@ -9,13 +9,16 @@ import {
   Link2,
   List,
   ListOrdered,
+  Pilcrow,
   Quote,
   Underline,
+  Undo2,
 } from "lucide-react";
 import Markdown from "./Markdown";
 import {
   insertImage,
   insertLink,
+  tidyParagraphs,
   toggleLinePrefix,
   toggleWrap,
   type EditResult,
@@ -53,6 +56,11 @@ export default function MarkdownEditor({
   const [preview, setPreview] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  /** Isi sebelum "Rapikan paragraf" dijalankan. Aksinya menyentuh seluruh
+   *  naskah sekaligus, dan Ctrl+Z bawaan textarea tidak bisa membatalkannya —
+   *  riwayat undo browser putus begitu nilainya diganti dari React. Jadi satu
+   *  langkah mundur disediakan sendiri di sini. */
+  const [beforeTidy, setBeforeTidy] = useState<string | null>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -64,6 +72,7 @@ export default function MarkdownEditor({
     if (!ta) return;
     const result = edit(ta.value, ta.selectionStart, ta.selectionEnd);
     if (maxLength && result.value.length > maxLength) return;
+    setBeforeTidy(null);
     onChange(result.value);
     // Menunggu React memasang nilai barunya dulu: mengubah `value` textarea
     // terkendali membuat browser melempar caret ke ujung teks, jadi seleksinya
@@ -112,6 +121,20 @@ export default function MarkdownEditor({
     run();
   };
 
+  const tidied = tidyParagraphs(value);
+  const canTidy = tidied !== value;
+
+  const runTidy = () => {
+    setBeforeTidy(value);
+    onChange(tidied);
+  };
+
+  const undoTidy = () => {
+    if (beforeTidy === null) return;
+    onChange(beforeTidy);
+    setBeforeTidy(null);
+  };
+
   const handleFile = async (file: File | undefined) => {
     if (!file || !onUploadImage) return;
     setUploading(true);
@@ -156,6 +179,23 @@ export default function MarkdownEditor({
               </button>
             ))}
 
+            <span className="md-toolbar__sep" aria-hidden />
+            <button
+              type="button"
+              className="md-toolbar__btn"
+              onClick={runTidy}
+              disabled={!canTidy}
+              title={
+                canTidy
+                  ? "Beri jarak antar-paragraf pada naskah yang tertulis rapat"
+                  : "Paragrafnya sudah rapi"
+              }
+              aria-label="Rapikan paragraf"
+            >
+              <Pilcrow size={16} aria-hidden />
+              <span className="md-toolbar__text">Rapikan paragraf</span>
+            </button>
+
             {onUploadImage && (
               <>
                 <span className="md-toolbar__sep" aria-hidden />
@@ -184,13 +224,29 @@ export default function MarkdownEditor({
             )}
           </div>
 
+          {beforeTidy !== null && (
+            <p className="md-editor__notice">
+              <span>Paragraf dirapikan. Periksa hasilnya di tab Preview.</span>
+              <button type="button" className="md-editor__undo" onClick={undoTidy}>
+                <Undo2 size={14} aria-hidden />
+                Batalkan
+              </button>
+            </p>
+          )}
+
           <textarea
             ref={taRef}
             className="field admin-form__content"
             rows={rows}
             value={value}
             maxLength={maxLength}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              // Begitu admin mengetik sendiri, tawaran "Batalkan" ditarik:
+              // mengembalikan naskah sebelum dirapikan pada titik ini akan
+              // ikut membuang ketikan barunya.
+              setBeforeTidy(null);
+              onChange(e.target.value);
+            }}
             onKeyDown={handleShortcut}
             placeholder="Tulis isi berita di sini…"
           />

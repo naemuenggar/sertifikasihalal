@@ -146,3 +146,75 @@ export function insertImage(value: string, start: number, end: number, url: stri
 function escapeRegExp(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
+
+/* ====================== Merapikan paragraf ======================
+ * Berita yang ditulis sebelum satu Enter berfungsi tersimpan sebagai satu
+ * blok panjang: seluruh isinya jadi satu paragraf, jarak antar-paragrafnya
+ * tidak ada, dan subjudulnya cuma baris teks biasa. Fungsi di bawah memberi
+ * baris kosong di antara paragraf supaya tiap paragraf berdiri sendiri.
+ *
+ * Yang TIDAK boleh disisipi baris kosong, karena baris kosong di situ justru
+ * merusak strukturnya:
+ *   - butir daftar berurutan — baris kosong mengubahnya jadi daftar renggang
+ *     yang tiap butirnya dibungkus paragraf sendiri
+ *   - baris kutipan berurutan — kutipannya pecah jadi beberapa kotak
+ *   - baris tabel — tabelnya batal dikenali sama sekali
+ *   - isi blok kode — di dalamnya baris kosong adalah bagian dari kodenya
+ * ================================================================ */
+
+type LineKind = "kosong" | "daftar" | "kutipan" | "tabel" | "judul" | "biasa";
+
+function classifyLine(line: string): LineKind {
+  if (line.trim() === "") return "kosong";
+  if (/^\s*([-*+]|\d+[.)])\s/.test(line)) return "daftar";
+  if (/^\s*>/.test(line)) return "kutipan";
+  if (/^\s*\|/.test(line)) return "tabel";
+  if (/^#{1,6}\s/.test(line)) return "judul";
+  return "biasa";
+}
+
+const isFence = (line: string) => /^\s*(```|~~~)/.test(line);
+
+/**
+ * Ubah satu baris baru jadi pemisah paragraf. Baris kosong yang sudah ada
+ * dipertahankan (dan deretan baris kosong berlebih dirapatkan jadi satu),
+ * jadi fungsi ini aman dijalankan berulang kali pada teks yang sama.
+ */
+export function tidyParagraphs(value: string): string {
+  const lines = value.replace(/\r\n/g, "\n").split("\n");
+  const out: string[] = [];
+  let inFence = false;
+
+  for (const line of lines) {
+    if (isFence(line)) {
+      inFence = !inFence;
+      out.push(line);
+      continue;
+    }
+    if (inFence) {
+      out.push(line);
+      continue;
+    }
+
+    const kind = classifyLine(line);
+    if (kind === "kosong") {
+      // Baris kosong beruntun dirapatkan jadi satu.
+      if (out.length > 0 && out[out.length - 1].trim() !== "") out.push("");
+      continue;
+    }
+
+    const prev = [...out].reverse().find((l) => l.trim() !== "");
+    const prevKind = prev === undefined ? undefined : classifyLine(prev);
+    const alreadySeparated = out.length === 0 || out[out.length - 1].trim() === "";
+    // Dua baris dari blok terstruktur yang sama tetap dempet.
+    const mustStayTogether =
+      prevKind !== undefined &&
+      prevKind === kind &&
+      (kind === "daftar" || kind === "kutipan" || kind === "tabel");
+
+    if (!alreadySeparated && !mustStayTogether) out.push("");
+    out.push(line);
+  }
+
+  return out.join("\n").trim();
+}
