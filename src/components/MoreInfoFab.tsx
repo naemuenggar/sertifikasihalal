@@ -4,11 +4,7 @@ import { LIMITS } from "../lib/limits";
 import { WhatsApp } from "./icons";
 import { WA_NUMBER } from "../utils/contact";
 import { submitContact } from "../lib/contact";
-
-/** Link WA dengan pesan pembuka otomatis (nomor satu sumber dari utils/contact). */
-const WA_MOREINFO = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
-  "Halo, saya ingin bertanya soal sertifikasi halal/BPOM"
-)}`;
+import { useLanguage } from "../i18n/LanguageContext";
 
 type Status = "idle" | "sending" | "ok" | "error";
 
@@ -18,6 +14,9 @@ type Status = "idle" | "sending" | "ok" | "error";
  * yang tersimpan ke tabel `contact_messages`.
  */
 export default function MoreInfoFab() {
+  const { t } = useLanguage();
+  /** Link WA dengan pesan pembuka otomatis (nomor satu sumber dari utils/contact). */
+  const waMoreInfo = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(t.moreInfo.waMessage)}`;
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -68,24 +67,24 @@ export default function MoreInfoFab() {
       setMessage("");
     } else {
       setStatus("error");
-      setErrMsg(res.error ?? "Gagal mengirim pesan. Silakan coba lagi.");
+      setErrMsg(res.code ? t.moreInfo.errors[res.code] : t.moreInfo.errors.failed);
     }
   };
 
   return (
     <div className="moreinfo" ref={rootRef}>
       {open && (
-        <div className="moreinfo__panel" role="dialog" aria-label="More Info">
+        <div className="moreinfo__panel" role="dialog" aria-label={t.moreInfo.panelLabel}>
           <div className="moreinfo__head">
             <div>
-              <strong>Ada yang bisa kami bantu?</strong>
-              <span>Chat langsung atau kirim pesan singkat.</span>
+              <strong>{t.moreInfo.heading}</strong>
+              <span>{t.moreInfo.sub}</span>
             </div>
             <button
               type="button"
               className="moreinfo__close"
               onClick={() => setOpen(false)}
-              aria-label="Tutup panel"
+              aria-label={t.moreInfo.close}
             >
               <X size={18} strokeWidth={1.8} />
             </button>
@@ -93,33 +92,30 @@ export default function MoreInfoFab() {
 
           <a
             className="moreinfo__wa"
-            href={WA_MOREINFO}
+            href={waMoreInfo}
             target="_blank"
             rel="noopener noreferrer"
           >
             <WhatsApp size={20} />
-            Chat via WhatsApp
+            {t.moreInfo.chatWa}
           </a>
 
           <div className="moreinfo__divider">
-            <span>atau kirim pesan</span>
+            <span>{t.moreInfo.divider}</span>
           </div>
 
           {status === "ok" ? (
             <div className="moreinfo__success">
-              <p>
-                Terima kasih! Pesan Anda sudah kami terima. Tim kami akan segera
-                menghubungi Anda.
-              </p>
+              <p>{t.moreInfo.success}</p>
               <button type="button" className="btn btn--ghost btn--sm" onClick={reset}>
-                Kirim pesan lain
+                {t.moreInfo.sendAnother}
               </button>
             </div>
           ) : (
             <form className="moreinfo__form" onSubmit={handleSubmit}>
               <input
                 className="field"
-                placeholder="Nama"
+                placeholder={t.moreInfo.namePh}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={LIMITS.contactName}
@@ -128,7 +124,7 @@ export default function MoreInfoFab() {
               />
               <input
                 className="field"
-                placeholder="No. HP / Email"
+                placeholder={t.moreInfo.contactPh}
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
                 maxLength={LIMITS.contactContact}
@@ -136,7 +132,7 @@ export default function MoreInfoFab() {
               />
               <textarea
                 className="field"
-                placeholder="Pesan"
+                placeholder={t.moreInfo.messagePh}
                 rows={3}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -150,7 +146,7 @@ export default function MoreInfoFab() {
                 disabled={status === "sending"}
               >
                 <Send size={15} strokeWidth={1.8} />
-                {status === "sending" ? "Mengirim…" : "Kirim"}
+                {status === "sending" ? t.moreInfo.sending : t.moreInfo.send}
               </button>
             </form>
           )}
@@ -162,7 +158,7 @@ export default function MoreInfoFab() {
         className="moreinfo__fab"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label="More Info"
+        aria-label={t.moreInfo.fabLabel}
       >
         <MessageCircleQuestion size={26} strokeWidth={1.8} />
       </button>

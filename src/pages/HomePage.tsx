@@ -7,9 +7,11 @@ import Packages from "../components/Packages";
 import FAQ from "../components/FAQ";
 import Clients from "../components/Clients";
 import { usePageTitle } from "../hooks/usePageMeta";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function HomePage() {
-  usePageTitle("Urushalal — Urus Sertifikasi Halal Jadi Gampang");
+  const { t } = useLanguage();
+  usePageTitle(t.meta.homeTitle);
   return (
     <>
       <Hero />

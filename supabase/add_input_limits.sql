@@ -11,10 +11,11 @@
 --
 -- Angkanya harus sama dengan src/lib/limits.ts.
 --
--- Jalankan add_news_cta_button.sql lebih dulu: constraint news di bawah
--- menyebut kolom cta_button. Dan jalankan check_before_input_limits.sql
--- sebelum keduanya — constraint check memvalidasi baris yang sudah ada,
--- jadi satu baris lama yang melanggar akan membatalkan seluruh perintah.
+-- Jalankan add_news_cta_button.sql dan add_news_en.sql lebih dulu: constraint
+-- news di bawah menyebut kolom cta_button dan kolom *_en. Dan jalankan
+-- check_before_input_limits.sql sebelum keduanya — constraint check
+-- memvalidasi baris yang sudah ada, jadi satu baris lama yang melanggar
+-- akan membatalkan seluruh perintah.
 -- ============================================================
 
 -- ---------- contact_messages ----------
@@ -41,6 +42,12 @@ alter table public.news
     and (cta_text is null or char_length(cta_text) <= 400)
     and (cta_button is null or char_length(cta_button) <= 40)
     and (thumbnail_url is null or char_length(thumbnail_url) <= 500)
+    -- Versi Inggris — batasnya sama dengan pasangan Indonesianya.
+    and (title_en is null or char_length(title_en) <= 160)
+    and (summary_en is null or char_length(summary_en) <= 400)
+    and (content_en is null or char_length(content_en) <= 50000)
+    and (cta_text_en is null or char_length(cta_text_en) <= 400)
+    and (cta_button_en is null or char_length(cta_button_en) <= 40)
   );
 
 -- Slug ikut dijaga bentuknya: hanya huruf kecil, angka, dan tanda hubung.

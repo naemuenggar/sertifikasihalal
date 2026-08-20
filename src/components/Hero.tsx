@@ -1,13 +1,16 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { HERO_SLIDES } from "../data/heroSlides";
+import { getHeroSlides } from "../data/heroSlides";
 import { HERO_AUTOPLAY_MS, useHeroSlider } from "../hooks/useHeroSlider";
+import { useLanguage } from "../i18n/LanguageContext";
 import HeroSlide from "./HeroSlide";
 
 export default function Hero() {
-  const total = HERO_SLIDES.length;
+  const { t } = useLanguage();
+  const slides = getHeroSlides(t.hero.slides);
+  const total = slides.length;
   const { index, goTo, step, isAutoplaying, pause, resume, onTouchStart, onTouchEnd, onKeyDown } =
     useHeroSlider(total);
-  const active = HERO_SLIDES[index];
+  const active = slides[index];
 
   return (
     <section
@@ -19,7 +22,7 @@ export default function Hero() {
       // memudar keluar tidak ikut berganti palet di tengah transisi.
       data-theme={active.theme}
       aria-roledescription="carousel"
-      aria-label="Layanan utama Urushalal"
+      aria-label={t.hero.ariaLabel}
       onMouseEnter={pause}
       onMouseLeave={resume}
       onFocus={pause}
@@ -29,7 +32,7 @@ export default function Hero() {
       onKeyDown={onKeyDown}
     >
       <div className="hero__slides">
-        {HERO_SLIDES.map((slide, i) => (
+        {slides.map((slide, i) => (
           <HeroSlide
             key={slide.id}
             slide={slide}
@@ -41,24 +44,24 @@ export default function Hero() {
       </div>
 
       {total > 1 && (
-        <div className="hero__controls" data-autoplay={isAutoplaying} role="group" aria-label="Navigasi slide">
+        <div className="hero__controls" data-autoplay={isAutoplaying} role="group" aria-label={t.hero.controlsLabel}>
           <button
             type="button"
             className="hero-ctl"
             onClick={() => step(-1)}
-            aria-label="Slide sebelumnya"
+            aria-label={t.hero.prevSlide}
           >
             <ChevronLeft size={18} strokeWidth={2} aria-hidden />
           </button>
 
           <div className="hero__dots">
-            {HERO_SLIDES.map((slide, i) => (
+            {slides.map((slide, i) => (
               <button
                 type="button"
                 key={slide.id}
                 className="hero-dot"
                 data-active={i === index}
-                aria-label={`Tampilkan slide ${slide.name}`}
+                aria-label={t.hero.showSlide(slide.name)}
                 aria-current={i === index}
                 onClick={() => goTo(i)}
               >
@@ -77,7 +80,7 @@ export default function Hero() {
             type="button"
             className="hero-ctl"
             onClick={() => step(1)}
-            aria-label="Slide berikutnya"
+            aria-label={t.hero.nextSlide}
           >
             <ChevronRight size={18} strokeWidth={2} aria-hidden />
           </button>
@@ -85,7 +88,7 @@ export default function Hero() {
       )}
 
       <p className="sr-only" aria-live="polite">
-        Slide {index + 1} dari {total}: {active.name}
+        {t.hero.slideStatus(index + 1, total, active.name)}
       </p>
     </section>
   );

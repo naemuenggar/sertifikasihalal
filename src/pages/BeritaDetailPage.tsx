@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Markdown from "../components/Markdown";
-import { fetchNewsBySlug } from "../lib/news";
+import { fetchNewsBySlug, localizedNews } from "../lib/news";
 import type { News } from "../lib/types";
 import ArticleCta from "../components/ArticleCta";
 import { formatDate } from "../utils/date";
 import NotFoundPage from "./NotFoundPage";
 import { usePageTitle } from "../hooks/usePageMeta";
+import { useLanguage } from "../i18n/LanguageContext";
 
 /** Halaman detail publik /berita/:slug — menampilkan isi lengkap satu berita. */
 export default function BeritaDetailPage() {
+  const { lang, t } = useLanguage();
   const { slug } = useParams();
   const [news, setNews] = useState<News | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,45 +33,50 @@ export default function BeritaDetailPage() {
     };
   }, [slug]);
 
-  usePageTitle(news ? `${news.title} — Urushalal` : "Berita — Urushalal");
+  const text = news ? localizedNews(news, lang) : null;
+  usePageTitle(text ? `${text.title} — Urushalal` : t.news.metaTitle);
 
   if (loading) {
     return (
       <section className="section">
         <div className="wrap">
-          <p className="lead">Memuat berita…</p>
+          <p className="lead">{t.news.detail.loading}</p>
         </div>
       </section>
     );
   }
 
-  if (!news) return <NotFoundPage />;
+  if (!news || !text) return <NotFoundPage />;
 
   return (
     <article className="section">
       <div className="wrap article-wrap">
         <Link to="/berita" className="article-back">
-          ← Semua berita
+          {t.news.detail.allNews}
         </Link>
 
         <header className="article-head">
-          <span className="news-card__cat">{news.category ?? "Berita"}</span>
-          <h1 className="h-display">{news.title}</h1>
-          <time className="article-date">{formatDate(news.published_at)}</time>
+          <span className="news-card__cat">
+            {(news.category && t.news.categoryNames[news.category]) ||
+              news.category ||
+              t.news.categoryFallback}
+          </span>
+          <h1 className="h-display">{text.title}</h1>
+          <time className="article-date">{formatDate(news.published_at, lang)}</time>
         </header>
 
         {news.thumbnail_url && (
-          <img className="article-hero" src={news.thumbnail_url} alt={news.title} />
+          <img className="article-hero" src={news.thumbnail_url} alt={text.title} />
         )}
 
         <div className="prose">
-          <Markdown>{news.content ?? ""}</Markdown>
+          <Markdown>{text.content ?? ""}</Markdown>
         </div>
 
         <ArticleCta
-          text={news.cta_text}
-          buttonLabel={news.cta_button}
-          articleTitle={news.title}
+          text={text.ctaText}
+          buttonLabel={text.ctaButton}
+          articleTitle={text.title}
         />
       </div>
     </article>

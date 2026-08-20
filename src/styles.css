@@ -393,6 +393,39 @@ h3 {
   align-items: center;
   gap: 0.7rem;
 }
+
+/* ---------- Language switcher (ID | EN) ---------- */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.lang-switch button {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55em 0.75em;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.lang-switch button:hover {
+  color: var(--ink);
+}
+.lang-switch button[data-active="true"] {
+  background: var(--forest);
+  color: #fff;
+}
+
 .menu-btn {
   display: none;
   background: none;
@@ -4166,6 +4199,30 @@ textarea.field {
    diatur di sini cuma jaraknya — bukan tampilan panelnya. */
 .admin-field .article-cta {
   margin-top: 0;
+}
+/* Kelompok kolom versi Inggris di form berita — dipisah visual supaya jelas
+   mana yang wajib (Indonesia) dan mana yang opsional (EN). */
+.admin-fieldset {
+  border: 1px dashed var(--line);
+  border-radius: var(--r);
+  padding: 1rem 1.1rem 1.2rem;
+  margin: 0.4rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.admin-fieldset legend {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 0.4rem;
+}
+.admin-fieldset__hint {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 0;
 }
 .admin-form__tabs {
   display: flex;

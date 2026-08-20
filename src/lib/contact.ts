@@ -7,6 +7,10 @@ import { getSupabase } from "./supabase";
 import { LIMITS, cleanText, isOverLimit } from "./limits";
 import type { ContactMessage, ContactMessageStatus } from "./types";
 
+/** Kode error submitContact — diterjemahkan ke pesan tampil oleh pemanggil
+ *  (form publik dwibahasa), bukan di sini. */
+export type ContactErrorCode = "unconfigured" | "required" | "too_long" | "failed";
+
 /**
  * Kirim pesan dari form publik. Mengembalikan ok:true jika tersimpan.
  *
@@ -18,9 +22,9 @@ export async function submitContact(input: {
   name: string;
   contact: string;
   message: string;
-}): Promise<{ ok: boolean; error?: string }> {
+}): Promise<{ ok: boolean; code?: ContactErrorCode; error?: string }> {
   const sb = getSupabase();
-  if (!sb) return { ok: false, error: "Database belum dikonfigurasi." };
+  if (!sb) return { ok: false, code: "unconfigured" };
 
   const payload = {
     name: cleanText(input.name),
@@ -29,21 +33,21 @@ export async function submitContact(input: {
   };
 
   if (!payload.name || !payload.contact || !payload.message) {
-    return { ok: false, error: "Nama, kontak, dan pesan wajib diisi." };
+    return { ok: false, code: "required" };
   }
   if (
     isOverLimit(payload.name, LIMITS.contactName) ||
     isOverLimit(payload.contact, LIMITS.contactContact) ||
     isOverLimit(payload.message, LIMITS.contactMessage)
   ) {
-    return { ok: false, error: "Isian terlalu panjang. Persingkat pesan Anda." };
+    return { ok: false, code: "too_long" };
   }
 
   try {
     const { error } = await sb.from("contact_messages").insert(payload);
-    return error ? { ok: false, error: error.message } : { ok: true };
+    return error ? { ok: false, code: "failed", error: error.message } : { ok: true };
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Terjadi kesalahan." };
+    return { ok: false, code: "failed", error: e instanceof Error ? e.message : "Unknown error." };
   }
 }
 

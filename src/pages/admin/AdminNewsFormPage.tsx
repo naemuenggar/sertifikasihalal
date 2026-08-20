@@ -29,6 +29,12 @@ export default function AdminNewsFormPage() {
   const [content, setContent] = useState("");
   const [ctaText, setCtaText] = useState("");
   const [ctaButton, setCtaButton] = useState("");
+  /* Versi Inggris — opsional. Kosong = pengunjung EN melihat versi Indonesia. */
+  const [titleEn, setTitleEn] = useState("");
+  const [summaryEn, setSummaryEn] = useState("");
+  const [contentEn, setContentEn] = useState("");
+  const [ctaTextEn, setCtaTextEn] = useState("");
+  const [ctaButtonEn, setCtaButtonEn] = useState("");
   const [status, setStatus] = useState<NewsStatus>("draft");
   const [publishedDate, setPublishedDate] = useState("");
   const [saving, setSaving] = useState(false);
@@ -53,6 +59,11 @@ export default function AdminNewsFormPage() {
       setContent(n.content ?? "");
       setCtaText(n.cta_text ?? "");
       setCtaButton(n.cta_button ?? "");
+      setTitleEn(n.title_en ?? "");
+      setSummaryEn(n.summary_en ?? "");
+      setContentEn(n.content_en ?? "");
+      setCtaTextEn(n.cta_text_en ?? "");
+      setCtaButtonEn(n.cta_button_en ?? "");
       setStatus(n.status);
       setPublishedDate(n.published_at ? n.published_at.slice(0, 10) : "");
       setLoading(false);
@@ -97,6 +108,11 @@ export default function AdminNewsFormPage() {
       content: content || null,
       cta_text: ctaText.trim() || null,
       cta_button: ctaButton.trim() || null,
+      title_en: titleEn.trim() || null,
+      summary_en: summaryEn.trim() || null,
+      content_en: contentEn || null,
+      cta_text_en: ctaTextEn.trim() || null,
+      cta_button_en: ctaButtonEn.trim() || null,
       status,
       published_at: publishedDate
         ? new Date(`${publishedDate}T09:00:00`).toISOString()
@@ -246,6 +262,83 @@ export default function AdminNewsFormPage() {
                 <ArticleCta text={ctaText} buttonLabel={ctaButton} />
               </div>
             )}
+
+            {/* ---------- Versi Inggris (opsional) ---------- */}
+            <fieldset className="admin-field admin-fieldset">
+              <legend>Versi Inggris (opsional)</legend>
+              <p className="admin-fieldset__hint">
+                Ditampilkan saat pengunjung memilih bahasa Inggris. Kolom yang dikosongkan
+                tetap menampilkan versi Indonesianya.
+              </p>
+
+              <label className="admin-field">
+                <span>Judul (EN)</span>
+                <input
+                  className="field"
+                  value={titleEn}
+                  onChange={(e) => setTitleEn(e.target.value)}
+                  placeholder="English title"
+                  maxLength={LIMITS.newsTitle}
+                />
+              </label>
+
+              <label className="admin-field">
+                <span>Ringkasan singkat (EN)</span>
+                <textarea
+                  className="field"
+                  rows={3}
+                  value={summaryEn}
+                  onChange={(e) => setSummaryEn(e.target.value)}
+                  placeholder="Shown on preview cards…"
+                  maxLength={LIMITS.newsSummary}
+                />
+              </label>
+
+              <div className="admin-field">
+                <span>Isi berita (EN)</span>
+                <MarkdownEditor
+                  value={contentEn}
+                  onChange={setContentEn}
+                  onUploadImage={uploadNewsImage}
+                  maxLength={LIMITS.newsContent}
+                />
+              </div>
+
+              <div className="admin-field">
+                <span>Ajakan penutup artikel (EN)</span>
+                <textarea
+                  className="field"
+                  rows={4}
+                  value={ctaTextEn}
+                  onChange={(e) => setCtaTextEn(e.target.value)}
+                  placeholder="e.g. Need help with halal certification? Discuss your product and business needs with our team."
+                  maxLength={LIMITS.newsCta}
+                />
+                <div className="admin-field__foot">
+                  <small>Versi Inggris dari ajakan penutup di atas.</small>
+                  <small className={ctaTextEn.length > LIMITS.newsCta * 0.9 ? "is-warn" : ""}>
+                    {ctaTextEn.length}/{LIMITS.newsCta}
+                  </small>
+                </div>
+              </div>
+
+              <label className="admin-field">
+                <span>Teks tombol (EN, opsional)</span>
+                <input
+                  className="field"
+                  value={ctaButtonEn}
+                  onChange={(e) => setCtaButtonEn(e.target.value)}
+                  placeholder="Free consultation via WhatsApp"
+                  maxLength={LIMITS.newsCtaButton}
+                />
+                <div className="admin-field__foot">
+                  <small>Kosongkan untuk memakai label bawaan bahasa Inggris.</small>
+                  <small className={ctaButtonEn.length > LIMITS.newsCtaButton * 0.9 ? "is-warn" : ""}>
+                    {ctaButtonEn.length}/{LIMITS.newsCtaButton}
+                  </small>
+                </div>
+              </label>
+            </fieldset>
           </div>
 
           {/* Kolom pengaturan terbit */}

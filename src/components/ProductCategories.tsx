@@ -10,86 +10,35 @@ import {
 } from "lucide-react";
 import Carousel from "./Carousel";
 import { useCarousel } from "../hooks/useCarousel";
+import { useLanguage } from "../i18n/LanguageContext";
 
-type ProductCategory = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  image?: string;
-};
-
-const halalCategories: ProductCategory[] = [
-  {
-    icon: UtensilsCrossed,
-    title: "Makanan dan Minuman",
-    description: "Produk olahan, minuman, dan bahan pangan yang beredar di pasar Indonesia.",
-    image: "halal-makanan_dan_minuman.jpg",
-  },
-  {
-    icon: Pill,
-    title: "Suplemen Makanan",
-    description: "Vitamin, mineral, dan produk nutrisi yang wajib bersertifikat Halal dan terdaftar BPOM.",
-    image: "halal-suplemen_makanan.jpg",
-  },
-  {
-    icon: Sparkles,
-    title: "Kosmetik dan Perawatan Diri",
-    description: "Skincare, make-up, dan produk perawatan tubuh yang diaplikasikan langsung ke kulit.",
-    image: "halal-kosmetik.jpg",
-  },
-  {
-    icon: Truck,
-    title: "Jasa Distribusi & Penyimpanan",
-    description: "Pendampingan sertifikasi halal untuk rantai distribusi dan penyimpanan produk, memastikan proses logistik tetap terjaga kehalalannya.",
-    image: "halal-logistik.jpg",
-  },
-  {
-    icon: HeartPulse,
-    title: "Barang Gunaan",
-    description: "Produk kebutuhan sehari-hari yang telah tersertifikasi halal, mulai dari plastic wrap, tisu, sabun, hingga perlengkapan rumah tangga lainnya.",
-    image: "halal-barang_gunaan.jpg",
-  },
-  {
-    icon: SprayCan,
-    title: "Produk Rumah Tangga",
-    description: "Bahan pembersih dan produk konsumsi rumah tangga berbahan kimia.",
-    image: "halal-produk_rumah_tangga.jpg",
-  },
-  {
-    icon: Boxes,
-    title: "Kategori Lainnya",
-    description: "Produk farmasi, kemasan pangan, dan kategori lain yang dievaluasi secara khusus.",
-  },
+/** Ikon & foto tiap kartu (bahasa-netral). Urutan mengikuti items di i18n. */
+const halalCardMeta: { icon: LucideIcon; image?: string }[] = [
+  { icon: UtensilsCrossed, image: "halal-makanan_dan_minuman.jpg" },
+  { icon: Pill, image: "halal-suplemen_makanan.jpg" },
+  { icon: Sparkles, image: "halal-kosmetik.jpg" },
+  { icon: Truck, image: "halal-logistik.jpg" },
+  { icon: HeartPulse, image: "halal-barang_gunaan.jpg" },
+  { icon: SprayCan, image: "halal-produk_rumah_tangga.jpg" },
+  { icon: Boxes },
 ];
 
-const bpomCategories: ProductCategory[] = [
-  {
-    icon: UtensilsCrossed,
-    title: "Makanan dan Minuman",
-    description: "Produk pangan olahan dan minuman yang memerlukan izin edar BPOM.",
-    image: "halal-makanan_dan_minuman.jpg",
-  },
-  {
-    icon: Pill,
-    title: "Suplemen Kesehatan",
-    description: "Vitamin, mineral, dan produk nutrisi sesuai ketentuan keamanan BPOM.",
-    image: "halal-suplemen_makanan.jpg",
-  },
-  {
-    icon: Sparkles,
-    title: "Produk Kosmetik",
-    description: "Skincare, make-up, dan produk perawatan tubuh yang wajib terdaftar di BPOM.",
-    image: "halal-kosmetik.jpg",
-  },
+const bpomCardMeta: { icon: LucideIcon; image?: string }[] = [
+  { icon: UtensilsCrossed, image: "halal-makanan_dan_minuman.jpg" },
+  { icon: Pill, image: "halal-suplemen_makanan.jpg" },
+  { icon: Sparkles, image: "halal-kosmetik.jpg" },
 ];
 
 type ProductCarouselProps = {
-  categories: ProductCategory[];
+  items: { title: string; description: string }[];
+  meta: { icon: LucideIcon; image?: string }[];
   theme: "halal" | "bpom";
 };
 
-function ProductCarousel({ categories, theme }: ProductCarouselProps) {
+function ProductCarousel({ items, meta, theme }: ProductCarouselProps) {
+  const { t } = useLanguage();
   const { trackRef, slide, progress, ratio } = useCarousel<HTMLDivElement>(".product-category");
+  const themeLabel = t.products.themeLabel[theme];
 
   return (
     <Carousel
@@ -97,11 +46,12 @@ function ProductCarousel({ categories, theme }: ProductCarouselProps) {
       ratio={ratio}
       onPrev={() => slide(-1)}
       onNext={() => slide(1)}
-      prevLabel={`Kategori ${theme} sebelumnya`}
-      nextLabel={`Kategori ${theme} berikutnya`}
+      prevLabel={t.products.prevLabel(themeLabel)}
+      nextLabel={t.products.nextLabel(themeLabel)}
     >
       <div className="product-categories__grid" ref={trackRef}>
-        {categories.map(({ icon: Icon, title, description, image }) => {
+        {items.map(({ title, description }, i) => {
+          const { icon: Icon, image } = meta[i];
           const isPhotoCard = Boolean(image);
           const overlay = theme === "bpom"
             ? "linear-gradient(180deg, rgba(15,40,60,0.15) 0%, rgba(15,40,60,0.75) 100%)"
@@ -135,31 +85,29 @@ function ProductCarousel({ categories, theme }: ProductCarouselProps) {
 }
 
 export default function ProductCategories() {
+  const { t } = useLanguage();
+
   return (
     <div className="product-categories-wrap">
       <section className="section product-categories__group" id="produk" data-service="halal">
         <div className="wrap">
           <div className="product-categories__head">
-            <span className="eyebrow">Cakupan sertifikasi</span>
-            <h2 className="h-section">Produk Halal yang Kami Sertifikasi</h2>
-            <p className="lead">
-              Sertifikasi Halal untuk berbagai kategori produk sesuai ketentuan BPJPH.
-            </p>
+            <span className="eyebrow">{t.products.halal.eyebrow}</span>
+            <h2 className="h-section">{t.products.halal.title}</h2>
+            <p className="lead">{t.products.halal.lead}</p>
           </div>
-          <ProductCarousel categories={halalCategories} theme="halal" />
+          <ProductCarousel items={t.products.halal.items} meta={halalCardMeta} theme="halal" />
         </div>
       </section>
 
       <section className="section product-categories__group" id="produk-bpom" data-service="bpom">
         <div className="wrap">
           <div className="product-categories__head">
-            <span className="eyebrow eyebrow--bpom">Cakupan izin edar</span>
-            <h2 className="h-section">Produk BPOM yang Kami Sertifikasi</h2>
-            <p className="lead">
-              Pendampingan izin edar BPOM untuk produk sesuai ketentuan yang berlaku.
-            </p>
+            <span className="eyebrow eyebrow--bpom">{t.products.bpom.eyebrow}</span>
+            <h2 className="h-section">{t.products.bpom.title}</h2>
+            <p className="lead">{t.products.bpom.lead}</p>
           </div>
-          <ProductCarousel categories={bpomCategories} theme="bpom" />
+          <ProductCarousel items={t.products.bpom.items} meta={bpomCardMeta} theme="bpom" />
         </div>
       </section>
     </div>

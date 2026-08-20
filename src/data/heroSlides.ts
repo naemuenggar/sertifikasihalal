@@ -16,7 +16,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 /** Dipakai sebagai `data-theme` di slide. Paletnya didefinisikan di styles.css
- *  (`.hero-slide[data-theme="..."]`), bukan di sini — file ini murni konten. */
+ *  (`.hero-slide[data-theme="..."]`), bukan di sini — file ini murni struktur. */
 export type HeroTheme = "halal" | "bpom";
 
 export interface HeroFeature {
@@ -36,9 +36,7 @@ export interface HeroSlideData {
   theme: HeroTheme;
   /** Path di /public. Dipasang lewat custom property, bukan <img>. */
   photo: string;
-  /** Crop potret 4:5 dari foto yang sama, dipakai di bawah 860px. Bukan sekadar
-   *  versi kecil: framing-nya beda, dipangkas ke dua subjeknya supaya wajah
-   *  tetap terbaca di lebar ponsel. Lihat `.hero__bg` di styles.css. */
+  /** Versi potret untuk layar ponsel (art direction via <source>). */
   photoPortrait: string;
   /** Label slide untuk pembaca layar dan dot indicator. */
   name: string;
@@ -55,87 +53,68 @@ export interface HeroSlideData {
   stats: readonly HeroStat[];
 }
 
-export const HERO_SLIDES: readonly HeroSlideData[] = [
+/** Bentuk teks satu slide per bahasa — diisi oleh src/i18n/{id,en}.ts.
+ *  Urutan features/stats harus sama dengan urutan ikon di slideMeta. */
+export type HeroSlideText = {
+  name: string;
+  badge: string;
+  titleHead: string;
+  titleAccent: string[];
+  lead: string;
+  features: { title: string; desc: string }[];
+  waMessage: string;
+  ctaSecondary: string;
+  stats: { num: string; label: string }[];
+};
+
+/** Bagian slide yang tidak berubah antar bahasa: tema, foto, dan ikon. */
+const slideMeta: Record<
+  "halal" | "bpom",
   {
-    id: "halal",
+    theme: HeroTheme;
+    photo: string;
+    photoPortrait: string;
+    featureIcons: LucideIcon[];
+    statIcons: LucideIcon[];
+  }
+> = {
+  halal: {
     theme: "halal",
     photo: "/hero-1.jpeg",
     photoPortrait: "/hero-1-portrait.jpeg",
-    name: "Sertifikasi Halal",
-    badge: "Sertifikasi Halal untuk Semua Jenis Usaha",
-    titleHead: "Sertifikasi Halal,",
-    titleAccent: ["Nilai Lebih", "untuk Bisnis Anda"],
-    lead: "Kami membantu Anda mendapatkan sertifikasi halal secara cepat, mudah, dan sesuai syariat.",
-    // Empat alasan utama, ditaruh di hero supaya keberatan pertama pengunjung
-    // ("aman nggak? lama nggak? diakui nggak?") sudah terjawab sebelum scroll.
-    features: [
-      {
-        icon: ShieldCheck,
-        title: "Sesuai Syariat",
-        desc: "Dipandu auditor berkompeten & tersertifikasi",
-      },
-      {
-        icon: Timer,
-        title: "Proses Cepat & Transparan",
-        desc: "Alur jelas, biaya pasti, tanpa hidden cost",
-      },
-      {
-        icon: Globe,
-        title: "Diakui Nasional & Global",
-        desc: "Sertifikat halal diakui BPJPH & MUI",
-      },
-      {
-        icon: Users,
-        title: "Pendampingan Profesional",
-        desc: "Tim ahli siap mendampingi sampai sertifikat terbit",
-      },
-    ],
-    waMessage: "Halo, saya mau konsultasi soal sertifikasi halal untuk produk saya.",
-    ctaSecondary: { label: "Lihat alurnya", to: "alur" },
-    stats: [
-      { icon: Award, num: "200+", label: "Produk Tersertifikasi" },
-      { icon: CalendarCheck, num: "30 Hari", label: "Rata-rata Audit" },
-      { icon: TrendingUp, num: "98%", label: "Pengajuan Lolos Verifikasi Pertama" },
-    ],
+    featureIcons: [ShieldCheck, Timer, Globe, Users],
+    statIcons: [Award, CalendarCheck, TrendingUp],
   },
-  {
-    id: "bpom",
+  bpom: {
     theme: "bpom",
     photo: "/hero-2.jpeg",
     photoPortrait: "/hero-2-portrait.jpeg",
-    name: "Izin BPOM",
-    badge: "Izin BPOM, Legalitas Terjamin",
-    titleHead: "Urus Izin BPOM,",
-    titleAccent: ["Mudah, Aman", "& Terarah"],
-    lead: "Kami membantu Anda mengurus izin BPOM untuk produk makanan, minuman, obat, kosmetik, dan suplemen dengan proses yang aman dan efisien.",
-    features: [
-      {
-        icon: ShieldCheck,
-        title: "Tim Berpengalaman",
-        desc: "Konsultan ahli regulasi siap membantu Anda",
-      },
-      {
-        icon: Rocket,
-        title: "Proses Cepat & Efisien",
-        desc: "Dokumen lengkap, proses lebih lancar",
-      },
-      {
-        icon: Scale,
-        title: "Legal & Terpercaya",
-        desc: "Sesuai ketentuan BPOM terbaru",
-      },
-      {
-        icon: FileCheck2,
-        title: "Layanan End-to-End",
-        desc: "Dari persiapan hingga izin terbit",
-      },
-    ],
-    waMessage: "Halo, saya mau konsultasi soal pengurusan izin BPOM untuk produk saya.",
-    ctaSecondary: { label: "Lihat alurnya", to: "alur" },
-    stats: [
-      { icon: ClipboardCheck, num: "4–5 Bulan", label: "Estimasi Proses" },
-      { icon: CircleCheck, num: "100%", label: "Pendampingan Sampai Terbit" },
-      { icon: Headset, num: "Konsultasi Gratis", label: "Tim siap membantu Anda kapan saja" },
-    ],
+    featureIcons: [ShieldCheck, Rocket, Scale, FileCheck2],
+    statIcons: [ClipboardCheck, CircleCheck, Headset],
   },
-];
+};
+
+/** Rakit data slide lengkap: ikon & foto dari slideMeta + teks bahasa aktif. */
+export function getHeroSlides(
+  slides: Record<"halal" | "bpom", HeroSlideText>,
+): HeroSlideData[] {
+  return (["halal", "bpom"] as const).map((slideId) => {
+    const meta = slideMeta[slideId];
+    const text = slides[slideId];
+    return {
+      id: slideId,
+      theme: meta.theme,
+      photo: meta.photo,
+      photoPortrait: meta.photoPortrait,
+      name: text.name,
+      badge: text.badge,
+      titleHead: text.titleHead,
+      titleAccent: text.titleAccent,
+      lead: text.lead,
+      features: text.features.map((f, i) => ({ icon: meta.featureIcons[i], ...f })),
+      waMessage: text.waMessage,
+      ctaSecondary: { label: text.ctaSecondary, to: "alur" },
+      stats: text.stats.map((s, i) => ({ icon: meta.statIcons[i], ...s })),
+    };
+  });
+}

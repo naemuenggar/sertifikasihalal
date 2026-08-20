@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchPublishedNews } from "../lib/news";
+import { fetchPublishedNews, localizedNews } from "../lib/news";
 import type { News } from "../lib/types";
 import { formatDate } from "../utils/date";
 import { useCarousel } from "../hooks/useCarousel";
+import { useLanguage } from "../i18n/LanguageContext";
 import Carousel from "./Carousel";
 import { LogoMark } from "./icons";
 
@@ -26,6 +27,7 @@ function readingTime(content: string | null): number {
  * Data dinamis dari tabel `news` (hanya yang Published), terbaru dulu.
  */
 export default function BeritaSection() {
+  const { lang, t } = useLanguage();
   const [items, setItems] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,13 +57,13 @@ export default function BeritaSection() {
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">
-            <span className="eyebrow">Berita</span>
+            <span className="eyebrow">{t.news.eyebrow}</span>
             <h2 className="h-section" style={{ marginTop: "0.7rem" }}>
-              Kabar & panduan terbaru seputar halal dan BPOM.
+              {t.news.homeTitle}
             </h2>
           </div>
           <Link to="/berita" className="section__link">
-            Semua berita
+            {t.news.allNews}
           </Link>
         </div>
 
@@ -80,13 +82,13 @@ export default function BeritaSection() {
           </div>
         ) : error ? (
           <div className="news-load-error">
-            <p>Berita sedang tidak dapat dimuat.</p>
+            <p>{t.news.loadError}</p>
             <button
               type="button"
               className="btn btn--ghost"
               onClick={() => window.location.reload()}
             >
-              Coba lagi
+              {t.news.retry}
             </button>
           </div>
         ) : (
@@ -96,37 +98,42 @@ export default function BeritaSection() {
               ratio={ratio}
               onPrev={() => slide(-1)}
               onNext={() => slide(1)}
-              prevLabel="Berita sebelumnya"
-              nextLabel="Berita berikutnya"
+              prevLabel={t.news.prevLabel}
+              nextLabel={t.news.nextLabel}
             >
               <div className="news-carousel__track" ref={trackRef}>
-                {items.map((item) => (
-                  <article className="news-carousel__card" key={item.id}>
-                    <Link to={`/berita/${item.slug}`} aria-label={item.title}>
-                      <div className="news-carousel__media">
-                        {item.thumbnail_url ? (
-                          <img src={item.thumbnail_url} alt="" loading="lazy" />
-                        ) : (
-                          <FeaturedPlaceholder />
-                        )}
-                        <span className="news-carousel__category">
-                          {item.category ?? "Berita"}
-                        </span>
-                        <div className="news-carousel__headline">
-                          <h3>{item.title}</h3>
+                {items.map((item) => {
+                  const text = localizedNews(item, lang);
+                  return (
+                    <article className="news-carousel__card" key={item.id}>
+                      <Link to={`/berita/${item.slug}`} aria-label={text.title}>
+                        <div className="news-carousel__media">
+                          {item.thumbnail_url ? (
+                            <img src={item.thumbnail_url} alt="" loading="lazy" />
+                          ) : (
+                            <FeaturedPlaceholder />
+                          )}
+                          <span className="news-carousel__category">
+                            {(item.category && t.news.categoryNames[item.category]) ||
+                              item.category ||
+                              t.news.categoryFallback}
+                          </span>
+                          <div className="news-carousel__headline">
+                            <h3>{text.title}</h3>
+                          </div>
                         </div>
-                      </div>
-                      <div className="news-carousel__body">
-                        {item.summary && <p>{item.summary}</p>}
-                        <span className="news-carousel__meta">
-                          <span>{formatDate(item.published_at)}</span>
-                          <span aria-hidden="true">•</span>
-                          <span>{readingTime(item.content)} menit baca</span>
-                        </span>
-                      </div>
-                    </Link>
-                  </article>
-                ))}
+                        <div className="news-carousel__body">
+                          {text.summary && <p>{text.summary}</p>}
+                          <span className="news-carousel__meta">
+                            <span>{formatDate(item.published_at, lang)}</span>
+                            <span aria-hidden="true">•</span>
+                            <span>{t.news.minRead(readingTime(text.content))}</span>
+                          </span>
+                        </div>
+                      </Link>
+                    </article>
+                  );
+                })}
               </div>
             </Carousel>
           </div>

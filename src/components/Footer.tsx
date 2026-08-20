@@ -2,26 +2,23 @@ import { Link } from "react-router-dom";
 import { LogoMark } from "./icons";
 import WaLink from "./WaLink";
 import { WA_DISPLAY, WA_LINK } from "../utils/contact";
-import { services, bpomServiceSlugs } from "../data/services";
-
-/** Tiga layanan BPOM diberi label pendek di footer. */
-const bpomShortLabel: Record<string, string> = {
-  "registrasi-makanan-minuman-bpom": "Pangan",
-  "registrasi-kosmetik-bpom": "Kosmetik",
-  "registrasi-suplemen-kesehatan-bpom": "Suplemen",
-};
-
-const halalServices = services.filter((s) => !bpomServiceSlugs.includes(s.slug));
+import { getServices, bpomServiceSlugs } from "../data/services";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+  const halalServices = getServices(t.services.items).filter(
+    (s) => !(bpomServiceSlugs as readonly string[]).includes(s.slug),
+  );
+
   return (
     <>
       <section className="cta-band" id="kontak" data-service="neutral">
         <div className="wrap cta-band__inner">
           <h2>
-            Saatnya produk Anda <em>resmi halal.</em>
+            {t.footer.ctaTitle} <em>{t.footer.ctaTitleAccent}</em>
           </h2>
-          <WaLink className="btn btn--solid">Mulai konsultasi gratis</WaLink>
+          <WaLink className="btn btn--solid">{t.footer.ctaButton}</WaLink>
         </div>
       </section>
 
@@ -33,14 +30,11 @@ export default function Footer() {
                 <LogoMark className="brand__mark" />
                 Urushalal
               </div>
-              <p className="foot-tag">
-                Pendamping sertifikasi halal & izin edar BPOM untuk usaha
-                Indonesia. Terdaftar dan terhubung dengan LPH resmi.
-              </p>
+              <p className="foot-tag">{t.footer.tagline}</p>
             </div>
 
             <div>
-              <h4>Layanan</h4>
+              <h4>{t.footer.servicesTitle}</h4>
               <ul>
                 {halalServices.map((s) => (
                   <li key={s.slug}>
@@ -49,11 +43,11 @@ export default function Footer() {
                 ))}
               </ul>
               <div className="foot-sub">
-                <span className="foot-sub__label">Izin Edar BPOM</span>
+                <span className="foot-sub__label">{t.footer.bpomLabel}</span>
                 <ul>
                   {bpomServiceSlugs.map((slug) => (
                     <li key={slug}>
-                      <Link to={`/layanan/${slug}`}>{bpomShortLabel[slug] ?? slug}</Link>
+                      <Link to={`/layanan/${slug}`}>{t.footer.bpomShort[slug]}</Link>
                     </li>
                   ))}
                 </ul>
@@ -61,17 +55,17 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4>Perusahaan</h4>
+              <h4>{t.footer.companyTitle}</h4>
               <ul>
-                <li><Link to="/tentang-kami">Tentang Kami</Link></li>
-                <li><Link to="/#alur">Alur</Link></li>
-                <li><Link to="/berita">Berita</Link></li>
-                <li><Link to="/#faq">FAQ</Link></li>
+                <li><Link to="/tentang-kami">{t.footer.companyLinks.about}</Link></li>
+                <li><Link to="/#alur">{t.footer.companyLinks.flow}</Link></li>
+                <li><Link to="/berita">{t.footer.companyLinks.news}</Link></li>
+                <li><Link to="/#faq">{t.footer.companyLinks.faq}</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4>Kontak</h4>
+              <h4>{t.footer.contactTitle}</h4>
               <ul>
                 <li><a href="mailto:halo@urushalal.id">halo@urushalal.id</a></li>
                 <li>
@@ -79,15 +73,15 @@ export default function Footer() {
                     {WA_DISPLAY}
                   </a>
                 </li>
-                <li>Jakarta Selatan</li>
-                <li>Senin–Jumat, 09–17 WIB</li>
+                <li>{t.footer.city}</li>
+                <li>{t.footer.hours}</li>
               </ul>
             </div>
           </div>
           <div className="foot-bottom">
-            <span>© 2026 Urushalal. Bekerja sesuai regulasi BPJPH & MUI.</span>
+            <span>{t.footer.copyright}</span>
             <span>
-              <a href="/kebijakan-privasi">Kebijakan privasi</a> · <a href="/syarat-layanan">Syarat layanan</a>
+              <a href="/kebijakan-privasi">{t.footer.privacy}</a> · <a href="/syarat-layanan">{t.footer.terms}</a>
             </span>
           </div>
         </div>

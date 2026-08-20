@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import PageHero from "../components/PageHero";
-import { fetchPublishedNews } from "../lib/news";
+import { fetchPublishedNews, localizedNews } from "../lib/news";
 import type { News } from "../lib/types";
 import { formatDate } from "../utils/date";
 import { usePageTitle } from "../hooks/usePageMeta";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const PAGE_SIZE = 9;
 
 /** Halaman /berita — daftar berita published, terbaru dulu, dengan pagination. */
 export default function BeritaPage() {
-  usePageTitle("Berita — Urushalal");
+  const { lang, t } = useLanguage();
+  usePageTitle(t.news.metaTitle);
 
   const [params, setParams] = useSearchParams();
   const page = Math.max(1, parseInt(params.get("page") ?? "1", 10) || 1);
@@ -44,54 +46,61 @@ export default function BeritaPage() {
   return (
     <>
       <PageHero
-        eyebrow="Berita"
+        eyebrow={t.news.page.eyebrow}
         title={
           <>
-            Kabar & <em>panduan terbaru.</em>
+            {t.news.page.titleHead} <em>{t.news.page.titleAccent}</em>
           </>
         }
-        lead="Regulasi, panduan, dan perkembangan terkini seputar sertifikasi halal dan izin edar BPOM."
+        lead={t.news.page.lead}
       />
 
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="wrap">
           {loading ? (
-            <p className="lead">Memuat berita…</p>
+            <p className="lead">{t.news.page.loading}</p>
           ) : items.length === 0 ? (
-            <p className="lead">Belum ada berita yang dipublikasikan.</p>
+            <p className="lead">{t.news.page.empty}</p>
           ) : (
             <>
               <div className="news-grid">
-                {items.map((n) => (
-                  <Link key={n.id} to={`/berita/${n.slug}`} className="news-card">
-                    <div className="news-card__media">
-                      {n.thumbnail_url ? (
-                        <img src={n.thumbnail_url} alt={n.title} loading="lazy" />
-                      ) : (
-                        <span className="news-card__ph" aria-hidden="true" />
-                      )}
-                    </div>
-                    <div className="news-card__body">
-                      <div className="news-card__meta">
-                        <span className="news-card__cat">{n.category ?? "Berita"}</span>
-                        <span className="news-card__date">{formatDate(n.published_at)}</span>
+                {items.map((n) => {
+                  const text = localizedNews(n, lang);
+                  return (
+                    <Link key={n.id} to={`/berita/${n.slug}`} className="news-card">
+                      <div className="news-card__media">
+                        {n.thumbnail_url ? (
+                          <img src={n.thumbnail_url} alt={text.title} loading="lazy" />
+                        ) : (
+                          <span className="news-card__ph" aria-hidden="true" />
+                        )}
                       </div>
-                      <h3>{n.title}</h3>
-                      {n.summary && <p>{n.summary}</p>}
-                    </div>
-                  </Link>
-                ))}
+                      <div className="news-card__body">
+                        <div className="news-card__meta">
+                          <span className="news-card__cat">
+                            {(n.category && t.news.categoryNames[n.category]) ||
+                              n.category ||
+                              t.news.categoryFallback}
+                          </span>
+                          <span className="news-card__date">{formatDate(n.published_at, lang)}</span>
+                        </div>
+                        <h3>{text.title}</h3>
+                        {text.summary && <p>{text.summary}</p>}
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
 
               {totalPages > 1 && (
-                <nav className="pagination" aria-label="Paginasi berita">
+                <nav className="pagination" aria-label={t.news.page.paginationLabel}>
                   <button
                     type="button"
                     className="btn btn--ghost btn--sm"
                     disabled={page <= 1}
                     onClick={() => setPage(page - 1)}
                   >
-                    Sebelumnya
+                    {t.news.page.prev}
                   </button>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                     <button
@@ -110,7 +119,7 @@ export default function BeritaPage() {
                     disabled={page >= totalPages}
                     onClick={() => setPage(page + 1)}
                   >
-                    Berikutnya
+                    {t.news.page.next}
                   </button>
                 </nav>
               )}

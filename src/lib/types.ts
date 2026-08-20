@@ -12,6 +12,13 @@ export type News = {
   content: string | null;
   cta_text: string | null;
   cta_button: string | null;
+  /* Versi Inggris. Null/kosong = pengunjung EN melihat versi Indonesia
+   * (fallback) — lihat localizedNews() di lib/news.ts. */
+  title_en: string | null;
+  summary_en: string | null;
+  content_en: string | null;
+  cta_text_en: string | null;
+  cta_button_en: string | null;
   status: NewsStatus;
   published_at: string | null;
   created_at: string;
@@ -28,6 +35,11 @@ export type NewsInput = {
   content: string | null;
   cta_text: string | null;
   cta_button: string | null;
+  title_en: string | null;
+  summary_en: string | null;
+  content_en: string | null;
+  cta_text_en: string | null;
+  cta_button_en: string | null;
   status: NewsStatus;
   published_at: string | null;
 };

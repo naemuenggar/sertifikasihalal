@@ -11,58 +11,46 @@ import {
 } from "lucide-react";
 import { LogoMark } from "./icons";
 import WaLink from "./WaLink";
-import { services } from "../data/services";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { getServices, type ServiceSlug } from "../data/services";
+import { useLanguage } from "../i18n/LanguageContext";
 
-/** Ikon + deskripsi satu-baris tiap layanan (judul & slug tetap dari data/services). */
-const layananMeta: Record<string, { icon: LucideIcon; tagline: string }> = {
-  "sertifikasi-halal-reguler": {
-    icon: ShieldCheck,
-    tagline: "Sertifikasi halal penuh di Indonesia — SIHALAL, audit LPH, hingga sertifikat BPJPH.",
-  },
-  "registrasi-sertifikat-halal-luar-negeri": {
-    icon: Globe,
-    tagline: "Daftarkan sertifikat halal luar negeri (MRA) agar diakui di Indonesia, lebih cepat.",
-  },
-  "registrasi-makanan-minuman-bpom": {
-    icon: UtensilsCrossed,
-    tagline: "Izin edar BPOM untuk pangan olahan & minuman kemasan (MD/ML) hingga siap dijual.",
-  },
-  "registrasi-kosmetik-bpom": {
-    icon: Sparkles,
-    tagline: "Notifikasi kosmetik (NA) untuk skincare, makeup, hingga parfum sesuai standar BPOM.",
-  },
-  "registrasi-suplemen-kesehatan-bpom": {
-    icon: Pill,
-    tagline: "Izin edar suplemen — vitamin, mineral, herbal — sesuai ketentuan keamanan BPOM.",
-  },
+/** Ikon tiap layanan (bahasa-netral). Judul & tagline datang dari i18n. */
+const layananIcons: Record<ServiceSlug, LucideIcon> = {
+  "sertifikasi-halal-reguler": ShieldCheck,
+  "registrasi-sertifikat-halal-luar-negeri": Globe,
+  "registrasi-makanan-minuman-bpom": UtensilsCrossed,
+  "registrasi-kosmetik-bpom": Sparkles,
+  "registrasi-suplemen-kesehatan-bpom": Pill,
 };
-
-const layananItems = services.map((s) => ({
-  slug: s.slug,
-  name: s.name,
-  icon: layananMeta[s.slug]?.icon ?? ShieldCheck,
-  tagline: layananMeta[s.slug]?.tagline ?? s.shortDesc,
-}));
-
-const linksBefore = [
-  { to: "/", label: "Beranda" },
-  { to: "/tentang-kami", label: "Tentang Kami" },
-];
-const linksAfter = [
-  { to: "/#alur", label: "Alur" },
-  { to: "/berita", label: "Berita" },
-];
 
 /** Delay sebelum dropdown menutup saat mouse leave, supaya tidak langsung
  *  hilang kalau kursor sekilas keluar area saat pindah ke submenu. */
 const DROP_CLOSE_DELAY_MS = 150;
 
 export default function Header() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false); // menu hamburger
   const [dropOpen, setDropOpen] = useState(false); // dropdown Layanan (desktop)
   const [mobLayananOpen, setMobLayananOpen] = useState(false); // accordion Layanan (mobile)
   const dropRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<number | null>(null);
+
+  const layananItems = getServices(t.services.items).map((s) => ({
+    slug: s.slug,
+    name: s.name,
+    icon: layananIcons[s.slug],
+    tagline: t.header.serviceTaglines[s.slug],
+  }));
+
+  const linksBefore = [
+    { to: "/", label: t.header.nav.home },
+    { to: "/tentang-kami", label: t.header.nav.about },
+  ];
+  const linksAfter = [
+    { to: "/#alur", label: t.header.nav.flow },
+    { to: "/berita", label: t.header.nav.news },
+  ];
 
   const close = () => setOpen(false);
 
@@ -109,13 +97,13 @@ export default function Header() {
   return (
     <header className="site-header" data-open={open}>
       <div className="wrap site-header__inner">
-        <Link to="/" className="brand" onClick={close} aria-label="Urushalal beranda">
+        <Link to="/" className="brand" onClick={close} aria-label={t.header.aria.brandHome}>
           <LogoMark className="brand__mark" />
           Urushalal
         </Link>
 
         {/* ---------- Navigasi desktop ---------- */}
-        <nav className="nav" aria-label="Utama">
+        <nav className="nav" aria-label={t.header.aria.mainNav}>
           {linksBefore.map((n) => (
             <Link key={n.to} to={n.to} onClick={close}>
               {n.label}
@@ -142,7 +130,7 @@ export default function Header() {
               aria-haspopup="true"
               onClick={() => setDropOpen((v) => !v)}
             >
-              Layanan
+              {t.header.nav.services}
               <ChevronDown
                 size={15}
                 strokeWidth={2}
@@ -153,7 +141,7 @@ export default function Header() {
             <div
               className="nav-dropdown"
               role="menu"
-              aria-label="Pilih layanan"
+              aria-label={t.header.aria.chooseService}
               data-open={dropOpen}
             >
               {layananItems.map(({ slug, name, icon: Icon, tagline }) => (
@@ -184,12 +172,13 @@ export default function Header() {
         </nav>
 
         <div className="header-cta">
+          <LanguageSwitcher />
           <WaLink className="btn btn--solid" onClick={close}>
-            Konsultasi gratis
+            {t.common.freeConsult}
           </WaLink>
           <button
             className="menu-btn"
-            aria-label={open ? "Tutup menu" : "Buka menu"}
+            aria-label={open ? t.header.aria.closeMenu : t.header.aria.openMenu}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
@@ -207,7 +196,7 @@ export default function Header() {
       {/* ---------- Menu mobile (hamburger) ---------- */}
       <div className="mobile-menu" data-open={open}>
         <div className="wrap mobile-menu__inner">
-          <nav className="mobile-nav" aria-label="Mobile">
+          <nav className="mobile-nav" aria-label={t.header.aria.mobileNav}>
             {linksBefore.map((n) => (
               <Link key={n.to} to={n.to} className="mobile-nav__item" onClick={close}>
                 {n.label}
@@ -222,7 +211,7 @@ export default function Header() {
                 aria-expanded={mobLayananOpen}
                 onClick={() => setMobLayananOpen((v) => !v)}
               >
-                Layanan
+                {t.header.nav.services}
                 <ChevronDown
                   size={18}
                   strokeWidth={2}
@@ -259,7 +248,7 @@ export default function Header() {
           </nav>
           <div className="mobile-menu__cta">
             <WaLink className="btn btn--solid" onClick={close}>
-              Konsultasi gratis
+              {t.common.freeConsult}
             </WaLink>
           </div>
         </div>

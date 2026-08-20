@@ -8,48 +8,19 @@ import {
 } from "lucide-react";
 import Carousel from "./Carousel";
 import { useCarousel } from "../hooks/useCarousel";
+import { useLanguage } from "../i18n/LanguageContext";
 
-type Service = {
-  icon: LucideIcon;
-  title: string;
-  desc: string;
-  tag: string;
-};
-
-const services: Service[] = [
-  {
-    icon: MessagesSquare,
-    title: "Konsultasi Awal Gratis",
-    desc: "Kami petakan jenis produk, bahan, dan proses Anda untuk menentukan skema sertifikasi yang paling pas.",
-    tag: "Fase persiapan",
-  },
-  {
-    icon: FileText,
-    title: "Penyusunan Dokumen",
-    desc: "Formulir Pendaftaran Halal (Reg-01), daftar bahan, flowchart produksi—kami susun rapi sampai siap verifikasi.",
-    tag: "BPJPH",
-  },
-  {
-    icon: ClipboardCheck,
-    title: "Pendampingan Audit",
-    desc: "Auditor LPH datang ke lokasi. Kami dampingi dari sisi teknis supaya audit jalan satu kali jalan.",
-    tag: "Lapangan",
-  },
-  {
-    icon: Award,
-    title: "Penerbitan Sertifikat",
-    desc: "Hasil audit kami pantau sampai Fatwa MUI keluar dan sertifikat halal resmi terbit di portal SiHALAL.",
-    tag: "Penyelesaian",
-  },
-  {
-    icon: PackageSearch,
-    title: "Kaji Bahan & Supplier",
-    desc: "Cek status halal setiap bahan dan supplier agar rantai pasok Anda terdokumentasi dan tidak bermasalah saat audit.",
-    tag: "Due diligence",
-  },
+/** Ikon tiap kartu (bahasa-netral), urutannya mengikuti t.serviceCards.items. */
+const serviceIcons: LucideIcon[] = [
+  MessagesSquare,
+  FileText,
+  ClipboardCheck,
+  Award,
+  PackageSearch,
 ];
 
 export default function Services() {
+  const { t } = useLanguage();
   const { trackRef, slide, progress, ratio } = useCarousel<HTMLDivElement>(".svc-carousel__card");
 
   return (
@@ -57,9 +28,9 @@ export default function Services() {
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">
-            <span className="eyebrow">Apa yang kami urus</span>
+            <span className="eyebrow">{t.serviceCards.eyebrow}</span>
             <h2 className="h-section" style={{ marginTop: "0.7rem" }}>
-              Dari niat sampai sertifikat terbit, satu pintu.
+              {t.serviceCards.title}
             </h2>
           </div>
         </div>
@@ -69,11 +40,12 @@ export default function Services() {
           ratio={ratio}
           onPrev={() => slide(-1)}
           onNext={() => slide(1)}
-          prevLabel="Kartu sebelumnya"
-          nextLabel="Kartu berikutnya"
+          prevLabel={t.serviceCards.prevLabel}
+          nextLabel={t.serviceCards.nextLabel}
         >
           <div className="svc-carousel" ref={trackRef}>
-            {services.map(({ icon: Icon, title, desc, tag }) => {
+            {t.serviceCards.items.map(({ title, desc, tag }, i) => {
+              const Icon = serviceIcons[i];
               const iconClass = "svc__icon svc__icon--halal";
               return (
                 <article className="svc svc-carousel__card" key={title}>

@@ -54,6 +54,41 @@ export async function fetchNewsBySlug(slug: string): Promise<News | null> {
   }
 }
 
+/** Teks satu berita yang sudah disesuaikan bahasa pengunjung. */
+export type LocalizedNewsText = {
+  title: string;
+  summary: string | null;
+  content: string | null;
+  ctaText: string | null;
+  ctaButton: string | null;
+};
+
+/**
+ * Pilih teks berita sesuai bahasa aktif. Kolom *_en boleh kosong — dalam
+ * bahasa Inggris pun berita yang belum diterjemahkan tetap tampil memakai
+ * versi Indonesianya, supaya halaman EN tidak pernah kehilangan konten.
+ * Kategori tidak ikut di sini: nilainya dari daftar tetap dan diterjemahkan
+ * lewat t.news.categoryNames.
+ */
+export function localizedNews(n: News, lang: "id" | "en"): LocalizedNewsText {
+  if (lang !== "en") {
+    return {
+      title: n.title,
+      summary: n.summary,
+      content: n.content,
+      ctaText: n.cta_text,
+      ctaButton: n.cta_button,
+    };
+  }
+  return {
+    title: n.title_en || n.title,
+    summary: n.summary_en || n.summary,
+    content: n.content_en || n.content,
+    ctaText: n.cta_text_en || n.cta_text,
+    ctaButton: n.cta_button_en || n.cta_button,
+  };
+}
+
 /* ============================ Khusus admin ============================
  * Memerlukan sesi login (role `authenticated`). RLS menolak akses anonim.
  * ==================================================================== */
@@ -104,6 +139,13 @@ function prepareNewsInput(input: NewsInput): { value?: NewsInput; error?: string
   const ctaButton = input.cta_button ? cleanText(input.cta_button) : null;
   const content = input.content ?? null;
   const thumbnailUrl = input.thumbnail_url ? input.thumbnail_url.trim() : null;
+  /* Versi Inggris — semuanya opsional; kosong disimpan sebagai null supaya
+   * fallback ke versi Indonesia berjalan (lihat localizedNews). */
+  const titleEn = input.title_en ? cleanText(input.title_en) : null;
+  const summaryEn = input.summary_en ? cleanText(input.summary_en) : null;
+  const ctaTextEn = input.cta_text_en ? cleanText(input.cta_text_en) : null;
+  const ctaButtonEn = input.cta_button_en ? cleanText(input.cta_button_en) : null;
+  const contentEn = input.content_en ?? null;
 
   if (!title) return { error: "Judul wajib diisi." };
   if (!slug) return { error: "Slug wajib diisi." };
@@ -121,6 +163,16 @@ function prepareNewsInput(input: NewsInput): { value?: NewsInput; error?: string
     return { error: "URL gambar harus diawali http:// atau https://." };
   if (thumbnailUrl && isOverLimit(thumbnailUrl, LIMITS.newsThumbnailUrl))
     return { error: "URL gambar terlalu panjang." };
+  if (titleEn && isOverLimit(titleEn, LIMITS.newsTitle))
+    return { error: `Judul (EN) maksimal ${LIMITS.newsTitle} karakter.` };
+  if (summaryEn && isOverLimit(summaryEn, LIMITS.newsSummary))
+    return { error: `Ringkasan (EN) maksimal ${LIMITS.newsSummary} karakter.` };
+  if (ctaTextEn && isOverLimit(ctaTextEn, LIMITS.newsCta))
+    return { error: `Ajakan penutup (EN) maksimal ${LIMITS.newsCta} karakter.` };
+  if (ctaButtonEn && isOverLimit(ctaButtonEn, LIMITS.newsCtaButton))
+    return { error: `Teks tombol (EN) maksimal ${LIMITS.newsCtaButton} karakter.` };
+  if (contentEn && isOverLimit(contentEn, LIMITS.newsContent))
+    return { error: `Isi berita (EN) maksimal ${LIMITS.newsContent.toLocaleString("id-ID")} karakter.` };
 
   return {
     value: {
@@ -133,6 +185,11 @@ function prepareNewsInput(input: NewsInput): { value?: NewsInput; error?: string
       cta_button: ctaButton || null,
       content: content || null,
       thumbnail_url: thumbnailUrl || null,
+      title_en: titleEn || null,
+      summary_en: summaryEn || null,
+      cta_text_en: ctaTextEn || null,
+      cta_button_en: ctaButtonEn || null,
+      content_en: contentEn || null,
     },
   };
 }

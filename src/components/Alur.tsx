@@ -15,115 +15,34 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { useLanguage } from "../i18n/LanguageContext";
+import type { Translations } from "../i18n/id";
 
 /** Jeda sebelum hover mengganti panel. Tanpa ini, kursor yang cuma melintas
  *  menuju node lain ikut memicu panel dan isinya terbaca berkedip. */
 const HOVER_DELAY_MS = 120;
 
-type Stage = {
-  title: string;
-  /** Ikon penanda tahap. Dipilih dari isi tahapnya — bukan hiasan, jadi jangan
-   *  diganti ke ikon yang cuma "kelihatan bagus" tapi tidak menggambarkan apa
-   *  yang terjadi di tahap itu. */
-  icon: LucideIcon;
-  /** Siapa yang mengerjakan tahap ini. Pertanyaan pertama calon klien. */
-  actor: string;
-  /** Tandai kalau tahap ini butuh kerja dari pihak klien, bukan cuma kami. */
-  needsYou?: boolean;
-  /** Hanya diisi kalau angkanya sudah pasti — jangan dikarang. Kosong = tidak
-   *  ditampilkan sama sekali, lebih baik daripada estimasi yang meleset. */
-  duration?: string;
-  desc: string;
+type Stage = Translations["flow"]["paths"]["reguler"]["stages"][number];
+
+/** id jalur — dipakai untuk DOM id/tab, bukan untuk tampilan. */
+const pathIds = ["reguler", "produksi-luar", "mra"] as const;
+type PathId = (typeof pathIds)[number];
+
+/** Ikon penanda tiap tahap (bahasa-netral). Dipilih dari isi tahapnya — bukan
+ *  hiasan, jadi jangan diganti ke ikon yang cuma "kelihatan bagus" tapi tidak
+ *  menggambarkan apa yang terjadi di tahap itu. Jalur audit dipakai dua kali:
+ *  produksi di Indonesia dan di luar negeri melewati tahap yang persis sama. */
+const auditIcons: LucideIcon[] = [MessagesSquare, FileStack, SearchCheck, ScrollText, BadgeCheck];
+const mraIcons: LucideIcon[] = [Globe, FileCheck, Landmark];
+const pathIcons: Record<PathId, LucideIcon[]> = {
+  reguler: auditIcons,
+  "produksi-luar": auditIcons,
+  mra: mraIcons,
 };
 
-type Path = {
-  id: string;
-  label: string;
-  /** Kalimat pembeda supaya orang tahu jalur ini buat siapa, sebelum mengklik. */
-  hint: string;
-  stages: Stage[];
-};
-
-/** Jalur audit dipakai dua kali: produksi di Indonesia dan di luar negeri
- *  melewati tahap yang persis sama — yang membedakan cuma di mana auditor
- *  datang. Ditulis sekali supaya keduanya tidak pelan-pelan berbeda isi. */
-const auditStages: Stage[] = [
-  {
-    title: "Konsultasi Gratis",
-    icon: MessagesSquare,
-    actor: "Urushalal",
-    duration: "Maks. 24 jam",
-    desc: "Kami tinjau produk dan negara asal produksi Anda, lalu konfirmasikan jalur sertifikasi yang paling tepat berikut perkiraan waktu dan estimasi biayanya.",
-  },
-  {
-    title: "Penyiapan Dokumentasi",
-    icon: FileStack,
-    actor: "Anda + Urushalal",
-    needsYou: true,
-    desc: "Sertifikat GMP, deklarasi bahan baku, desain kemasan, dan dokumen pendukung lainnya kami siapkan bersama Anda sampai lengkap.",
-  },
-  {
-    title: "Pendaftaran SIHALAL & Audit",
-    icon: SearchCheck,
-    actor: "LPH",
-    desc: "Permohonan diajukan lewat sistem SIHALAL milik BPJPH. Auditor dari Lembaga Pemeriksa Halal terakreditasi memeriksa langsung ke fasilitas produksi Anda.",
-  },
-  {
-    title: "Fatwa MUI",
-    icon: ScrollText,
-    actor: "MUI",
-    desc: "Hasil audit ditinjau Komisi Fatwa Majelis Ulama Indonesia. Fatwa halal ini syarat keagamaan yang diwajibkan undang-undang.",
-  },
-  {
-    title: "Penerbitan Sertifikat",
-    icon: BadgeCheck,
-    actor: "BPJPH",
-    duration: "Berlaku permanen",
-    desc: "BPJPH menerbitkan Sertifikat Halal Indonesia resmi. Kepatuhan tetap dievaluasi berkala setiap 4 tahun — kami bantu pantau dan urus pembaruannya.",
-  },
-];
-
-const paths: Path[] = [
-  {
-    id: "reguler",
-    label: "Produksi di Indonesia",
-    hint: "Belum punya sertifikat halal, atau produksi di dalam negeri. Ada audit ke lokasi.",
-    stages: auditStages,
-  },
-  {
-    id: "produksi-luar",
-    label: "Produksi di luar negeri",
-    hint: "Belum punya sertifikat halal, atau produksi di luar negeri. Ada audit ke lokasi.",
-    stages: auditStages,
-  },
-  {
-    id: "mra",
-    label: "Sudah punya sertifikat luar negeri",
-    hint: "Lembaga penerbitnya punya perjanjian MRA dengan BPJPH. Tanpa audit ulang.",
-    stages: [
-      {
-        title: "Konsultasi & Cek Kelayakan MRA",
-        icon: Globe,
-        actor: "Urushalal",
-        duration: "Maks. 24 jam",
-        desc: "Kami verifikasi apakah lembaga penerbit sertifikat Anda punya perjanjian saling pengakuan (MRA) dengan BPJPH.",
-      },
-      {
-        title: "Penyiapan Berkas Sertifikat",
-        icon: FileCheck,
-        actor: "Anda + Urushalal",
-        needsYou: true,
-        desc: "Sertifikat halal yang sudah Anda miliki beserta dokumen pendukungnya kami rapikan sesuai ketentuan BPJPH. Syaratnya, sertifikat terbit dari lembaga di negara tempat produk diproduksi.",
-      },
-      {
-        title: "Registrasi ke BPJPH",
-        icon: Landmark,
-        actor: "BPJPH",
-        desc: "Sertifikat didaftarkan ke sistem BPJPH untuk mendapat pengakuan resmi di Indonesia. Tanpa audit ulang ke fasilitas produksi, jadi jauh lebih cepat dan hemat biaya.",
-      },
-    ],
-  },
-];
+/** Indeks tahap yang butuh kerja dari pihak klien (bukan cuma kami) —
+ *  di semua jalur tahap "Anda + Urushalal" sama-sama tahap ke-2. */
+const NEEDS_YOU_INDEX = 1;
 
 /** Node di baris pertama. Sisanya turun ke baris kedua. */
 const ROW1 = 3;
@@ -157,10 +76,10 @@ function snakeCell(i: number, total: number) {
   return { row, col, dir };
 }
 
-function Badges({ stage }: { stage: Stage }) {
+function Badges({ stage, needsYou }: { stage: Stage; needsYou: boolean }) {
   return (
     <div className="flow__meta">
-      <span className={`flow__actor${stage.needsYou ? " flow__actor--you" : ""}`}>
+      <span className={`flow__actor${needsYou ? " flow__actor--you" : ""}`}>
         {stage.actor}
       </span>
       {stage.duration && <span className="flow__dur">{stage.duration}</span>}
@@ -169,7 +88,10 @@ function Badges({ stage }: { stage: Stage }) {
 }
 
 export default function Alur() {
-  const [activeId, setActiveId] = useState(paths[0].id);
+  const { t } = useLanguage();
+  const paths = pathIds.map((pid) => ({ id: pid, ...t.flow.paths[pid] }));
+
+  const [activeId, setActiveId] = useState<PathId>(paths[0].id);
   // Dua state terpisah, bukan satu: klik mengunci tahap, hover cuma mengintip.
   // Kalau digabung, panel ikut berpindah setiap kursor lewat dan pilihan yang
   // sudah sengaja diklik ikut hilang.
@@ -219,7 +141,7 @@ export default function Alur() {
     setPinnedIdx(i);
   };
 
-  const selectPath = (id: string) => {
+  const selectPath = (id: PathId) => {
     setActiveId(id);
     cancelPreview();
     setPreviewIdx(null);
@@ -231,18 +153,17 @@ export default function Alur() {
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">
-            <span className="eyebrow">Alur</span>
+            <span className="eyebrow">{t.flow.eyebrow}</span>
             <h2 className="h-section" style={{ marginTop: "0.7rem" }}>
-              Alurnya beda, tergantung dari mana produk Anda.
+              {t.flow.title}
             </h2>
           </div>
         </div>
         <p className="lead" style={{ marginBottom: "clamp(1.6rem,3vw,2.2rem)" }}>
-          Kami tidak menjanjikan “cepat instan”. Yang kami jaga: setiap tahap
-          tuntas tanpa bolak-balik dokumen, dan Anda tahu posisi pengajuan setiap saat.
+          {t.flow.lead}
         </p>
 
-        <div className="paths" role="tablist" aria-label="Pilih jalur sertifikasi">
+        <div className="paths" role="tablist" aria-label={t.flow.tablistLabel}>
           {paths.map((p) => (
             <button
               key={p.id}
@@ -266,8 +187,8 @@ export default function Alur() {
           aria-labelledby={`path-tab-${active.id}`}
         >
           <p className="flow__count">
-            {active.stages.length} tahap
-            {active.id === "mra" && " — lebih ringkas karena audit lapangan dilewati"}
+            {t.flow.stageCount(active.stages.length)}
+            {active.id === "mra" && t.flow.overseasNote}
           </p>
 
           {isWide ? (
@@ -276,8 +197,7 @@ export default function Alur() {
                   Node-nya sendiri sudah berbentuk kartu, ini penegasnya. */}
               <p className="snake__hint">
                 <MousePointerClick size={16} strokeWidth={1.8} aria-hidden />
-                Arahkan kursor ke tiap tahap untuk mengintip detailnya, klik
-                untuk menguncinya.
+                {t.flow.snakeHint}
               </p>
 
               {/* key memaksa remount saat jalur berganti supaya animasi masuknya
@@ -287,7 +207,7 @@ export default function Alur() {
                   const { row, col, dir } = snakeCell(i, active.stages.length);
                   const DirectionIcon =
                     dir === "left" ? ChevronLeft : dir === "elbow" ? ChevronDown : ChevronRight;
-                  const StageIcon = s.icon;
+                  const StageIcon = pathIcons[active.id][i];
                   return (
                     <li
                       className="snake__cell"
@@ -315,9 +235,9 @@ export default function Alur() {
                         {/* Nomornya hilang dari layar begitu diganti ikon —
                             dikembalikan ke pembaca layar supaya urutan tahapnya
                             tetap terdengar, bukan cuma terlihat. */}
-                        <span className="sr-only">Tahap {i + 1}:</span>
+                        <span className="sr-only">{t.flow.stepLabel(i + 1)}:</span>
                         <span className="snake__title">{s.title}</span>
-                        <Badges stage={s} />
+                        <Badges stage={s} needsYou={i === NEEDS_YOU_INDEX} />
                       </button>
                     </li>
                   );
@@ -333,7 +253,7 @@ export default function Alur() {
                 className="detail"
                 id="flow-detail"
                 role="region"
-                aria-label="Detail tahap"
+                aria-label={t.flow.detailLabel}
                 style={{
                   ["--col" as string]: snakeCell(
                     detailIdx,
@@ -350,7 +270,7 @@ export default function Alur() {
                     {String(detailIdx + 1).padStart(2, "0")}
                   </span>
                   <div className="detail__text">
-                    <span className="detail__step">Tahap {detailIdx + 1}</span>
+                    <span className="detail__step">{t.flow.stepLabel(detailIdx + 1)}</span>
                     <h3>{detail.title}</h3>
                     <p>{detail.desc}</p>
                   </div>
@@ -360,7 +280,7 @@ export default function Alur() {
           ) : (
             <ol className="flow" key={active.id}>
               {active.stages.map((s, i) => {
-                const StageIcon = s.icon;
+                const StageIcon = pathIcons[active.id][i];
                 return (
                   <li className="flow__step" key={s.title}>
                     <span className="flow__marker" aria-hidden="true">
@@ -368,10 +288,10 @@ export default function Alur() {
                     </span>
                     <div className="flow__body">
                       <h3>
-                        <span className="sr-only">Tahap {i + 1}: </span>
+                        <span className="sr-only">{t.flow.stepLabel(i + 1)}: </span>
                         {s.title}
                       </h3>
-                      <Badges stage={s} />
+                      <Badges stage={s} needsYou={i === NEEDS_YOU_INDEX} />
                       <p>{s.desc}</p>
                     </div>
                   </li>

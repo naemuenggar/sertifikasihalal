@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import type { CSSProperties } from "react";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import type { HeroSlideData } from "../data/heroSlides";
+import { useLanguage } from "../i18n/LanguageContext";
 import ScrollLink from "./ScrollLink";
 import WaLink from "./WaLink";
 
@@ -16,6 +17,7 @@ type Props = {
 /** Satu panel hero. Murni presentasional: seluruh warnanya datang dari
  *  `data-theme`, seluruh isinya dari `slide`. */
 export default function HeroSlide({ slide, isActive, position, total }: Props) {
+  const { t } = useLanguage();
   return (
     <div
       className="hero-slide"
@@ -23,7 +25,7 @@ export default function HeroSlide({ slide, isActive, position, total }: Props) {
       data-active={isActive}
       role="group"
       aria-roledescription="slide"
-      aria-label={`${position} dari ${total} — ${slide.name}`}
+      aria-label={t.hero.slideAria(position, total, slide.name)}
       aria-hidden={!isActive}
       style={
         {
@@ -76,7 +78,7 @@ export default function HeroSlide({ slide, isActive, position, total }: Props) {
           <div className="hero__cta">
             <WaLink className="btn btn--solid" message={slide.waMessage}>
               <MessageCircle size={18} strokeWidth={1.8} aria-hidden />
-              Mulai konsultasi gratis
+              {t.common.startFreeConsult}
             </WaLink>
             <ScrollLink to={slide.ctaSecondary.to} className="btn btn--ghost">
               {slide.ctaSecondary.label}

@@ -1,24 +1,26 @@
 import { Link, useParams } from "react-router-dom";
-import { getService, services, bpomServiceSlugs } from "../data/services";
+import { getService, getServices, bpomServiceSlugs } from "../data/services";
 import PageHero from "../components/PageHero";
 import WaLink from "../components/WaLink";
 import NotFoundPage from "./NotFoundPage";
 import { usePageTitle } from "../hooks/usePageMeta";
+import { useLanguage } from "../i18n/LanguageContext";
 
 /** Halaman detail /layanan/:slug — artikel singkat satu layanan. */
 export default function LayananDetailPage() {
+  const { t } = useLanguage();
   const { slug } = useParams();
-  const service = getService(slug);
-  usePageTitle(service ? `${service.name} — Urushalal` : "Tidak ditemukan — Urushalal");
+  const service = getService(slug, t.services.items);
+  usePageTitle(service ? `${service.name} — Urushalal` : t.services.metaNotFound);
 
   if (!service) return <NotFoundPage />;
 
-  const others = services.filter((s) => s.slug !== service.slug);
-  const serviceType = bpomServiceSlugs.includes(service.slug) ? "bpom" : "halal";
+  const others = getServices(t.services.items).filter((s) => s.slug !== service.slug);
+  const serviceType = (bpomServiceSlugs as readonly string[]).includes(service.slug) ? "bpom" : "halal";
 
   return (
     <>
-      <PageHero eyebrow="Layanan" title={service.name} />
+      <PageHero eyebrow={t.services.detail.eyebrow} title={service.name} />
 
       <section className="section" style={{ paddingTop: 0 }} data-service={serviceType}>
         <div className="wrap">
@@ -29,16 +31,16 @@ export default function LayananDetailPage() {
 
             <aside className="detail-side">
               <div className="detail-cta">
-                <h3>Tertarik dengan layanan ini?</h3>
-                <p>Konsultasikan kebutuhan produk Anda — gratis, tanpa kewajiban.</p>
-                <WaLink className="btn btn--solid">Konsultasi gratis</WaLink>
+                <h3>{t.services.detail.ctaTitle}</h3>
+                <p>{t.services.detail.ctaText}</p>
+                <WaLink className="btn btn--solid">{t.common.freeConsult}</WaLink>
                 <Link to="/" className="btn btn--ghost">
-                  Kembali ke beranda
+                  {t.common.backHome}
                 </Link>
               </div>
 
               <div className="detail-others">
-                <h4>Layanan lainnya</h4>
+                <h4>{t.services.detail.others}</h4>
                 <ul>
                   {others.map((s) => (
                     <li key={s.slug}>

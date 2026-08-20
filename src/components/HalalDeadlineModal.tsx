@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { TriangleAlert, X } from "lucide-react";
 import WaLink from "./WaLink";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const SESSION_KEY = "urushalal-deadline-modal-dismissed";
 
 export default function HalalDeadlineModal() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function HalalDeadlineModal() {
           type="button"
           className="deadline-modal__close"
           onClick={dismiss}
-          aria-label="Tutup peringatan"
+          aria-label={t.deadlineModal.close}
         >
           <X size={20} strokeWidth={1.8} />
         </button>
@@ -65,15 +67,10 @@ export default function HalalDeadlineModal() {
         <span className="deadline-modal__icon" aria-hidden="true">
           <TriangleAlert size={38} strokeWidth={1.8} />
         </span>
-        <h2 id="deadline-modal-title">Jangan lewatkan batas waktu 17 Oktober 2026!</h2>
-        <p id="deadline-modal-description">
-          Anda berisiko kehilangan akses ke lebih dari 200 juta konsumen Muslim
-          di Indonesia, dan dapat dikenakan sanksi dari BPJPH/pemerintah — mulai
-          dari larangan impor, penarikan produk dari pasar, hingga denda
-          administratif.
-        </p>
+        <h2 id="deadline-modal-title">{t.deadlineModal.title}</h2>
+        <p id="deadline-modal-description">{t.deadlineModal.description}</p>
         <WaLink className="deadline-modal__cta" onClick={dismiss}>
-          Konsultasi Gratis
+          {t.deadlineModal.cta}
         </WaLink>
       </div>
     </div>

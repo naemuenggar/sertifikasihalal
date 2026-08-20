@@ -1,6 +1,7 @@
 import type { KeyboardEvent } from "react";
 import Carousel from "./Carousel";
 import { useCarousel } from "../hooks/useCarousel";
+import { useLanguage } from "../i18n/LanguageContext";
 import clientData from "../data/data-klien.json";
 
 type Client = (typeof clientData.clients)[number];
@@ -15,6 +16,12 @@ function initials(name: string) {
 }
 
 function ClientCard({ client }: { client: Client }) {
+  const { lang, t } = useLanguage();
+  const isEn = lang === "en";
+  const country = isEn ? client.countryEn : client.country;
+  const description = isEn ? client.descriptionEn : client.description;
+  const layanan = isEn ? client.layananRuangHalalEn : client.layananRuangHalal;
+
   return (
     <article className="client-card clients-carousel__card">
       <div className="client-card__logo">
@@ -24,23 +31,24 @@ function ClientCard({ client }: { client: Client }) {
           <span aria-hidden="true">{initials(client.name)}</span>
         )}
       </div>
-      <div className="client-card__country" role="img" aria-label={`Asal perusahaan: ${client.country}`}>
+      <div className="client-card__country" role="img" aria-label={t.clients.origin(country)}>
         <img
           src={`https://flagcdn.com/w80/${client.flagCode.toLowerCase()}.png`}
-          alt={`Bendera ${client.country}`}
+          alt={t.clients.flagAlt(country)}
           width="48"
           height="32"
           loading="lazy"
         />
       </div>
       <h3>{client.name}</h3>
-      <p>{client.description}</p>
-      <span className="client-card__service">{client.layananRuangHalal}</span>
+      <p>{description}</p>
+      <span className="client-card__service">{layanan}</span>
     </article>
   );
 }
 
 export default function Clients() {
+  const { t } = useLanguage();
   const { trackRef, slide, progress, ratio } = useCarousel<HTMLDivElement>(".clients-carousel__card");
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -54,14 +62,14 @@ export default function Clients() {
       <div className="wrap">
         <div className="section__head">
           <div className="section__title">
-            <span className="eyebrow">Dipercaya pelaku usaha</span>
-            <h2 className="h-section" style={{ marginTop: "0.7rem" }}>Klien Kami</h2>
+            <span className="eyebrow">{t.clients.eyebrow}</span>
+            <h2 className="h-section" style={{ marginTop: "0.7rem" }}>{t.clients.title}</h2>
           </div>
-          <p className="lead">Pendampingan sertifikasi Halal dan BPOM untuk berbagai industri di Indonesia dan mancanegara.</p>
+          <p className="lead">{t.clients.lead}</p>
         </div>
         <div className="clients-carousel-shell">
-          <Carousel progress={progress} ratio={ratio} onPrev={() => slide(-1)} onNext={() => slide(1)} prevLabel="Klien sebelumnya" nextLabel="Klien berikutnya">
-            <div className="clients-carousel" ref={trackRef} tabIndex={0} onKeyDown={handleKeyDown} aria-label="Daftar klien Ruang Halal">
+          <Carousel progress={progress} ratio={ratio} onPrev={() => slide(-1)} onNext={() => slide(1)} prevLabel={t.clients.prevLabel} nextLabel={t.clients.nextLabel}>
+            <div className="clients-carousel" ref={trackRef} tabIndex={0} onKeyDown={handleKeyDown} aria-label={t.clients.listLabel}>
               {clientData.clients.map((client) => <ClientCard client={client} key={client.id} />)}
             </div>
           </Carousel>

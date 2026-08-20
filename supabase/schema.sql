@@ -24,6 +24,11 @@ create table if not exists public.news (
   content       text,                 -- isi berita (Markdown)
   cta_text      text,                 -- kalimat ajakan penutup artikel
   cta_button    text,                 -- label tombol WhatsApp; null = pakai label bawaan
+  title_en      text,                 -- judul versi Inggris; null = fallback ke Indonesia
+  summary_en    text,                 -- ringkasan versi Inggris
+  content_en    text,                 -- isi versi Inggris (Markdown)
+  cta_text_en   text,                 -- ajakan penutup versi Inggris
+  cta_button_en text,                 -- label tombol versi Inggris
   status        text not null default 'draft'
                 check (status in ('draft', 'published')),
   published_at  timestamptz,
@@ -36,6 +41,16 @@ alter table public.news
   add column if not exists cta_text text;
 alter table public.news
   add column if not exists cta_button text;
+alter table public.news
+  add column if not exists title_en text;
+alter table public.news
+  add column if not exists summary_en text;
+alter table public.news
+  add column if not exists content_en text;
+alter table public.news
+  add column if not exists cta_text_en text;
+alter table public.news
+  add column if not exists cta_button_en text;
 
 create index if not exists news_status_published_at_idx
   on public.news (status, published_at desc);
