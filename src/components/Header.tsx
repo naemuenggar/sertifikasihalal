@@ -172,10 +172,13 @@ export default function Header() {
         </nav>
 
         <div className="header-cta">
-          <LanguageSwitcher />
           <WaLink className="btn btn--solid" onClick={close}>
             {t.common.freeConsult}
           </WaLink>
+          {/* Toggle bendera di pojok kanan header (setelah CTA). Di mobile
+              tetap di kiri hamburger — urutan hamburger-terakhir itu patokan
+              umum, jangan ditukar. */}
+          <LanguageSwitcher />
           <button
             className="menu-btn"
             aria-label={open ? t.header.aria.closeMenu : t.header.aria.openMenu}
