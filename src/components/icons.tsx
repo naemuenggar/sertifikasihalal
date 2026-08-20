@@ -1,11 +1,12 @@
 /**
- * Hanya brand mark dan bendera yang digambar sendiri di sini — lambang yang
- * tidak punya padanan di lucide-react. Ikon UI lainnya wajib diambil dari
- * lucide supaya grid, stroke, dan berat optisnya seragam.
+ * Logo Urushalal + bendera untuk language switcher — lambang yang tidak punya
+ * padanan di lucide-react. Ikon UI lainnya wajib diambil dari lucide supaya
+ * grid, stroke, dan berat optisnya seragam.
  *
- * Bendera memakai SVG inline, bukan emoji — Windows tidak merender emoji
- * bendera (yang muncul cuma huruf "ID"/"GB"), jadi tampilannya tidak bisa
- * diandalkan di sebagian besar desktop pengunjung.
+ * Logo memakai file gambar di public/images/logo. Bendera digambar sebagai
+ * SVG inline, bukan emoji — Windows tidak merender emoji bendera (yang muncul
+ * cuma huruf "ID"/"GB"), jadi tampilannya tidak bisa diandalkan di sebagian
+ * besar desktop pengunjung.
  */
 
 type IconProps = {
@@ -13,36 +14,17 @@ type IconProps = {
   size?: number;
 };
 
+/** Logo resmi Urushalal. File-nya JPG — tanpa transparansi, jadi kalau latar
+ *  logo bukan terang, ganti file-nya dengan PNG transparan (path sama). */
 export function LogoMark({ className, size = 30 }: IconProps) {
   return (
-    <svg
-      className={className}
+    <img
+      className={className ? `logo-mark ${className}` : "logo-mark"}
+      src="/images/logo/logo.jpg"
+      alt=""
       width={size}
       height={size}
-      viewBox="0 0 32 32"
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M16 2.5c3.4 3.2 6.8 4.6 10.5 4.6.3 4.4-.5 9.2-2.8 13-2 3.3-4.8 5.6-7.7 7-2.9-1.4-5.7-3.7-7.7-7C5.6 16.3 4.8 11.5 5.1 7.1 8.8 7.1 12.2 5.7 15.6 2.5z"
-        fill="currentColor"
-        opacity="0.16"
-      />
-      <path
-        d="M16 2.5c3.4 3.2 6.8 4.6 10.5 4.6.3 4.4-.5 9.2-2.8 13-2 3.3-4.8 5.6-7.7 7-2.9-1.4-5.7-3.7-7.7-7C5.6 16.3 4.8 11.5 5.1 7.1 8.8 7.1 12.2 5.7 15.6 2.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        fill="none"
-      />
-      <path
-        d="M11 14.5l3.2 3.2L21 11"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+    />
   );
 }
 

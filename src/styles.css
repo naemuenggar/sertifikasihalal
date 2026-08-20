@@ -247,6 +247,11 @@ h3 {
   height: 32px;
   color: var(--forest);
 }
+/* Logo sekarang file gambar (public/images/logo), bukan SVG inline —
+   contain menjaga proporsinya berapa pun rasio file yang diunggah. */
+.logo-mark {
+  object-fit: contain;
+}
 .nav {
   display: flex;
   align-items: center;
