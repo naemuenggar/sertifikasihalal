@@ -1,7 +1,11 @@
 /**
- * Hanya brand mark yang digambar sendiri di sini — lambang yang tidak punya
- * padanan di lucide-react. Ikon UI lainnya wajib diambil dari lucide supaya
- * grid, stroke, dan berat optisnya seragam.
+ * Hanya brand mark dan bendera yang digambar sendiri di sini — lambang yang
+ * tidak punya padanan di lucide-react. Ikon UI lainnya wajib diambil dari
+ * lucide supaya grid, stroke, dan berat optisnya seragam.
+ *
+ * Bendera memakai SVG inline, bukan emoji — Windows tidak merender emoji
+ * bendera (yang muncul cuma huruf "ID"/"GB"), jadi tampilannya tidak bisa
+ * diandalkan di sebagian besar desktop pengunjung.
  */
 
 type IconProps = {
@@ -38,6 +42,42 @@ export function LogoMark({ className, size = 30 }: IconProps) {
         strokeLinejoin="round"
         fill="none"
       />
+    </svg>
+  );
+}
+
+/** Bendera Indonesia — dua pita merah di atas putih. */
+export function FlagId({ className, size = 22 }: IconProps) {
+  return (
+    <svg
+      className={className}
+      width={size}
+      height={(size * 2) / 3}
+      viewBox="0 0 24 16"
+      aria-hidden
+    >
+      <rect width="24" height="8" fill="#E70011" />
+      <rect y="8" width="24" height="8" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
+/** Bendera Inggris (Union Jack) versi sederhana — tetap dikenali di ukuran
+ *  kecil tanpa harus menggambar diagonal offset versi resminya. */
+export function FlagGb({ className, size = 22 }: IconProps) {
+  return (
+    <svg
+      className={className}
+      width={size}
+      height={(size * 2) / 3}
+      viewBox="0 0 24 16"
+      aria-hidden
+    >
+      <rect width="24" height="16" fill="#012169" />
+      <path d="M0 0L24 16M24 0L0 16" stroke="#FFFFFF" strokeWidth="3.2" />
+      <path d="M0 0L24 16M24 0L0 16" stroke="#C8102E" strokeWidth="1.1" />
+      <path d="M12 0V16M0 8H24" stroke="#FFFFFF" strokeWidth="5.4" />
+      <path d="M12 0V16M0 8H24" stroke="#C8102E" strokeWidth="3.2" />
     </svg>
   );
 }

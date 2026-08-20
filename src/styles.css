@@ -394,36 +394,47 @@ h3 {
   gap: 0.7rem;
 }
 
-/* ---------- Language switcher (ID | EN) ---------- */
+/* ---------- Language switcher (bendera) ---------- */
 .lang-switch {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  padding: 2px;
+  gap: 3px;
+  padding: 3px;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
   background: var(--surface);
 }
 .lang-switch button {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
   background: none;
   border: none;
   border-radius: 999px;
-  padding: 0.55em 0.75em;
+  padding: 4px;
   cursor: pointer;
-  transition: color 0.15s, background 0.15s;
 }
-.lang-switch button:hover {
-  color: var(--ink);
+.lang-switch button svg {
+  display: block;
+  width: 22px;
+  height: auto;
+  border-radius: 2px;
+  /* Garis tepi tipis supaya sisi putih bendera tidak hilang di latar terang. */
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 18, 0.18);
+  transition: opacity 0.15s, filter 0.15s, box-shadow 0.15s;
 }
-.lang-switch button[data-active="true"] {
-  background: var(--forest);
-  color: #fff;
+/* Bahasa yang tidak aktif diredupkan; yang aktif diberi ring warna utama. */
+.lang-switch button[data-active="false"] svg {
+  opacity: 0.45;
+  filter: grayscale(0.4);
+}
+.lang-switch button[data-active="false"]:hover svg {
+  opacity: 0.9;
+  filter: none;
+}
+.lang-switch button[data-active="true"] svg {
+  box-shadow:
+    0 0 0 2px var(--forest),
+    inset 0 0 0 1px rgba(15, 23, 18, 0.18);
 }
 
 .menu-btn {
