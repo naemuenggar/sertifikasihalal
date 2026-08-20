@@ -587,7 +587,7 @@ export const id = {
     contactTitle: "Kontak",
     city: "Jakarta Selatan",
     hours: "Senin–Jumat, 09–17 WIB",
-    copyright: "© 2026 PT Ruang Halal Indonesia. Bekerja sesuai regulasi BPJPH & MUI.",
+    copyright: "© 2026 PT Ruang Halal Indonesia. Mengikuti regulasi BPJPH.",
     privacy: "Kebijakan privasi",
     terms: "Syarat layanan",
   },

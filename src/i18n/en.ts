@@ -575,7 +575,7 @@ export const en: Translations = {
     contactTitle: "Contact",
     city: "South Jakarta",
     hours: "Monday–Friday, 09:00–17:00 WIB",
-    copyright: "© 2026 PT Ruang Halal Indonesia. Operates in compliance with BPJPH & MUI regulations.",
+    copyright: "© 2026 PT Ruang Halal Indonesia. Operates in compliance with BPJPH regulations.",
     privacy: "Privacy policy",
     terms: "Terms of service",
   },
