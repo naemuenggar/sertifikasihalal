@@ -44,49 +44,60 @@ type Path = {
   stages: Stage[];
 };
 
+/** Jalur audit dipakai dua kali: produksi di Indonesia dan di luar negeri
+ *  melewati tahap yang persis sama — yang membedakan cuma di mana auditor
+ *  datang. Ditulis sekali supaya keduanya tidak pelan-pelan berbeda isi. */
+const auditStages: Stage[] = [
+  {
+    title: "Konsultasi Gratis",
+    icon: MessagesSquare,
+    actor: "Urushalal",
+    duration: "Maks. 24 jam",
+    desc: "Kami tinjau produk dan negara asal produksi Anda, lalu konfirmasikan jalur sertifikasi yang paling tepat berikut perkiraan waktu dan estimasi biayanya.",
+  },
+  {
+    title: "Penyiapan Dokumentasi",
+    icon: FileStack,
+    actor: "Anda + Urushalal",
+    needsYou: true,
+    desc: "Sertifikat GMP, deklarasi bahan baku, desain kemasan, dan dokumen pendukung lainnya kami siapkan bersama Anda sampai lengkap.",
+  },
+  {
+    title: "Pendaftaran SIHALAL & Audit",
+    icon: SearchCheck,
+    actor: "LPH",
+    desc: "Permohonan diajukan lewat sistem SIHALAL milik BPJPH. Auditor dari Lembaga Pemeriksa Halal terakreditasi memeriksa langsung ke fasilitas produksi Anda.",
+  },
+  {
+    title: "Fatwa MUI",
+    icon: ScrollText,
+    actor: "MUI",
+    desc: "Hasil audit ditinjau Komisi Fatwa Majelis Ulama Indonesia. Fatwa halal ini syarat keagamaan yang diwajibkan undang-undang.",
+  },
+  {
+    title: "Penerbitan Sertifikat",
+    icon: BadgeCheck,
+    actor: "BPJPH",
+    duration: "Berlaku permanen",
+    desc: "BPJPH menerbitkan Sertifikat Halal Indonesia resmi. Kepatuhan tetap dievaluasi berkala setiap 4 tahun — kami bantu pantau dan urus pembaruannya.",
+  },
+];
+
 const paths: Path[] = [
   {
     id: "reguler",
     label: "Produksi di Indonesia",
     hint: "Belum punya sertifikat halal, atau produksi di dalam negeri. Ada audit ke lokasi.",
-    stages: [
-      {
-        title: "Konsultasi Gratis",
-        icon: MessagesSquare,
-        actor: "Urushalal",
-        duration: "Maks. 24 jam",
-        desc: "Kami tinjau produk dan negara asal produksi Anda, lalu konfirmasikan jalur sertifikasi yang paling tepat berikut perkiraan waktu dan estimasi biayanya.",
-      },
-      {
-        title: "Penyiapan Dokumentasi",
-        icon: FileStack,
-        actor: "Anda + Urushalal",
-        needsYou: true,
-        desc: "Sertifikat GMP, deklarasi bahan baku, desain kemasan, dan dokumen pendukung lainnya kami siapkan bersama Anda sampai lengkap.",
-      },
-      {
-        title: "Pendaftaran SIHALAL & Audit",
-        icon: SearchCheck,
-        actor: "LPH",
-        desc: "Permohonan diajukan lewat sistem SIHALAL milik BPJPH. Auditor dari Lembaga Pemeriksa Halal terakreditasi memeriksa langsung ke fasilitas produksi Anda.",
-      },
-      {
-        title: "Fatwa MUI",
-        icon: ScrollText,
-        actor: "MUI",
-        desc: "Hasil audit ditinjau Komisi Fatwa Majelis Ulama Indonesia. Fatwa halal ini syarat keagamaan yang diwajibkan undang-undang.",
-      },
-      {
-        title: "Penerbitan Sertifikat",
-        icon: BadgeCheck,
-        actor: "BPJPH",
-        duration: "Berlaku permanen",
-        desc: "BPJPH menerbitkan Sertifikat Halal Indonesia resmi. Kepatuhan tetap dievaluasi berkala setiap 4 tahun — kami bantu pantau dan urus pembaruannya.",
-      },
-    ],
+    stages: auditStages,
   },
   {
-    id: "luar-negeri",
+    id: "produksi-luar",
+    label: "Produksi di luar negeri",
+    hint: "Belum punya sertifikat halal, atau produksi di luar negeri. Ada audit ke lokasi.",
+    stages: auditStages,
+  },
+  {
+    id: "mra",
     label: "Sudah punya sertifikat luar negeri",
     hint: "Lembaga penerbitnya punya perjanjian MRA dengan BPJPH. Tanpa audit ulang.",
     stages: [
@@ -256,7 +267,7 @@ export default function Alur() {
         >
           <p className="flow__count">
             {active.stages.length} tahap
-            {active.id === "luar-negeri" && " — lebih ringkas karena audit lapangan dilewati"}
+            {active.id === "mra" && " — lebih ringkas karena audit lapangan dilewati"}
           </p>
 
           {isWide ? (
