@@ -1378,15 +1378,26 @@ h3 {
 .alur .lead {
   color: var(--ink-soft);
 }
-/* Pemilih jalur. Alur sertifikasi sebenarnya bercabang — reguler pakai audit
-   lapangan, jalur MRA tidak. Dulu keduanya ditumpuk jadi satu paragraf dan
-   pembaca harus memilah sendiri; sekarang dia memilih dulu, baru baca. */
+/* Pemilih jalur. Alur sertifikasi sebenarnya bercabang — produksi dalam dan
+   luar negeri pakai audit lapangan, jalur MRA tidak. Dulu semuanya ditumpuk
+   jadi satu paragraf dan pembaca harus memilah sendiri; sekarang dia memilih
+   dulu, baru baca. Tiga kolom sejajar supaya ketiganya terbaca sebagai pilihan
+   setara — kalau salah satunya turun sendirian ke baris kedua, dia terbaca
+   sebagai catatan tambahan, bukan jalur yang sama sahnya. */
 .paths {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(0.7rem, 1.5vw, 1rem);
-  max-width: 820px;
+  max-width: 1120px;
   margin-bottom: clamp(1.8rem, 3.5vw, 2.6rem);
+}
+/* Di bawah ini tiga kolom bikin tiap kartu terlalu sempit dan hint-nya pecah
+   jadi lima baris — lebih baik menumpuk penuh daripada ditumpuk dua-satu. */
+@media (max-width: 900px) {
+  .paths {
+    grid-template-columns: 1fr;
+    max-width: 820px;
+  }
 }
 .paths__btn {
   display: flex;
@@ -1962,9 +1973,6 @@ h3 {
 }
 
 @media (max-width: 640px) {
-  .paths {
-    grid-template-columns: 1fr;
-  }
   .flow__step {
     grid-template-columns: 40px 1fr;
     gap: 0.9rem;
@@ -4286,6 +4294,40 @@ textarea.field {
 .md-editor__foot .is-warn {
   color: var(--terracotta);
   font-weight: 600;
+}
+
+/* Tombol toolbar yang sedang berlaku di posisi kursor (dipakai rata teks).
+   Tanpa penanda ini admin tidak punya cara tahu paragrafnya sudah rata tengah
+   atau belum selain membuka tab Preview. */
+.md-toolbar__btn.is-active {
+  background: var(--surface);
+  border-color: var(--forest);
+  color: var(--forest);
+}
+
+/* Rata teks dari toolbar. Browser memang sudah memetakan atribut `align` ke
+   text-align lewat gaya bawaannya, tapi itu perilaku peninggalan HTML lama —
+   ditulis ulang di sini supaya tidak bergantung padanya. */
+.prose div[align="left"] {
+  text-align: left;
+}
+.prose div[align="center"] {
+  text-align: center;
+}
+.prose div[align="right"] {
+  text-align: right;
+}
+.prose div[align="justify"] {
+  text-align: justify;
+  /* Baris terakhir paragraf tidak ikut diregangkan — kalau ikut, sisa satu
+     dua kata tertarik melebar sampai jarak antar-katanya menganga. */
+  text-align-last: left;
+}
+/* Jarak antar-paragraf di dalam pembungkus rata teks. Aturan `.prose > * + *`
+   hanya menjangkau anak langsung .prose, jadi tanpa ini paragraf di dalam
+   <div align> saling menempel. */
+.prose div[align] > * + * {
+  margin-top: 1.35em;
 }
 
 /* Stabilo dan garis bawah dari toolbar. Tanpa aturan ini <mark> memakai kuning

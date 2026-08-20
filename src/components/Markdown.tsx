@@ -27,9 +27,23 @@ import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
  *  onerror/onclick, dan membatasi protokol href ke http/https/mailto —
  *  jadi `[klik](javascript:...)` mati di sini. Kita cuma menambah dua tag
  *  inline yang memang dipakai toolbar editor. */
+const ALIGN_VALUES: [string, ...string[]] = ["align", "left", "center", "right", "justify"];
+
 const schema = {
   ...defaultSchema,
   tagNames: [...(defaultSchema.tagNames ?? []), "u", "mark"],
+  attributes: {
+    ...defaultSchema.attributes,
+    // Perataan teks dari toolbar dibawa atribut `align` — bukan
+    // `style="text-align:…"`, karena `style` tidak ada di daftar putih dan
+    // memang tidak layak dibuka (CSS sembarang bisa masuk lewat situ).
+    //
+    // `align` sendiri sudah diizinkan skema bawaan, tapi untuk semua elemen
+    // dan tanpa batas nilai. Di sini bentuknya diganti jadi
+    // [nama, ...nilai yang boleh] supaya hanya empat perataan ini yang lolos;
+    // ini mempersempit, bukan melonggarkan.
+    "*": (defaultSchema.attributes?.["*"] ?? []).map((attr) => (attr === "align" ? ALIGN_VALUES : attr)),
+  },
 };
 
 type Props = {

@@ -218,3 +218,173 @@ export function tidyParagraphs(value: string): string {
 
   return out.join("\n").trim();
 }
+
+/* ====================== Rata teks (align) ======================
+ * Markdown tidak punya sintaks perataan teks sama sekali. Satu-satunya jalan
+ * adalah membungkus bloknya dengan HTML — dan yang dipakai di sini
+ * `<div align="...">`, bukan `style="text-align:..."`, karena penyaring di
+ * komponen Markdown membuang atribut `style` (celah paling gampang untuk
+ * menyelipkan CSS berbahaya). Atribut `align` bisa dibatasi nilainya ke empat
+ * pilihan saja, jadi tidak ada yang bisa dititipkan lewat situ.
+ *
+ * Baris kosong di dalam pembungkusnya WAJIB ada. Tanpa itu remark
+ * memperlakukan seluruh blok sebagai HTML mentah, dan format Markdown di
+ * dalamnya (tebal, tautan, daftar) berhenti dikenali — tanda bintangnya
+ * tampil apa adanya di halaman.
+ * ================================================================ */
+
+export type Align = "left" | "center" | "right" | "justify";
+
+const ALIGN_OPEN = /^<div align="(left|center|right|justify)">\s*$/;
+const ALIGN_CLOSE = /^<\/div>\s*$/;
+
+const isMarker = (line: string) => ALIGN_OPEN.test(line) || ALIGN_CLOSE.test(line);
+
+type Line = { start: number; end: number; text: string };
+
+function splitLines(value: string): Line[] {
+  const out: Line[] = [];
+  let start = 0;
+  for (;;) {
+    const nl = value.indexOf("\n", start);
+    const end = nl === -1 ? value.length : nl;
+    out.push({ start, end, text: value.slice(start, end) });
+    if (nl === -1) return out;
+    start = nl + 1;
+  }
+}
+
+/** Baris ke berapa sebuah posisi kursor berada. */
+function lineIndexAt(lines: Line[], offset: number): number {
+  const idx = lines.findIndex((l) => offset >= l.start && offset <= l.end);
+  return idx === -1 ? lines.length - 1 : idx;
+}
+
+type Wrapper = { open: number; close: number; align: Align };
+
+/** Pembungkus rata teks yang sedang melingkupi baris ke-`from`..`to`, kalau ada. */
+function findWrapper(lines: Line[], from: number, to: number): Wrapper | null {
+  let open = -1;
+  let align: Align | null = null;
+  for (let i = from - 1; i >= 0; i -= 1) {
+    const text = lines[i].text;
+    // Ketemu penutup lebih dulu → blok ini ada DI LUAR pembungkus mana pun.
+    if (ALIGN_CLOSE.test(text)) return null;
+    const m = text.match(ALIGN_OPEN);
+    if (m) {
+      open = i;
+      align = m[1] as Align;
+      break;
+    }
+  }
+  if (open === -1 || !align) return null;
+
+  for (let i = to + 1; i < lines.length; i += 1) {
+    const text = lines[i].text;
+    if (ALIGN_OPEN.test(text)) return null;
+    if (ALIGN_CLOSE.test(text)) return { open, close: i, align };
+  }
+  // Pembukanya ada tapi penutupnya belum (naskah setengah jadi) → anggap
+  // tidak terbungkus, supaya tombolnya tidak mengubah teks di luar niat admin.
+  return null;
+}
+
+/** Susun ulang naskah dari daftar baris, dengan seleksi dinyatakan sebagai
+ *  rentang baris pada susunan yang BARU. */
+function fromLines(lines: string[], selStartLine: number, selEndLine: number): EditResult {
+  const value = lines.join("\n");
+  const startLine = Math.max(0, Math.min(selStartLine, lines.length - 1));
+  const endLine = Math.max(startLine, Math.min(selEndLine, lines.length - 1));
+  const head = lines.slice(0, startLine).join("\n");
+  return {
+    value,
+    selectionStart: startLine === 0 ? 0 : head.length + 1,
+    selectionEnd: lines.slice(0, endLine + 1).join("\n").length,
+  };
+}
+
+/** Perataan yang sedang berlaku di posisi kursor — dipakai toolbar untuk
+ *  menyalakan tombol yang aktif. */
+export function getAlign(value: string, start: number, end: number): Align {
+  const lines = splitLines(value);
+  const wrapper = findWrapper(lines, lineIndexAt(lines, start), lineIndexAt(lines, end));
+  return wrapper ? wrapper.align : "left";
+}
+
+/**
+ * Pasang/ganti/lepas perataan teks pada blok yang tersentuh seleksi.
+ *
+ * "Rata kiri" tidak menulis pembungkus apa pun — itu memang tampilan bawaan
+ * paragraf, jadi menandainya cuma menambah sampah di naskah. Tombolnya
+ * berfungsi sebagai "kembalikan ke normal": pembungkus yang ada dilepas.
+ * Menekan tombol yang sedang aktif juga melepas, supaya semuanya terasa
+ * sebagai toggle seperti tombol format lainnya.
+ */
+export function toggleAlign(value: string, start: number, end: number, align: Align): EditResult {
+  const lines = splitLines(value);
+  const texts = lines.map((l) => l.text);
+  let from = lineIndexAt(lines, start);
+  let to = lineIndexAt(lines, end);
+  // Seleksi yang berhenti tepat di awal baris berikutnya tidak ikut menarik
+  // baris itu — kalau tidak, menyorot satu paragraf utuh dengan mouse selalu
+  // menyeret baris kosong sesudahnya.
+  if (to > from && end === lines[to].start) to -= 1;
+
+  const wrapper = findWrapper(lines, from, to);
+
+  if (wrapper) {
+    const { open, close } = wrapper;
+    if (wrapper.align === align || align === "left") {
+      // Lepas pembungkusnya, berikut baris kosong yang tadi ditambahkan
+      // bersamanya — kalau ditinggal, tiap kali dipasang-lepas naskahnya
+      // menumpuk baris kosong.
+      const dropped = new Set<number>([open, close]);
+      if (texts[open + 1]?.trim() === "" && open + 1 < close) dropped.add(open + 1);
+      if (texts[close - 1]?.trim() === "" && close - 1 > open) dropped.add(close - 1);
+      const kept = texts.map((_, i) => i).filter((i) => !dropped.has(i));
+      const isBody = (i: number) => i > open && i < close && texts[i].trim() !== "";
+      const first = kept.findIndex(isBody);
+      const last = kept.length - 1 - [...kept].reverse().findIndex(isBody);
+      const nextLines = kept.map((i) => texts[i]);
+      if (first === -1) return fromLines(nextLines, Math.max(0, open - 1), Math.max(0, open - 1));
+      return fromLines(nextLines, first, last);
+    }
+
+    const nextLines = [...texts];
+    nextLines[open] = `<div align="${align}">`;
+    // Baris kosong pengapit tidak ikut diseleksi: yang mau dilihat admin
+    // sesudah menekan tombol adalah teksnya, bukan jarak di sekelilingnya.
+    let bodyStart = open + 1;
+    let bodyEnd = close - 1;
+    while (bodyStart < bodyEnd && texts[bodyStart].trim() === "") bodyStart += 1;
+    while (bodyEnd > bodyStart && texts[bodyEnd].trim() === "") bodyEnd -= 1;
+    return fromLines(nextLines, bodyStart, bodyEnd);
+  }
+
+  if (align === "left") return { value, selectionStart: start, selectionEnd: end };
+
+  // Tanpa seleksi, yang diratakan adalah paragraf tempat kursor berada.
+  // Dengan seleksi, persis baris-baris yang disorot — admin yang menyorot tiga
+  // baris dari lima tidak berharap kelimanya ikut bergeser.
+  if (end === start) {
+    while (from > 0 && texts[from - 1].trim() !== "" && !isMarker(texts[from - 1])) from -= 1;
+    while (to < texts.length - 1 && texts[to + 1].trim() !== "" && !isMarker(texts[to + 1])) to += 1;
+  }
+
+  const padBefore = from > 0 && texts[from - 1].trim() !== "";
+  const padAfter = to < texts.length - 1 && texts[to + 1].trim() !== "";
+  const body = texts.slice(from, to + 1);
+  const nextLines = [
+    ...texts.slice(0, from),
+    ...(padBefore ? [""] : []),
+    `<div align="${align}">`,
+    "",
+    ...body,
+    "",
+    "</div>",
+    ...(padAfter ? [""] : []),
+    ...texts.slice(to + 1),
+  ];
+  const bodyStart = from + (padBefore ? 1 : 0) + 2;
+  return fromLines(nextLines, bodyStart, bodyStart + body.length - 1);
+}

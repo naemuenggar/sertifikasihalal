@@ -1,5 +1,9 @@
 import { useRef, useState, type KeyboardEvent } from "react";
 import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
   Bold,
   Heading2,
   Heading3,
@@ -16,11 +20,14 @@ import {
 } from "lucide-react";
 import Markdown from "./Markdown";
 import {
+  getAlign,
   insertImage,
   insertLink,
   tidyParagraphs,
+  toggleAlign,
   toggleLinePrefix,
   toggleWrap,
+  type Align,
   type EditResult,
 } from "../utils/markdown";
 
@@ -29,8 +36,8 @@ import {
  *
  * Kenapa toolbar di atas textarea, bukan editor WYSIWYG penuh: yang disimpan
  * di kolom `news.content` tetap teks Markdown apa adanya. Formatnya bisa
- * dibaca manusia, aman dari XSS (tidak ada HTML yang ikut tersimpan kecuali
- * dua tag inline yang dilewatkan daftar putih di komponen Markdown), dan
+ * dibaca manusia, aman dari XSS (HTML yang ikut tersimpan hanya
+ * segelintir tag yang dilewatkan daftar putih di komponen Markdown), dan
  * berita lama tidak perlu dimigrasi sama sekali. Toolbar ini semata menutup
  * masalah sebenarnya: admin tidak perlu hafal sintaksnya.
  */
@@ -61,12 +68,21 @@ export default function MarkdownEditor({
    *  riwayat undo browser putus begitu nilainya diganti dari React. Jadi satu
    *  langkah mundur disediakan sendiri di sini. */
   const [beforeTidy, setBeforeTidy] = useState<string | null>(null);
+  /** Perataan teks di posisi kursor sekarang, supaya tombol yang sedang
+   *  berlaku bisa terlihat menyala. Ikut posisi kursor, bukan sekali hitung:
+   *  satu naskah bisa berisi beberapa blok dengan perataan berbeda-beda. */
+  const [align, setAlign] = useState<Align>("left");
   const taRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   /** Jalankan satu operasi teks, lalu kembalikan fokus + seleksi ke textarea.
    *  Tanpa pengembalian seleksi, tiap klik tombol memaksa admin mencari lagi
    *  posisi ketiknya — dan itu yang bikin toolbar terasa rusak. */
+  const syncAlign = () => {
+    const ta = taRef.current;
+    if (ta) setAlign(getAlign(ta.value, ta.selectionStart, ta.selectionEnd));
+  };
+
   const apply = (edit: (value: string, start: number, end: number) => EditResult) => {
     const ta = taRef.current;
     if (!ta) return;
@@ -82,6 +98,7 @@ export default function MarkdownEditor({
     setTimeout(() => {
       ta.focus();
       ta.setSelectionRange(result.selectionStart, result.selectionEnd);
+      syncAlign();
     }, 0);
   };
 
@@ -105,6 +122,13 @@ export default function MarkdownEditor({
     { icon: ListOrdered, label: "Daftar bernomor", run: () => apply((v, s, e) => toggleLinePrefix(v, s, e, "1. ")) },
     { icon: Quote, label: "Kutipan", run: () => apply((v, s, e) => toggleLinePrefix(v, s, e, "> ")) },
     { icon: Link2, label: "Tautan", hint: "Ctrl+K", run: () => apply((v, s, e) => insertLink(v, s, e)) },
+  ];
+
+  const alignActions: { icon: typeof AlignLeft; label: string; value: Align }[] = [
+    { icon: AlignLeft, label: "Rata kiri", value: "left" },
+    { icon: AlignCenter, label: "Rata tengah", value: "center" },
+    { icon: AlignRight, label: "Rata kanan", value: "right" },
+    { icon: AlignJustify, label: "Rata kiri-kanan", value: "justify" },
   ];
 
   const handleShortcut = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -180,6 +204,24 @@ export default function MarkdownEditor({
             ))}
 
             <span className="md-toolbar__sep" aria-hidden />
+            {alignActions.map(({ icon: Icon, label, value: alignValue }) => {
+              const isActive = align === alignValue;
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  className={`md-toolbar__btn${isActive ? " is-active" : ""}`}
+                  onClick={() => apply((v, s, e) => toggleAlign(v, s, e, alignValue))}
+                  title={label}
+                  aria-label={label}
+                  aria-pressed={isActive}
+                >
+                  <Icon size={16} aria-hidden />
+                </button>
+              );
+            })}
+
+            <span className="md-toolbar__sep" aria-hidden />
             <button
               type="button"
               className="md-toolbar__btn"
@@ -248,6 +290,8 @@ export default function MarkdownEditor({
               onChange(e.target.value);
             }}
             onKeyDown={handleShortcut}
+            onSelect={syncAlign}
+            onFocus={syncAlign}
             placeholder="Tulis isi berita di sini…"
           />
 
