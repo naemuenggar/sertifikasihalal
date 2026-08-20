@@ -538,7 +538,7 @@ export const en: Translations = {
     titleAccent: "supports you all the way.",
     profileTitle: "Brief Profile",
     profileText:
-      "Urushalal exists to help businesses — from SMEs to corporations, local and foreign companies alike — obtain BPJPH halal certification and BPOM distribution licenses through a process that is fast, transparent, and compliant with the latest regulations. We understand that licensing can feel complicated, which is why we act as a partner that guides you through every stage, from the initial consultation to the moment your certificate or distribution license is in your hands.",
+      "Urushalal, a platform developed by PT Ruang Halal Indonesia, exists to help businesses — from SMEs to corporations, local and foreign companies alike — obtain BPJPH halal certification and BPOM distribution licenses through a process that is fast, transparent, and compliant with the latest regulations. We understand that licensing can feel complicated, which is why we act as a partner that guides you through every stage, from the initial consultation to the moment your certificate or distribution license is in your hands.",
     visionTitle: "Vision",
     visionText:
       "To become the most trusted partner for businesses in meeting halal and product safety standards in Indonesia.",
@@ -575,7 +575,7 @@ export const en: Translations = {
     contactTitle: "Contact",
     city: "South Jakarta",
     hours: "Monday–Friday, 09:00–17:00 WIB",
-    copyright: "© 2026 Urushalal. Operates in compliance with BPJPH & MUI regulations.",
+    copyright: "© 2026 PT Ruang Halal Indonesia. Operates in compliance with BPJPH & MUI regulations.",
     privacy: "Privacy policy",
     terms: "Terms of service",
   },

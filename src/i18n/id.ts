@@ -550,7 +550,7 @@ export const id = {
     titleAccent: "mendampingi sampai tuntas.",
     profileTitle: "Profil Singkat",
     profileText:
-      "Urushalal hadir untuk membantu pelaku usaha — dari UMKM hingga korporasi, lokal maupun perusahaan luar negeri — mengurus sertifikasi halal BPJPH dan izin edar BPOM dengan proses yang cepat, transparan, dan sesuai regulasi terbaru. Kami memahami bahwa proses perizinan bisa terasa rumit, karena itu kami hadir sebagai partner yang mendampingi setiap tahapan, dari konsultasi awal hingga sertifikat/izin edar terbit di tangan Anda.",
+      "Urushalal sebagai platform yang dibuat oleh PT Ruang Halal Indonesia hadir untuk membantu pelaku usaha — dari UMKM hingga korporasi, lokal maupun perusahaan luar negeri — mengurus sertifikasi halal BPJPH dan izin edar BPOM dengan proses yang cepat, transparan, dan sesuai regulasi terbaru. Kami memahami bahwa proses perizinan bisa terasa rumit, karena itu kami hadir sebagai partner yang mendampingi setiap tahapan, dari konsultasi awal hingga sertifikat/izin edar terbit di tangan Anda.",
     visionTitle: "Visi",
     visionText:
       "Menjadi mitra terpercaya nomor satu bagi pelaku usaha dalam memenuhi standar kehalalan dan keamanan produk di Indonesia.",
@@ -587,7 +587,7 @@ export const id = {
     contactTitle: "Kontak",
     city: "Jakarta Selatan",
     hours: "Senin–Jumat, 09–17 WIB",
-    copyright: "© 2026 Urushalal. Bekerja sesuai regulasi BPJPH & MUI.",
+    copyright: "© 2026 PT Ruang Halal Indonesia. Bekerja sesuai regulasi BPJPH & MUI.",
     privacy: "Kebijakan privasi",
     terms: "Syarat layanan",
   },
