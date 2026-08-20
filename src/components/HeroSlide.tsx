@@ -41,7 +41,9 @@ export default function HeroSlide({ slide, isActive, position, total }: Props) {
       <div className="wrap hero__inner">
         <div className="hero__copy">
           <p className="hero__badge">
-            <span className="hero__badge-mark" aria-hidden />
+            {/* Teks badge sudah menyampaikan maknanya — logo ini pelengkap
+                visual, jadi alt dikosongkan. */}
+            <img className="hero__badge-logo" src={slide.badgeLogo} alt="" />
             {slide.badge}
           </p>
 

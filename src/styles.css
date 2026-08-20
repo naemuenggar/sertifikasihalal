@@ -732,7 +732,7 @@ h3 {
   max-width: 40rem;
 }
 
-/* Badge + ornamen bintang delapan (dua kotak dirotasi, tanpa aset) */
+/* Badge + logo kecil di kirinya */
 .hero__badge {
   display: inline-flex;
   align-items: center;
@@ -742,25 +742,17 @@ h3 {
   letter-spacing: 0.01em;
   color: var(--h-badge);
 }
-.hero__badge-mark {
-  position: relative;
+/* Logo kecil di dalam badge — kotak chipnya mengikuti ornamen bintang yang
+   dulu di sini (30×30, rounded 9px) supaya layout badge tidak berubah. */
+.hero__badge-logo {
   width: 30px;
   height: 30px;
   flex-shrink: 0;
   border-radius: 9px;
   background: var(--h-badge-bg);
   border: 1px solid var(--h-badge-border);
-}
-.hero__badge-mark::before,
-.hero__badge-mark::after {
-  content: "";
-  position: absolute;
-  inset: 9px;
-  background: var(--h-accent);
-  border-radius: 2px;
-}
-.hero__badge-mark::after {
-  transform: rotate(45deg);
+  object-fit: contain;
+  padding: 2px;
 }
 
 .hero__title {

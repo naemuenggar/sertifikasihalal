@@ -38,6 +38,8 @@ export interface HeroSlideData {
   photo: string;
   /** Versi potret untuk layar ponsel (art direction via <source>). */
   photoPortrait: string;
+  /** Logo kecil di dalam badge, kiri teks. Path di /public. */
+  badgeLogo: string;
   /** Label slide untuk pembaca layar dan dot indicator. */
   name: string;
   badge: string;
@@ -67,13 +69,14 @@ export type HeroSlideText = {
   stats: { num: string; label: string }[];
 };
 
-/** Bagian slide yang tidak berubah antar bahasa: tema, foto, dan ikon. */
+/** Bagian slide yang tidak berubah antar bahasa: tema, foto, logo, dan ikon. */
 const slideMeta: Record<
   "halal" | "bpom",
   {
     theme: HeroTheme;
     photo: string;
     photoPortrait: string;
+    badgeLogo: string;
     featureIcons: LucideIcon[];
     statIcons: LucideIcon[];
   }
@@ -82,6 +85,7 @@ const slideMeta: Record<
     theme: "halal",
     photo: "/hero-1.jpeg",
     photoPortrait: "/hero-1-portrait.jpeg",
+    badgeLogo: "/images/logo/logohalal.jpeg",
     featureIcons: [ShieldCheck, Timer, Globe, Users],
     statIcons: [Award, CalendarCheck, TrendingUp],
   },
@@ -89,6 +93,9 @@ const slideMeta: Record<
     theme: "bpom",
     photo: "/hero-2.jpeg",
     photoPortrait: "/hero-2-portrait.jpeg",
+    // Sementara pakai logo yang sama dengan slide halal — ganti path-nya di
+    // sini kalau sudah ada file logo khusus BPOM.
+    badgeLogo: "/images/logo/logohalal.jpeg",
     featureIcons: [ShieldCheck, Rocket, Scale, FileCheck2],
     statIcons: [ClipboardCheck, CircleCheck, Headset],
   },
@@ -106,6 +113,7 @@ export function getHeroSlides(
       theme: meta.theme,
       photo: meta.photo,
       photoPortrait: meta.photoPortrait,
+      badgeLogo: meta.badgeLogo,
       name: text.name,
       badge: text.badge,
       titleHead: text.titleHead,
