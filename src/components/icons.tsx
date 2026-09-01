@@ -16,11 +16,11 @@ type IconProps = {
 
 /** Logo resmi Urushalal. File-nya JPG — tanpa transparansi, jadi kalau latar
  *  logo bukan terang, ganti file-nya dengan PNG transparan (path sama). */
-export function LogoMark({ className, size = 30 }: IconProps) {
+export function LogoMark({ className, size = 34 }: IconProps) {
   return (
     <img
       className={className ? `logo-mark ${className}` : "logo-mark"}
-      src="/images/logo/logo.jpg"
+      src="/images/logo/logo3.jpeg"
       alt=""
       width={size}
       height={size}

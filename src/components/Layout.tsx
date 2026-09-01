@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import MoreInfoFab from "./MoreInfoFab";
 import HalalDeadlineModal from "./HalalDeadlineModal";
 import { useLanguage } from "../i18n/LanguageContext";
+import ChatbotWidget from "./ChatbotWidget";
 
 /** Kerangka halaman publik: header + konten rute + footer + FAB "More Info".
  *  Dipakai semua halaman depan; area admin punya layout sendiri. */
@@ -21,6 +22,7 @@ export default function Layout() {
       <Footer />
       <HalalDeadlineModal />
       <MoreInfoFab />
+      <ChatbotWidget />
     </>
   );
 }

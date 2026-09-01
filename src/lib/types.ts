@@ -56,3 +56,15 @@ export type ContactMessage = {
 };
 
 export type ContactMessageStatus = "belum_ditindaklanjuti" | "sudah_ditindaklanjuti";
+
+export type Faq = {
+  id: string;
+  question: string;
+  answer: string;
+  category: string | null;
+  keywords: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  variants?: string[];
+};
